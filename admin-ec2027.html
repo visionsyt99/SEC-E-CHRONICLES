@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin — The E Chronicles</title>
+  <!-- NOT linked anywhere on the site. URL: admin-ec2027.html -->
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── LOGIN SCREEN ── */
+    .login-screen{
+      position:fixed;inset:0;z-index:9999;
+      background:var(--bg);
+      display:flex;align-items:center;justify-content:center;
+      padding:1.5rem;
+    }
+    .login-box{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:20px;padding:2.5rem 2rem;
+      width:100%;max-width:380px;text-align:center;
+      box-shadow:var(--shadow-lg);
+    }
+    .login-logo{
+      width:56px;height:56px;border-radius:14px;background:var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;
+      color:#fff;margin:0 auto 1.2rem;
+    }
+    .login-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:.3rem}
+    .login-sub{font-size:.82rem;color:var(--text3);margin-bottom:2rem}
+    .login-input{
+      width:100%;padding:.75rem 1rem;
+      background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;
+      font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);
+      outline:none;text-align:center;letter-spacing:.15em;
+      transition:border-color .2s;margin-bottom:1rem;
+    }
+    .login-input:focus{border-color:var(--accent)}
+    .login-btn{
+      width:100%;padding:.8rem;background:var(--accent);color:#fff;border:none;
+      border-radius:10px;font-size:.88rem;font-weight:700;
+      letter-spacing:.08em;cursor:pointer;transition:background .2s,transform .1s;
+    }
+    .login-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+    .login-error{color:#dc2626;font-size:.8rem;margin-top:.6rem;display:none}
+    .login-shake{animation:shake .4s ease}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+    /* ── ADMIN LAYOUT ── */
+    .admin-wrap{display:none;min-height:100vh}
+    .admin-wrap.visible{display:flex}
+
+    /* sidebar */
+    .admin-sidebar{
+      width:230px;flex-shrink:0;
+      background:var(--surface);border-right:1px solid var(--border);
+      padding:1.5rem 1rem;
+      position:sticky;top:0;height:100vh;overflow-y:auto;
+    }
+    .admin-brand{
+      font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;
+      color:var(--accent);padding:.5rem .5rem 1.5rem;
+      border-bottom:1px solid var(--border);margin-bottom:1rem;
+    }
+    .admin-brand span{font-size:.7rem;font-family:'DM Mono',monospace;color:var(--text3);display:block;letter-spacing:.12em;text-transform:uppercase;margin-top:.2rem}
+    .sidebar-nav{list-style:none;display:flex;flex-direction:column;gap:.2rem}
+    .snav-item{
+      display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;
+      border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;
+      color:var(--text2);transition:background .15s,color .15s;
+    }
+    .snav-item:hover,.snav-item.active{background:var(--accent-light);color:var(--accent)}
+    .snav-icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-logout{
+      margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border);margin-top:2rem;
+    }
+    .logout-btn{
+      width:100%;padding:.6rem;background:transparent;border:1.5px solid var(--border);
+      border-radius:8px;color:var(--text3);font-size:.8rem;cursor:pointer;
+      transition:all .2s;
+    }
+    .logout-btn:hover{border-color:#dc2626;color:#dc2626}
+
+    /* main content */
+    .admin-main{flex:1;padding:2rem;overflow-y:auto;max-height:100vh}
+    .admin-panel{display:none}
+    .admin-panel.active{display:block}
+    .admin-panel-title{
+      font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;
+      margin-bottom:.4rem;
+    }
+    .admin-panel-sub{font-size:.85rem;color:var(--text3);margin-bottom:2rem}
+
+    /* ── FORM ELEMENTS ── */
+    .admin-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1.5rem;margin-bottom:1.2rem;
+    }
+    .admin-card-title{font-weight:700;font-size:.9rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+    .form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+    .form-row.cols-1{grid-template-columns:1fr}
+    .field{display:flex;flex-direction:column;gap:.35rem}
+    .field label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+    .field input,.field textarea,.field select{
+      background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;
+      padding:.6rem .85rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
+      color:var(--text);outline:none;transition:border-color .2s;
+      width:100%;
+    }
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+    .field textarea{resize:vertical;min-height:80px}
+    .admin-btn{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.6rem 1.4rem;font-size:.82rem;font-weight:600;
+      border-radius:8px;border:none;cursor:pointer;transition:all .2s;
+    }
+    .admin-btn-primary{background:var(--accent);color:#fff}
+    .admin-btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+    .admin-btn-danger{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
+    .admin-btn-danger:hover{background:rgba(239,68,68,.15)}
+
+    /* items list */
+    .items-list{display:flex;flex-direction:column;gap:.6rem;margin-top:1.2rem}
+    .item-row{
+      background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+      padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;
+      transition:border-color .15s;
+    }
+    .item-row:hover{border-color:var(--border-hover)}
+    .item-row-info{flex:1;min-width:0}
+    .item-row-title{font-weight:600;font-size:.88rem;truncate;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .item-row-meta{font-size:.75rem;color:var(--text3);margin-top:.15rem}
+    .item-row-actions{display:flex;gap:.4rem;flex-shrink:0}
+    .icon-btn{
+      width:30px;height:30px;border-radius:6px;border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:.85rem;
+      transition:background .15s;background:transparent;
+    }
+    .icon-btn-del{color:#dc2626}
+    .icon-btn-del:hover{background:rgba(239,68,68,.1)}
+    .icon-btn-edit{color:var(--accent)}
+    .icon-btn-edit:hover{background:var(--accent-light)}
+    .icon-btn-pin{color:var(--gold)}
+    .icon-btn-pin:hover{background:var(--gold-light)}
+
+    /* color picker row */
+    .color-picker{display:flex;gap:.5rem;flex-wrap:wrap}
+    .color-swatch{
+      width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+      transition:transform .15s,border-color .15s;
+    }
+    .color-swatch:hover,.color-swatch.selected{transform:scale(1.15);border-color:var(--text)}
+
+    /* success toast */
+    .toast{
+      position:fixed;bottom:2rem;right:2rem;z-index:9999;
+      background:var(--accent);color:#fff;
+      padding:.75rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:600;
+      transform:translateY(100px);opacity:0;transition:all .3s;
+      pointer-events:none;
+    }
+    .toast.show{transform:translateY(0);opacity:1}
+
+    /* ── SCHEDULE EDITOR ── */
+    .schedule-day-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem}
+    .sdt{padding:.35rem .8rem;font-size:.75rem;font-weight:500;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+    .sdt.active,.sdt:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+    .period-row{
+      display:grid;grid-template-columns:60px 1fr 1fr 1fr 30px;gap:.5rem;align-items:center;
+      margin-bottom:.5rem;
+    }
+    .period-row input{padding:.45rem .6rem;font-size:.82rem}
+    .period-add-btn{
+      padding:.5rem 1rem;background:var(--accent-light);color:var(--accent);
+      border:1.5px dashed rgba(26,79,160,.3);border-radius:8px;
+      font-size:.82rem;font-weight:500;cursor:pointer;width:100%;
+      transition:all .2s;margin-top:.5rem;
+    }
+    .period-add-btn:hover{background:var(--accent);color:#fff;border-style:solid}
+
+    @media(max-width:768px){
+      .admin-sidebar{width:200px}
+      .form-row{grid-template-columns:1fr}
+      .form-row.cols-3{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:600px){
+      .admin-wrap{flex-direction:column}
+      .admin-sidebar{width:100%;height:auto;position:relative;padding:1rem}
+      .sidebar-nav{flex-direction:row;flex-wrap:wrap}
+      .snav-item{padding:.4rem .6rem;font-size:.78rem}
+      .admin-main{padding:1.2rem}
+      .period-row{grid-template-columns:50px 1fr 1fr 24px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box" id="loginBox">
+    <div class="login-logo">E</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">The E Chronicles · Section E</div>
+    <input type="password" class="login-input" id="pwInput" placeholder="Enter password" />
+    <button class="login-btn" id="loginBtn">Unlock Panel →</button>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-wrap" id="adminWrap">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-brand">Admin<span>The E Chronicles</span></div>
+    <ul class="sidebar-nav">
+      <li class="snav-item active" data-panel="notices"><span class="snav-icon">📢</span>Notices</li>
+      <li class="snav-item" data-panel="resources"><span class="snav-icon">📚</span>Resources</li>
+      <li class="snav-item" data-panel="events"><span class="snav-icon">🎉</span>Events</li>
+      <li class="snav-item" data-panel="achievements"><span class="snav-icon">🏆</span>Achievements</li>
+      <li class="snav-item" data-panel="memories"><span class="snav-icon">💬</span>Memory Wall</li>
+      <li class="snav-item" data-panel="schedule"><span class="snav-icon">📅</span>Schedule</li>
+      <li class="snav-item" data-panel="photos"><span class="snav-icon">📸</span>Photos</li>
+      <li class="snav-item" data-panel="member-photos"><span class="snav-icon">🧑‍🎓</span>Member Photos</li>
+      <li class="snav-item" data-panel="gallery-admin"><span class="snav-icon">🖼️</span>Gallery</li>
+      <li class="snav-item" data-panel="countdown"><span class="snav-icon">⏱️</span>Countdown</li>
+      <li class="snav-item" data-panel="birthdays"><span class="snav-icon">🎂</span>Birthdays</li>
+    </ul>
+    <div class="sidebar-logout"><button class="logout-btn" id="logoutBtn">🔓 Logout</button></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <!-- ══════ NOTICES ══════ -->
+    <div class="admin-panel active" id="panel-notices">
+      <div class="admin-panel-title">📢 Notices</div>
+      <div class="admin-panel-sub">Add, edit and pin announcements for Section E.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add New Notice</div>
+        <div class="form-row"><div class="field"><label>Title</label><input type="text" id="n-title" placeholder="Notice title"/></div><div class="field"><label>Tag</label><input type="text" id="n-tag" placeholder="e.g. Exam, Fee, Event"/></div></div>
+        <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="n-desc" placeholder="Full notice details…"></textarea></div></div>
+        <div class="form-row">
+          <div class="field"><label>Icon (emoji)</label><input type="text" id="n-icon" placeholder="📢" maxlength="4"/></div>
+          <div class="field"><label>Date</label><input type="date" id="n-date"/></div>
+        </div>
+        <div class="field" style="margin-bottom:1rem"><label>Card Colour</label>
+          <div class="color-picker" id="n-color-picker">
+            <div class="color-swatch selected" data-val="0" style="background:rgba(26,79,160,.4)"></div>
+            <div class="color-swatch" data-val="1" style="background:rgba(34,197,94,.4)"></div>
+            <div class="color-swatch" data-val="2" style="background:rgba(201,162,39,.4)"></div>
+            <div class="color-swatch" data-val="3" style="background:rgba(239,68,68,.4)"></div>
+            <div class="color-swatch" data-val="4" style="background:rgba(168,85,247,.4)"></div>
+            <div class="color-swatch" data-val="5" style="background:rgba(20,184,166,.4)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+          <button class="admin-btn admin-btn-primary" id="addNoticeBtn">Add Notice</button>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;cursor:pointer"><input type="checkbox" id="n-pin"/> Pin to top</label>
+        </div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Current Notices</div>
+        <div class="items-list" id="notices-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════ RESOURCES ══════ -->
+    <div class="admin-panel" id="panel-resources">
+      <div class="admin-panel-title">📚 Resources</div>
+      <div class="admin-panel-sub">Add study materials, notes and useful links.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add Resource</div>
+        <div class="form-row"><div class="field"><label>Title</label><input type="text" id="r-title" placeholder="Resource title"/></div><div class="field"><label>Subject</label><select id="r-subject"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Mathematics</option><option>English</option><option>General</option></select></div></div>
+        <div class="form-row"><div class="field"><label>Description</label><input type="text" id="r-desc" placeholder="Brief description"/></div><div class="field"><label>Type</label><input type="text" id="r-type" placeholder="e.g. Notes, Past Paper, Video"/></div></div>
+        <div class="form-row"><div class="field"><label>Link (URL)</label><input type="url" id="r-link" placeholder="https://drive.google.com/…"/></div><div class="field"><label>Icon (emoji)</label><input type="text" id="r-icon" placeholder="📄" maxlength="4"/></div></div>
+        <button class="admin-btn admin-btn-primary" id="addResourceBtn">Add Resource</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Current Resources</div>
+        <div class="items-list" id="resources-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════ EVENTS ══════ -->
+    <div class="admin-panel" id="panel-events">
+      <div class="admin-panel-title">🎉 Events</div>
+      <div class="admin-panel-sub">Add upcoming and past events. Mark special ones for countdown.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add Event</div>
+        <div class="form-row"><div class="field"><label>Title</label><input type="text" id="ev-title" placeholder="Event name"/></div><div class="field"><label>Date</label><input type="date" id="ev-date"/></div></div>
+        <div class="form-row"><div class="field"><label>Time</label><input type="text" id="ev-time" placeholder="e.g. 10:00 AM"/></div><div class="field"><label>Venue</label><input type="text" id="ev-venue" placeholder="Location"/></div></div>
+        <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="ev-desc" placeholder="Event details…"></textarea></div></div>
+        <div class="form-row">
+          <div class="field"><label>Status</label><select id="ev-status"><option value="upcoming">Upcoming</option><option value="past">Past</option><option value="special">⭐ Special (with countdown)</option></select></div>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="addEventBtn">Add Event</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Current Events</div>
+        <div class="items-list" id="events-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════ ACHIEVEMENTS ══════ -->
+    <div class="admin-panel" id="panel-achievements">
+      <div class="admin-panel-title">🏆 Achievements</div>
+      <div class="admin-panel-sub">Celebrate every win from Section E students.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add Achievement</div>
+        <div class="form-row"><div class="field"><label>Student Name</label><input type="text" id="ac-name" placeholder="Full name"/></div><div class="field"><label>Achievement Title</label><input type="text" id="ac-title" placeholder="e.g. 1st in District Olympiad"/></div></div>
+        <div class="form-row"><div class="field"><label>Category</label><input type="text" id="ac-cat" placeholder="e.g. Academic, Sports, Arts"/></div><div class="field"><label>Date</label><input type="date" id="ac-date"/></div></div>
+        <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="ac-desc" placeholder="Brief description of the achievement…"></textarea></div></div>
+        <div class="form-row"><div class="field"><label>Emoji / Trophy Icon</label><input type="text" id="ac-emoji" placeholder="🏆" maxlength="4"/></div></div>
+        <button class="admin-btn admin-btn-primary" id="addAchBtn">Add Achievement</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Current Achievements</div>
+        <div class="items-list" id="achievements-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════ MEMORY WALL ══════ -->
+    <div class="admin-panel" id="panel-memories">
+      <div class="admin-panel-title">💬 Memory Wall</div>
+      <div class="admin-panel-sub">Add photos (via Google Drive ID) or text memories.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add Memory</div>
+        <div class="form-row"><div class="field"><label>Type</label><select id="mem-type"><option value="photo">📷 Photo (Google Drive)</option><option value="text">✍️ Text Memory</option></select></div><div class="field"><label>Author / Student Name</label><input type="text" id="mem-author" placeholder="Student name"/></div></div>
+        <div class="field" id="mem-drive-field" style="margin-bottom:.9rem"><label>Google Drive File ID</label><input type="text" id="mem-drive" placeholder="e.g. 1aBcDeFgHiJkLmNoPqRsTuVwXyZ"/><small style="font-size:.72rem;color:var(--text3);margin-top:.3rem;display:block">Get from Drive share link: drive.google.com/file/d/<strong>FILE_ID</strong>/view</small></div>
+        <div class="field" id="mem-text-field" style="display:none;margin-bottom:.9rem"><label>Memory Text</label><textarea id="mem-text" placeholder="Write a memory, quote or note…"></textarea></div>
+        <div class="form-row"><div class="field"><label>Date</label><input type="date" id="mem-date"/></div></div>
+        <button class="admin-btn admin-btn-primary" id="addMemoryBtn">Add to Memory Wall</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Current Memories</div>
+        <div class="items-list" id="memories-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════ SCHEDULE ══════ -->
+    <div class="admin-panel" id="panel-schedule">
+      <div class="admin-panel-title">📅 Class Schedule</div>
+      <div class="admin-panel-sub">Edit the weekly timetable and control which days are visible on the public site.</div>
+
+      <!-- ── MANAGE DAYS VISIBILITY (admin only) ── -->
+      <div class="admin-card" style="margin-bottom:1.2rem">
+        <div class="admin-card-title">👁 Manage Visible Days</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-bottom:.9rem">Toggle which days appear on the public Schedule page. Hidden days are completely removed from the front-end.</p>
+        <div id="dayVisibilityToggles" style="display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:.9rem"></div>
+        <button class="admin-btn admin-btn-primary" id="saveDayVisBtn">💾 Save Day Visibility</button>
+      </div>
+
+      <!-- ── TIMETABLE EDITOR ── -->
+      <div class="admin-card">
+        <div class="admin-card-title">✏️ Edit Timetable</div>
+        <div class="schedule-day-tabs" id="schDayTabs">
+          <button class="sdt active" data-d="0">Sunday</button>
+          <button class="sdt" data-d="1">Monday</button>
+          <button class="sdt" data-d="2">Tuesday</button>
+          <button class="sdt" data-d="3">Wednesday</button>
+          <button class="sdt" data-d="4">Thursday</button>
+          <button class="sdt" data-d="5">Friday</button>
+        </div>
+        <div id="scheduleEditor"></div>
+        <button class="period-add-btn" id="addPeriodBtn">+ Add Period</button>
+        <div style="margin-top:1rem"><button class="admin-btn admin-btn-primary" id="saveScheduleBtn">💾 Save Schedule</button></div>
+      </div>
+    </div>
+
+    <!-- ══════ PHOTO SOURCE ══════ -->
+    <div class="admin-panel" id="panel-photos">
+      <div class="admin-panel-title">📸 Member Photo Source</div>
+      <div class="admin-panel-sub">Set where member card photos are loaded from. Photos must be named 501.jpg, 502.jpg … 556.jpg</div>
+      <div class="admin-card">
+        <div class="admin-card-title">🔗 Google Apps Script Proxy URL</div>
+        <p style="font-size:.8rem;color:var(--text3);line-height:1.6;margin-bottom:.9rem">
+          The most reliable method is a Google Apps Script that reads files from your Drive folder by roll number name.<br>
+          <strong style="color:var(--accent)">Steps:</strong><br>
+          1. Open <a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a> → New project<br>
+          2. Paste this code and deploy as Web App (anyone can access):<br>
+          <code style="display:block;background:var(--bg2);padding:.6rem .8rem;border-radius:6px;margin:.5rem 0;font-size:.72rem;white-space:pre-wrap;font-family:'DM Mono',monospace">function doGet(e){
+  var roll=e.parameter.roll;
+  var folderId='YOUR_FOLDER_ID_HERE';
+  var folder=DriveApp.getFolderById(folderId);
+  var files=folder.getFilesByName(roll+'.jpg');
+  if(files.hasNext()){
+    var file=files.next();
+    file.setSharing(DriveApp.Access.ANYONE,DriveApp.Permission.VIEW);
+    return ContentService.createTextOutput(
+      JSON.stringify({url:'https://drive.google.com/uc?export=view&id='+file.getId()})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({url:''})).setMimeType(ContentService.MimeType.JSON);
+}</code>
+          3. Paste the deployed Web App URL below.
+        </p>
+        <div class="form-row cols-1">
+          <div class="field">
+            <label>Apps Script Web App URL</label>
+            <input type="text" id="drive-script-url" placeholder="https://script.google.com/macros/s/.../exec"/>
+          </div>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="saveDriveScriptBtn">💾 Save & Test</button>
+        <div id="drive-test-result" style="margin-top:.7rem;font-size:.78rem;display:none"></div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📁 Google Drive Folder Link (reference)</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-bottom:.7rem">Save your folder link here for easy reference. Photos named 501.jpg–556.jpg should be in this folder.</p>
+        <div class="form-row cols-1">
+          <div class="field">
+            <label>Drive Folder Link</label>
+            <input type="text" id="drive-folder-link" placeholder="https://drive.google.com/drive/folders/..."/>
+          </div>
+        </div>
+        <button class="admin-btn" id="saveDriveFolderBtn">Save Folder Link</button>
+      </div>
+    </div>
+
+    <!-- ══════ MEMBER PHOTOS (per-roll Drive ID) ══════ -->
+    <div class="admin-panel" id="panel-member-photos">
+      <div class="admin-panel-title">🧑‍🎓 Member Photos (Per Person)</div>
+      <div class="admin-panel-sub">Paste each student's Google Drive File ID here. This overrides the folder-based lookup for that student. Photos will load on the Members page and Birthday page. Leave blank to use the folder/script method.</div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">💡 How to get a Drive File ID</div>
+        <p style="font-size:.8rem;color:var(--text3);line-height:1.6;margin-bottom:.6rem">
+          Right-click the photo in Google Drive → <strong>Get link</strong> → copy the ID from the URL.<br>
+          Example: <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">https://drive.google.com/file/d/<strong>1AbCdEf...</strong>/view</code> → paste <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">1AbCdEf...</code>
+        </p>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Quick Paste — All Students</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-bottom:1rem">Enter a Drive File ID next to each roll number. Leave blank to skip.</p>
+        <div id="memberPhotosList" style="display:flex;flex-direction:column;gap:.6rem;max-height:600px;overflow-y:auto;padding-right:.4rem"></div>
+        <div style="display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap">
+          <button class="admin-btn admin-btn-primary" id="saveMemberPhotosBtn">💾 Save All Member Photos</button>
+          <button class="admin-btn" id="clearMemberPhotosBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All</button>
+        </div>
+        <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved! Photos will update on the Members &amp; Birthdays pages.</div>
+      </div>
+    </div>
+
+    <!-- ══════ GALLERY (Drive file IDs) ══════ -->
+    <div class="admin-panel" id="panel-gallery-admin">
+      <div class="admin-panel-title">🖼️ Gallery Photos</div>
+      <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Each photo will appear in the Gallery page. You can set a caption and category for each.</div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add New Gallery Photo</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Google Drive File ID</label>
+            <input type="text" id="gal-drive-id" placeholder="1AbCdEfGhIjKlMnOpQr..."/>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="gal-cat">
+              <option value="class">Classroom</option>
+              <option value="events">Events</option>
+              <option value="trips">Trips</option>
+              <option value="fun">Fun Times</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row cols-1">
+          <div class="field">
+            <label>Caption (optional)</label>
+            <input type="text" id="gal-caption" placeholder="e.g. Sports Day 2025"/>
+          </div>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="addGalleryPhotoBtn">➕ Add Photo</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">📷 Gallery Photos (<span id="galCountLabel">0</span>)</div>
+        <div id="galleryAdminList" style="display:flex;flex-direction:column;gap:.6rem;max-height:500px;overflow-y:auto;padding-right:.4rem">
+          <div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>
+        </div>
+        <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap">
+          <button class="admin-btn" id="clearAllGalleryBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All Gallery Photos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ COUNTDOWN ══════ -->
+    <div class="admin-panel" id="panel-countdown">
+      <div class="admin-panel-title">⏱️ Countdown</div>
+      <div class="admin-panel-sub">Update what the homepage counts down to.</div>
+      <div class="admin-card">
+        <div class="form-row cols-1"><div class="field"><label>Event Name</label><input type="text" id="cd-name" placeholder="e.g. Grade 12 Begins"/></div></div>
+        <div class="form-row"><div class="field"><label>Target Date</label><input type="date" id="cd-date"/></div><div class="field"><label>Display Label (shown below timer)</label><input type="text" id="cd-label" placeholder="e.g. Ashad 1, 2082 (June 15, 2026)"/></div></div>
+        <button class="admin-btn admin-btn-primary" id="saveCountdownBtn">💾 Save Countdown</button>
+        <p style="font-size:.78rem;color:var(--text3);margin-top:.8rem">⚠️ After saving, manually update <code style="font-family:'DM Mono',monospace">index.html</code> line with TARGET date for the countdown. Or use the saved value via localStorage on index.</p>
+      </div>
+    </div>
+
+    <!-- ══════ BIRTHDAYS ══════ -->
+    <div class="admin-panel" id="panel-birthdays">
+      <div class="admin-panel-title">🎂 Birthdays</div>
+      <div class="admin-panel-sub">Add student birthdays using Nepali (BS) calendar. These show on the Birthdays page and trigger the popup.</div>
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Add Birthday (BS Date)</div>
+        <div class="form-row cols-3">
+          <div class="field"><label>Roll No.</label><input type="number" id="bd-roll" min="501" max="556" placeholder="501"/></div>
+          <div class="field"><label>Full Name</label><input type="text" id="bd-name" placeholder="Full name"/></div>
+          <div class="field"><label>BS Year (Birth year)</label><input type="number" id="bd-bsyear" placeholder="e.g. 2064" min="2050" max="2075"/></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>BS Month (1=Baisakh … 12=Chaitra)</label>
+            <select id="bd-bsmonth">
+              <option value="1">1 — Baisakh (बैशाख)</option>
+              <option value="2">2 — Jestha (जेठ)</option>
+              <option value="3">3 — Ashadh (असार)</option>
+              <option value="4">4 — Shrawan (श्रावण)</option>
+              <option value="5">5 — Bhadra (भाद्र)</option>
+              <option value="6">6 — Ashwin (आश्विन)</option>
+              <option value="7">7 — Kartik (कार्तिक)</option>
+              <option value="8">8 — Mangsir (मंसिर)</option>
+              <option value="9">9 — Poush (पौष)</option>
+              <option value="10">10 — Magh (माघ)</option>
+              <option value="11">11 — Falgun (फाल्गुन)</option>
+              <option value="12">12 — Chaitra (चैत्र)</option>
+            </select>
+          </div>
+          <div class="field"><label>BS Day</label><input type="number" id="bd-bsday" min="1" max="32" placeholder="e.g. 15"/></div>
+        </div>
+        <div class="form-row cols-1">
+          <div class="field"><label>Custom Birthday Message (optional — leave blank for auto)</label>
+            <textarea id="bd-msg" placeholder="Write a personal birthday message for this student…" style="min-height:60px"></textarea>
+          </div>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="addBdBtn">Add Birthday</button>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Birthday List</div>
+        <div class="items-list" id="birthdays-list"></div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- admin-wrap -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Saved successfully</div>
+
+<script src="nepali-date.js"></script>
+<script>
+const PASSWORD = 'Echronicles2527';
+const loginScreen = document.getElementById('loginScreen');
+const adminWrap   = document.getElementById('adminWrap');
+const pwInput     = document.getElementById('pwInput');
+const loginError  = document.getElementById('loginError');
+
+function checkAuth() {
+  if (sessionStorage.getItem('ec_admin') === '1') unlock();
+}
+function unlock() {
+  loginScreen.style.display = 'none';
+  adminWrap.classList.add('visible');
+  loadAll();
+}
+document.getElementById('loginBtn').addEventListener('click', () => {
+  if (pwInput.value === PASSWORD) {
+    sessionStorage.setItem('ec_admin','1');
+    unlock();
+  } else {
+    loginError.style.display = 'block';
+    document.getElementById('loginBox').classList.add('login-shake');
+    setTimeout(()=>document.getElementById('loginBox').classList.remove('login-shake'),500);
+    pwInput.value = ''; pwInput.focus();
+  }
+});
+pwInput.addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('ec_admin');
+  location.reload();
+});
+checkAuth();
+
+// ── SIDEBAR NAV ──
+document.querySelectorAll('.snav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.snav-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('panel-'+item.dataset.panel).classList.add('active');
+  });
+});
+
+// ── TOAST ──
+function toast(msg='Saved!') {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ── STORAGE HELPERS ──
+const KEYS = {notices:'ec_notices',resources:'ec_resources',events:'ec_events',achievements:'ec_achievements',memories:'ec_memories',birthdays:'ec_birthdays'};
+function load(key){ return JSON.parse(localStorage.getItem(KEYS[key]||key)||'[]'); }
+function save(key,data){ localStorage.setItem(KEYS[key]||key,JSON.stringify(data)); }
+function nextId(arr){ return arr.length ? Math.max(...arr.map(i=>i.id||0))+1 : 1; }
+function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
+
+// ── COLOR PICKER ──
+let selectedColor = 0;
+document.getElementById('n-color-picker').addEventListener('click', e=>{
+  const sw = e.target.closest('.color-swatch');
+  if(!sw) return;
+  document.querySelectorAll('#n-color-picker .color-swatch').forEach(s=>s.classList.remove('selected'));
+  sw.classList.add('selected');
+  selectedColor = parseInt(sw.dataset.val);
+});
+
+// ── MEMORY TYPE TOGGLE ──
+document.getElementById('mem-type').addEventListener('change', e=>{
+  const isPhoto = e.target.value === 'photo';
+  document.getElementById('mem-drive-field').style.display = isPhoto ? 'block' : 'none';
+  document.getElementById('mem-text-field').style.display  = isPhoto ? 'none' : 'block';
+});
+
+// ══════════════════════════════
+// NOTICES
+// ══════════════════════════════
+function renderNoticesList() {
+  const data = load('notices');
+  const el = document.getElementById('notices-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No notices yet.</div>';return;}
+  el.innerHTML = data.map(n=>`
+    <div class="item-row">
+      <div style="font-size:1.1rem">${n.icon||'📢'}</div>
+      <div class="item-row-info"><div class="item-row-title">${n.title}</div><div class="item-row-meta">${n.tag||''} · ${n.date}</div></div>
+      <div class="item-row-actions">
+        <button class="icon-btn icon-btn-pin" onclick="togglePin('notices',${n.id})" title="${n.pinned?'Unpin':'Pin'}">📌</button>
+        <button class="icon-btn icon-btn-del" onclick="delItem('notices',${n.id})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('addNoticeBtn').addEventListener('click',()=>{
+  const title = document.getElementById('n-title').value.trim();
+  if(!title) return alert('Please enter a title.');
+  const data = load('notices');
+  data.push({
+    id:nextId(data), title,
+    tag: document.getElementById('n-tag').value.trim()||'General',
+    desc: document.getElementById('n-desc').value.trim(),
+    icon: document.getElementById('n-icon').value.trim()||'📢',
+    date: fmtDate(document.getElementById('n-date').value),
+    color: selectedColor,
+    pinned: document.getElementById('n-pin').checked ? 1 : 0
+  });
+  save('notices',data);
+  renderNoticesList();
+  toast('Notice added!');
+  ['n-title','n-tag','n-desc','n-icon','n-date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-pin').checked=false;
+});
+
+// ══════════════════════════════
+// RESOURCES
+// ══════════════════════════════
+function renderResourcesList(){
+  const data=load('resources');
+  const el=document.getElementById('resources-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No resources yet.</div>';return;}
+  el.innerHTML=data.map(r=>`
+    <div class="item-row">
+      <div style="font-size:1.1rem">${r.icon||'📄'}</div>
+      <div class="item-row-info"><div class="item-row-title">${r.title}</div><div class="item-row-meta">${r.subject} · ${r.type||''}</div></div>
+      <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('resources',${r.id})">🗑</button></div>
+    </div>`).join('');
+}
+document.getElementById('addResourceBtn').addEventListener('click',()=>{
+  const title=document.getElementById('r-title').value.trim();
+  if(!title) return alert('Please enter a title.');
+  const data=load('resources');
+  data.push({
+    id:nextId(data), title,
+    subject:document.getElementById('r-subject').value,
+    desc:document.getElementById('r-desc').value.trim(),
+    type:document.getElementById('r-type').value.trim(),
+    link:document.getElementById('r-link').value.trim(),
+    icon:document.getElementById('r-icon').value.trim()||'📄'
+  });
+  save('resources',data); renderResourcesList(); toast('Resource added!');
+  ['r-title','r-desc','r-type','r-link','r-icon'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ══════════════════════════════
+// EVENTS
+// ══════════════════════════════
+function renderEventsList(){
+  const data=load('events');
+  const el=document.getElementById('events-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No events yet.</div>';return;}
+  el.innerHTML=data.map(e=>`
+    <div class="item-row">
+      <div style="font-size:1.1rem">${e.status==='special'?'⭐':e.status==='upcoming'?'🟢':'⚫'}</div>
+      <div class="item-row-info"><div class="item-row-title">${e.title}</div><div class="item-row-meta">${e.date} · ${e.venue||''}</div></div>
+      <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('events',${e.id})">🗑</button></div>
+    </div>`).join('');
+}
+document.getElementById('addEventBtn').addEventListener('click',()=>{
+  const title=document.getElementById('ev-title').value.trim();
+  if(!title) return alert('Please enter a title.');
+  const data=load('events');
+  data.push({
+    id:nextId(data), title,
+    date:document.getElementById('ev-date').value,
+    time:document.getElementById('ev-time').value.trim(),
+    venue:document.getElementById('ev-venue').value.trim(),
+    desc:document.getElementById('ev-desc').value.trim(),
+    status:document.getElementById('ev-status').value
+  });
+  save('events',data); renderEventsList(); toast('Event added!');
+  ['ev-title','ev-date','ev-time','ev-venue','ev-desc'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ══════════════════════════════
+// ACHIEVEMENTS
+// ══════════════════════════════
+function renderAchievementsList(){
+  const data=load('achievements');
+  const el=document.getElementById('achievements-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No achievements yet.</div>';return;}
+  el.innerHTML=data.map(a=>`
+    <div class="item-row">
+      <div style="font-size:1.1rem">${a.emoji||'🏆'}</div>
+      <div class="item-row-info"><div class="item-row-title">${a.name} — ${a.title}</div><div class="item-row-meta">${a.category||''} · ${a.date}</div></div>
+      <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('achievements',${a.id})">🗑</button></div>
+    </div>`).join('');
+}
+document.getElementById('addAchBtn').addEventListener('click',()=>{
+  const name=document.getElementById('ac-name').value.trim();
+  const title=document.getElementById('ac-title').value.trim();
+  if(!name||!title) return alert('Please fill name and title.');
+  const data=load('achievements');
+  data.push({
+    id:nextId(data), name, title,
+    category:document.getElementById('ac-cat').value.trim(),
+    date:fmtDate(document.getElementById('ac-date').value),
+    desc:document.getElementById('ac-desc').value.trim(),
+    emoji:document.getElementById('ac-emoji').value.trim()||'🏆'
+  });
+  save('achievements',data); renderAchievementsList(); toast('Achievement added!');
+  ['ac-name','ac-title','ac-cat','ac-date','ac-desc','ac-emoji'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ══════════════════════════════
+// MEMORIES
+// ══════════════════════════════
+function renderMemoriesList(){
+  const data=load('memories');
+  const el=document.getElementById('memories-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No memories yet.</div>';return;}
+  el.innerHTML=data.map(m=>`
+    <div class="item-row">
+      <div style="font-size:1.1rem">${m.type==='photo'?'📷':'✍️'}</div>
+      <div class="item-row-info"><div class="item-row-title">${m.author}</div><div class="item-row-meta">${m.type==='photo'?'Photo · '+m.driveId.slice(0,20)+'…':m.text.slice(0,40)+'…'}</div></div>
+      <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('memories',${m.id})">🗑</button></div>
+    </div>`).join('');
+}
+document.getElementById('addMemoryBtn').addEventListener('click',()=>{
+  const type=document.getElementById('mem-type').value;
+  const author=document.getElementById('mem-author').value.trim();
+  if(!author) return alert('Please enter a name.');
+  const data=load('memories');
+  const entry={id:nextId(data),type,author,date:fmtDate(document.getElementById('mem-date').value)};
+  if(type==='photo'){
+    const id=document.getElementById('mem-drive').value.trim();
+    if(!id) return alert('Please enter a Google Drive file ID.');
+    entry.driveId=id;
+  } else {
+    const txt=document.getElementById('mem-text').value.trim();
+    if(!txt) return alert('Please enter memory text.');
+    entry.text=txt;
+  }
+  data.push(entry);
+  save('memories',data); renderMemoriesList(); toast('Memory added!');
+  ['mem-author','mem-drive','mem-text','mem-date'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ══════════════════════════════
+// SCHEDULE
+// ══════════════════════════════
+const SCHEDULE_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+let schedDay=0;
+const DEFAULT_SCHEDULE={
+  0:[{period:'1',time:'6:15–7:00',subject:'Biology',teacher:'',room:''},
+     {period:'2',time:'7:00–7:45',subject:'Chemistry',teacher:'',room:''},
+     {period:'3',time:'7:45–8:30',subject:'Physics',teacher:'',room:''},
+     {period:'—',time:'8:30–8:45',subject:'Short Break',teacher:'',room:''},
+     {period:'4',time:'8:45–9:30',subject:'Mathematics',teacher:'',room:''},
+     {period:'5',time:'9:30–10:15',subject:'English',teacher:'',room:''},
+     {period:'6',time:'10:15–11:00',subject:'Nepali',teacher:'',room:''}]
+};
+for(let i=1;i<6;i++) DEFAULT_SCHEDULE[i]=[...DEFAULT_SCHEDULE[0]];
+
+function getSchedule(){ return JSON.parse(localStorage.getItem('ec_schedule_admin')||JSON.stringify(DEFAULT_SCHEDULE)); }
+function setSchedule(d){ localStorage.setItem('ec_schedule_admin',JSON.stringify(d)); }
+
+function renderScheduleEditor(){
+  const sch=getSchedule();
+  const rows=sch[schedDay]||[];
+  document.getElementById('scheduleEditor').innerHTML=rows.map((r,i)=>`
+    <div class="period-row" data-idx="${i}">
+      <input class="pe-period" value="${r.period}" placeholder="No."/>
+      <input class="pe-time" value="${r.time}" placeholder="Time"/>
+      <input class="pe-subject" value="${r.subject}" placeholder="Subject"/>
+      <input class="pe-teacher" value="${r.teacher}" placeholder="Teacher"/>
+      <button class="icon-btn icon-btn-del" onclick="removePeriod(${i})" style="font-size:.75rem">🗑</button>
+    </div>`).join('');
+}
+function removePeriod(idx){
+  const sch=getSchedule(); sch[schedDay].splice(idx,1);
+  setSchedule(sch); renderScheduleEditor();
+}
+document.getElementById('addPeriodBtn').addEventListener('click',()=>{
+  const sch=getSchedule();
+  if(!sch[schedDay]) sch[schedDay]=[];
+  sch[schedDay].push({period:String(sch[schedDay].length+1),time:'',subject:'',teacher:'',room:''});
+  setSchedule(sch); renderScheduleEditor();
+});
+document.getElementById('saveScheduleBtn').addEventListener('click',()=>{
+  const sch=getSchedule();
+  const rows=document.querySelectorAll('.period-row');
+  sch[schedDay]=Array.from(rows).map(row=>({
+    period:row.querySelector('.pe-period').value,
+    time:row.querySelector('.pe-time').value,
+    subject:row.querySelector('.pe-subject').value,
+    teacher:row.querySelector('.pe-teacher').value,
+    room:''
+  }));
+  setSchedule(sch); toast('Schedule saved!');
+  // also sync to public schedule key
+  const pub=getSchedule();
+  localStorage.setItem('ec_schedule',JSON.stringify(pub));
+});
+document.getElementById('schDayTabs').addEventListener('click',e=>{
+  const btn=e.target.closest('.sdt');
+  if(!btn) return;
+  document.querySelectorAll('.sdt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  schedDay=parseInt(btn.dataset.d);
+  renderScheduleEditor();
+});
+
+// ── DAY VISIBILITY MANAGEMENT (admin only) ──
+const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+function renderDayVisibilityToggles(){
+  const hidden = JSON.parse(localStorage.getItem('ec_hidden_days')||'[]');
+  const wrap = document.getElementById('dayVisibilityToggles');
+  if(!wrap) return;
+  wrap.innerHTML = DAY_LABELS.map((lbl,i)=>{
+    const isHidden = hidden.includes(i);
+    return `<label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;
+      padding:.4rem .85rem;border-radius:8px;border:1.5px solid var(--border);
+      background:${isHidden?'var(--bg2)':'var(--accent-light)'};
+      color:${isHidden?'var(--text3)':'var(--accent)'};font-size:.8rem;font-weight:500;
+      user-select:none;transition:all .2s">
+      <input type="checkbox" data-day="${i}" ${isHidden?'':'checked'}
+        style="accent-color:var(--accent);width:15px;height:15px"/>
+      ${lbl}
+    </label>`;
+  }).join('');
+}
+document.getElementById('saveDayVisBtn').addEventListener('click',()=>{
+  const checkboxes = document.querySelectorAll('#dayVisibilityToggles input[data-day]');
+  const hidden = [];
+  checkboxes.forEach(cb=>{
+    if(!cb.checked) hidden.push(parseInt(cb.dataset.day));
+  });
+  localStorage.setItem('ec_hidden_days', JSON.stringify(hidden));
+  renderDayVisibilityToggles();
+  toast('Day visibility saved! Public schedule updated.');
+});
+document.getElementById('dayVisibilityToggles').addEventListener('change', renderDayVisibilityToggles);
+renderDayVisibilityToggles();
+
+// ══════════════════════════════
+// BIRTHDAYS (BS dates)
+// ══════════════════════════════
+const BS_MN = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+function renderBirthdaysList(){
+  const data=load('birthdays');
+  const el=document.getElementById('birthdays-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>';return;}
+  const sorted=[...data].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
+  el.innerHTML=sorted.map(b=>`
+    <div class="item-row">
+      <div style="font-size:1rem">🎂</div>
+      <div class="item-row-info">
+        <div class="item-row-title">${b.name}</div>
+        <div class="item-row-meta">Roll ${b.roll} · ${BS_MN[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||'?'} BS</div>
+      </div>
+      <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('birthdays',${b.id})">🗑</button></div>
+    </div>`).join('');
+}
+document.getElementById('addBdBtn').addEventListener('click',()=>{
+  const roll=parseInt(document.getElementById('bd-roll').value);
+  const name=document.getElementById('bd-name').value.trim();
+  const bsYear=parseInt(document.getElementById('bd-bsyear').value)||0;
+  const bsMonth=parseInt(document.getElementById('bd-bsmonth').value);
+  const bsDay=parseInt(document.getElementById('bd-bsday').value);
+  const customMsg=document.getElementById('bd-msg').value.trim();
+  if(!name||!bsMonth||!bsDay) return alert('Please fill name, month and day.');
+  const data=load('birthdays');
+  data.push({id:nextId(data),roll,name,bsYear,bsMonth,bsDay,customMsg:customMsg||null});
+  save('birthdays',data);
+  renderBirthdaysList(); toast('Birthday added!');
+  ['bd-roll','bd-name','bd-bsyear','bd-bsday','bd-msg'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ══════════════════════════════
+// COUNTDOWN (info only)
+// ══════════════════════════════
+document.getElementById('saveCountdownBtn').addEventListener('click',()=>{
+  localStorage.setItem('ec_countdown',JSON.stringify({
+    name:document.getElementById('cd-name').value,
+    date:document.getElementById('cd-date').value,
+    label:document.getElementById('cd-label').value
+  }));
+  toast('Countdown info saved! Update index.html TARGET date.');
+});
+
+// ══════════════════════════════
+// SHARED DELETE + PIN
+// ══════════════════════════════
+function delItem(key,id){
+  if(!confirm('Delete this item?')) return;
+  const data=load(key).filter(i=>i.id!==id);
+  save(key,data);
+  loadAll(); toast('Deleted.');
+}
+function togglePin(key,id){
+  const data=load(key);
+  const item=data.find(i=>i.id===id);
+  if(item) item.pinned = item.pinned ? 0 : 1;
+  save(key,data); renderNoticesList(); toast(item.pinned?'Pinned!':'Unpinned.');
+}
+
+function loadAll(){
+  renderNoticesList();
+  renderResourcesList();
+  renderEventsList();
+  renderAchievementsList();
+  renderMemoriesList();
+  renderScheduleEditor();
+  renderBirthdaysList();
+  // load photo settings
+  const savedScript = localStorage.getItem('ec_drive_script_url')||'';
+  const savedFolder = localStorage.getItem('ec_drive_folder')||'';
+  if(document.getElementById('drive-script-url')) document.getElementById('drive-script-url').value=savedScript;
+  if(document.getElementById('drive-folder-link')) document.getElementById('drive-folder-link').value=savedFolder;
+}
+
+// ── PHOTO SETTINGS ──
+document.getElementById('saveDriveScriptBtn').addEventListener('click',async()=>{
+  const url = document.getElementById('drive-script-url').value.trim();
+  if(!url){ toast('Please enter a URL'); return; }
+  localStorage.setItem('ec_drive_script_url', url);
+  const res = document.getElementById('drive-test-result');
+  res.style.display='block';
+  res.textContent='Testing with roll 501…';
+  res.style.color='var(--text3)';
+  try {
+    const r = await fetch(`${url}?roll=501`);
+    const d = await r.json();
+    if(d.url){ res.textContent='✅ Success! Photo URL found for roll 501.'; res.style.color='#10b981'; }
+    else { res.textContent='⚠️ Connected but no photo found for 501.jpg — check your folder.'; res.style.color='var(--gold)'; }
+  } catch(e){
+    res.textContent='❌ Could not connect. Check URL and Apps Script permissions.'; res.style.color='#ef4444';
+  }
+  toast('Script URL saved!');
+});
+document.getElementById('saveDriveFolderBtn').addEventListener('click',()=>{
+  const link = document.getElementById('drive-folder-link').value.trim();
+  localStorage.setItem('ec_drive_folder', link);
+  toast('Folder link saved!');
+});
+
+// ══════════════════════════════
+// MEMBER PHOTOS (per-roll Drive ID)
+// ══════════════════════════════
+const ALL_STUDENTS = [
+  {roll:501,name:"ROHIT KUMAR YADAV"},{roll:502,name:"SAUMYA DONGOL"},
+  {roll:503,name:"RONISHA KHADKA"},{roll:504,name:"RUBY YADAV"},
+  {roll:505,name:"RUPAK SHRESTHA"},{roll:506,name:"RUPESH KUMAR MANDAL"},
+  {roll:507,name:"SACHIN KUMAR YADAV"},{roll:508,name:"SADHNA RAI"},
+  {roll:509,name:"SHAADIKA KAFLE"},{roll:510,name:"SAGAR BABU SHRESTHA"},
+  {roll:511,name:"SAKAR NEUPANE"},{roll:512,name:"SAKAR PAUDEL"},
+  {roll:513,name:"SAKSHAM ADHIKARI"},{roll:514,name:"SAKSHAM THAPA"},
+  {roll:515,name:"SAKSHI YADAV"},{roll:516,name:"SAKSHYAM POUDEL"},
+  {roll:517,name:"SAMBHAV PANDEY"},{roll:518,name:"SAMIKSHYA GHALE"},
+  {roll:519,name:"SAMIN ROKAYA"},{roll:520,name:"SAMIP POUDEL"},
+  {roll:521,name:"SAMIR KC"},{roll:522,name:"SAMPADA POUDEL"},
+  {roll:523,name:"SAMRIDDHA MANDAL"},{roll:524,name:"SAMRIDDHI KARKI"},
+  {roll:525,name:"SAMRIDDHI PANT"},{roll:526,name:"SAMRIDH SINGH"},
+  {roll:527,name:"SANDESH SAH"},{roll:528,name:"SANDIP KC"},
+  {roll:529,name:"SANSAR KAPHLE"},{roll:530,name:"SANTOSH KUMAR MANDAL"},
+  {roll:531,name:"SAPEKSH MAHATO"},{roll:532,name:"SARTHAK KAFLE"},
+  {roll:533,name:"SATISH SUBEDI"},{roll:534,name:"SAUGAT NEPAL"},
+  {roll:535,name:"SAUKHIN BARAL"},{roll:536,name:"SAURAV JHA"},
+  {roll:537,name:"SAURAV KHANAL"},{roll:538,name:"SAURAV KUMAR YADAV"},
+  {roll:539,name:"SHASHANK YADAV"},{roll:540,name:"SAURAV PANDEY (CR)"},
+  {roll:541,name:"SEKHA LIMBU"},{roll:542,name:"SHAMBHABI GHIMIRE"},
+  {roll:543,name:"SHISHIR BHURTEL"},{roll:544,name:"SHISHIR JUNG RANA"},
+  {roll:545,name:"SHISHIR KHANAL"},{roll:546,name:"SHIVA THARU CHAUDHARY"},
+  {roll:547,name:"SHOVANA KARKI"},{roll:548,name:"SHREEJI POKHREL (CR)"},
+  {roll:549,name:"SHREESAK PANDEY"},{roll:550,name:"SHREYANKA THAPALIYA"},
+  {roll:551,name:"SHREYA TAMANG"},{roll:552,name:"SHREYNA SHRESTHA"},
+  {roll:553,name:"RAVI SHANKAR MAHATO"},{roll:554,name:"SACHIN B.K."},
+  {roll:555,name:"SAURAV LUITEL"},{roll:556,name:"SAURAV NEUPANE"}
+];
+
+function renderMemberPhotosList() {
+  const container = document.getElementById('memberPhotosList');
+  if (!container) return;
+  const saved = JSON.parse(localStorage.getItem('ec_member_photos') || '{}');
+  container.innerHTML = ALL_STUDENTS.map(s => {
+    const val = saved[s.roll] || '';
+    return `
+    <div style="display:flex;align-items:center;gap:.7rem;background:var(--bg2);border-radius:8px;padding:.5rem .75rem;border:1px solid var(--border)">
+      <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text3);min-width:36px">#${s.roll}</div>
+      <div style="font-size:.78rem;font-weight:600;flex:1;min-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name.split(' ').slice(0,2).join(' ')}</div>
+      <input type="text" data-roll="${s.roll}"
+        value="${val}"
+        placeholder="Drive File ID (leave blank to skip)"
+        style="flex:2;min-width:0;font-family:'DM Mono',monospace;font-size:.72rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;color:var(--text);outline:none"
+        class="member-photo-id-input"/>
+      ${val ? `<img src="https://drive.google.com/thumbnail?id=${val}&sz=w60" style="width:36px;height:46px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0" onerror="this.style.display='none'"/>` : '<div style="width:36px;height:46px;background:var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--text3)">—</div>'}
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('saveMemberPhotosBtn').addEventListener('click', () => {
+  const inputs = document.querySelectorAll('.member-photo-id-input');
+  const result = {};
+  inputs.forEach(inp => {
+    const roll = inp.dataset.roll;
+    const val = inp.value.trim();
+    if (val) result[roll] = val;
+  });
+  localStorage.setItem('ec_member_photos', JSON.stringify(result));
+  const msg = document.getElementById('memberPhotosSavedMsg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display='none', 4000);
+  toast('Member photos saved! 🎉');
+  renderMemberPhotosList();
+});
+
+document.getElementById('clearMemberPhotosBtn').addEventListener('click', () => {
+  if (!confirm('Clear all member photo IDs?')) return;
+  localStorage.removeItem('ec_member_photos');
+  renderMemberPhotosList();
+  toast('Cleared all member photos.');
+});
+
+// ══════════════════════════════
+// GALLERY ADMIN
+// ══════════════════════════════
+function loadGallery() {
+  return JSON.parse(localStorage.getItem('ec_gallery') || '[]');
+}
+function saveGallery(data) {
+  localStorage.setItem('ec_gallery', JSON.stringify(data));
+}
+
+function renderGalleryAdmin() {
+  const list = document.getElementById('galleryAdminList');
+  const countLabel = document.getElementById('galCountLabel');
+  if (!list) return;
+  const photos = loadGallery();
+  countLabel.textContent = photos.length;
+  if (!photos.length) {
+    list.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>';
+    return;
+  }
+  const catLabel = {class:'Classroom',events:'Events',trips:'Trips',fun:'Fun Times'};
+  list.innerHTML = photos.map((p,i) => `
+    <div style="display:flex;align-items:center;gap:.75rem;background:var(--bg2);border-radius:10px;padding:.6rem .9rem;border:1px solid var(--border)">
+      <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w80" style="width:52px;height:52px;object-fit:cover;border-radius:7px;border:1px solid var(--border);flex-shrink:0"
+        onerror="this.style.display='none'"/>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.15rem">${p.caption||'(no caption)'}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3)">${p.id.slice(0,28)}…</div>
+        <div style="font-size:.65rem;color:var(--accent);margin-top:.15rem">${catLabel[p.cat]||p.cat}</div>
+      </div>
+      <button onclick="deleteGalleryPhoto(${i})"
+        style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;border-radius:6px;padding:.3rem .55rem;cursor:pointer;font-size:.75rem;flex-shrink:0">🗑️</button>
+    </div>`).join('');
+}
+
+function deleteGalleryPhoto(index) {
+  if (!confirm('Remove this photo from gallery?')) return;
+  const photos = loadGallery();
+  photos.splice(index, 1);
+  saveGallery(photos);
+  renderGalleryAdmin();
+  toast('Photo removed.');
+}
+
+document.getElementById('addGalleryPhotoBtn').addEventListener('click', () => {
+  const id = document.getElementById('gal-drive-id').value.trim();
+  const cat = document.getElementById('gal-cat').value;
+  const caption = document.getElementById('gal-caption').value.trim();
+  if (!id) { toast('Please enter a Drive File ID'); return; }
+  // Strip full URLs to just the ID
+  const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)/);
+  const cleanId = urlMatch ? urlMatch[1] : id;
+  const photos = loadGallery();
+  photos.push({ id: cleanId, cat, caption });
+  saveGallery(photos);
+  document.getElementById('gal-drive-id').value = '';
+  document.getElementById('gal-caption').value = '';
+  renderGalleryAdmin();
+  toast('Photo added to gallery! ✅');
+});
+
+document.getElementById('clearAllGalleryBtn').addEventListener('click', () => {
+  if (!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
+  saveGallery([]);
+  renderGalleryAdmin();
+  toast('Gallery cleared.');
+});
+
+// init new panels when switching to them
+document.querySelectorAll('.snav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const p = item.dataset.panel;
+    if (p === 'member-photos') renderMemberPhotosList();
+    if (p === 'gallery-admin') renderGalleryAdmin();
+  });
+});
+
+// init on load if already on those panels
+renderGalleryAdmin();
+</script>
+</body>
+</html>

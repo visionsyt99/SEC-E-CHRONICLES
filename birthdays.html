@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Birthdays — The E Chronicles</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="main.css"/>
+  <style>
+    .page-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem}
+    .page-hero-inner{max-width:1100px;margin:0 auto}
+    .bday-section{padding:3rem 2.5rem 5rem}
+    .bday-inner{max-width:1100px;margin:0 auto}
+
+    /* ── INFO POPUP (click any chip) ── */
+    .bday-popup-overlay{
+      position:fixed;inset:0;z-index:99999;
+      background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(8px);
+      display:flex;align-items:center;justify-content:center;
+      padding:1rem;
+      opacity:0;pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    .bday-popup-overlay.open{opacity:1;pointer-events:all}
+    .bday-popup{
+      background:var(--surface);
+      border-radius:22px;
+      max-width:400px;width:100%;
+      overflow:hidden;
+      position:relative;
+      transform:scale(.9) translateY(16px);
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+      box-shadow:0 20px 70px rgba(0,0,0,.35);
+    }
+    .bday-popup-overlay.open .bday-popup{transform:scale(1) translateY(0)}
+
+    .bday-popup-top{
+      height:5px;
+      background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b);
+      background-size:200% 100%;
+      animation:confetti-slide 2s linear infinite;
+    }
+    @keyframes confetti-slide{from{background-position:0 0}to{background-position:200% 0}}
+
+    .bday-popup-body{padding:1.8rem 1.8rem 1.4rem;text-align:center}
+
+    .bday-popup-photo-wrap{position:relative;display:inline-block;margin-bottom:1rem}
+    .bday-popup-photo{
+      width:100px;height:120px;border-radius:14px;overflow:hidden;
+      margin:0 auto;
+      border:3px solid var(--gold);
+      box-shadow:0 0 0 4px var(--gold-light),0 8px 28px var(--gold-glow);
+    }
+    .bday-popup-photo img{width:100%;height:100%;object-fit:cover;object-position:top center}
+    .bday-popup-photo-placeholder{
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--gold-light),var(--accent-light));
+      font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold);
+    }
+    .bday-star-ring{
+      position:absolute;inset:-7px;border-radius:18px;
+      border:2px dashed var(--gold);opacity:.4;
+      animation:spin-ring 8s linear infinite;
+    }
+    @keyframes spin-ring{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* TODAY badge on popup when it IS their birthday */
+    .bday-today-badge{
+      display:inline-block;
+      background:linear-gradient(90deg,var(--gold),#ffd93d);
+      color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:.2rem .7rem;border-radius:100px;margin-bottom:.5rem;
+    }
+
+    .bday-popup-emoji{font-size:1.8rem;margin-bottom:.4rem;animation:bounce-emoji 1s ease infinite alternate}
+    @keyframes bounce-emoji{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+
+    .bday-popup-name{
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.55rem;font-weight:700;margin-bottom:.15rem;
+      background:linear-gradient(135deg,var(--gold),var(--accent));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .bday-popup-roll{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3);margin-bottom:.9rem}
+    .bday-popup-msg{
+      font-family:'Cormorant Garamond',serif;font-style:italic;
+      font-size:.95rem;color:var(--text2);line-height:1.65;margin-bottom:1.2rem;
+      padding:.9rem 1rem;background:var(--bg2);border-radius:10px;
+      border-left:3px solid var(--gold);text-align:left;
+    }
+    .bday-popup-date{
+      font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);
+      margin-bottom:1.1rem;letter-spacing:.1em;
+    }
+    .bday-popup-close{
+      width:100%;padding:.7rem;background:var(--accent);color:#fff;
+      border:none;border-radius:9px;font-size:.82rem;font-weight:700;
+      cursor:pointer;letter-spacing:.07em;transition:background .2s,transform .1s;
+    }
+    .bday-popup-close:hover{background:var(--accent2);transform:translateY(-1px)}
+
+    /* multiple birthdays nav */
+    .bday-nav{display:flex;align-items:center;justify-content:center;gap:.8rem;margin-bottom:.9rem}
+    .bday-nav-btn{background:var(--bg2);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .bday-nav-btn:hover{background:var(--accent-light);border-color:var(--accent)}
+    .bday-nav-count{font-size:.75rem;color:var(--text3);font-family:'DM Mono',monospace}
+
+    /* ── UPCOMING ── */
+    .upcoming-section{margin-bottom:3rem}
+    .sub-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+    .upcoming-list{display:flex;flex-direction:column;gap:.6rem}
+    .upcoming-item{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:.8rem 1.2rem;display:flex;align-items:center;gap:1rem;
+      transition:border-color .2s,transform .2s;cursor:pointer;
+    }
+    .upcoming-item:hover{border-color:var(--gold);transform:translateX(4px)}
+    .days-bubble{
+      min-width:55px;text-align:center;
+      background:var(--gold-light);border:1px solid rgba(201,162,39,.25);border-radius:9px;
+      padding:.45rem .35rem;
+    }
+    .days-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--gold);line-height:1}
+    .days-label{font-size:.56rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+    .ui-name{font-weight:600;font-size:.86rem}
+    .ui-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3);margin-top:.12rem}
+
+    /* ── ALL BIRTHDAYS ── */
+    .month-group{margin-bottom:2.2rem}
+    .month-label{
+      font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;
+      color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.4rem;margin-bottom:.8rem;
+    }
+    .month-cards{display:flex;flex-wrap:wrap;gap:.6rem}
+    .bday-chip{
+      background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      padding:.5rem .9rem;display:flex;align-items:center;gap:.6rem;
+      font-size:.82rem;transition:border-color .2s,transform .15s;cursor:pointer;
+    }
+    .bday-chip:hover{border-color:var(--gold);transform:translateY(-2px)}
+    .bday-chip.today-chip{border-color:var(--gold);background:var(--gold-light)}
+    .chip-day{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);min-width:28px;font-weight:600}
+    .chip-name{font-weight:500}
+
+    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
+    .admin-note{background:var(--accent-light);border:1px solid rgba(26,79,160,.2);border-radius:var(--radius-sm);padding:1rem 1.2rem;font-size:.8rem;color:var(--accent);margin-top:2rem;line-height:1.6}
+    .admin-note code{font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:600px){.page-hero,.bday-section{padding-left:1.25rem;padding-right:1.25rem}.bday-popup{border-radius:16px}}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="page">
+  <div class="page-hero">
+    <div class="page-hero-inner reveal">
+      <div class="section-label">// Celebrate together</div>
+      <h1 class="section-title">🎂 Birthdays</h1>
+      <p class="section-desc">Never miss a classmate's birthday. All dates in Nepali calendar (BS). Click any name to see their birthday card.</p>
+    </div>
+  </div>
+  <section class="bday-section">
+    <div class="bday-inner">
+      <div class="upcoming-section reveal">
+        <div class="sub-title">🗓 Upcoming Birthdays <span style="font-size:.75rem;font-weight:400;color:var(--text3);font-family:'DM Mono',monospace">(next 30 days)</span></div>
+        <div class="upcoming-list" id="upcomingList"></div>
+      </div>
+      <div class="months-section reveal reveal-delay-1">
+        <div class="sub-title">📅 All Birthdays by Month</div>
+        <div id="allBirthdays"></div>
+      </div>
+      <div class="admin-note reveal">ℹ️ Add birthdays in the <a href="admin-ec2027.html" style="color:var(--accent)">admin panel</a> using BS dates, or directly in the <code>ec_birthdays</code> localStorage key as <code>[{"roll":501,"name":"NAME","bsMonth":4,"bsDay":15,"bsYear":2064}]</code></div>
+    </div>
+  </section>
+</div>
+
+<!-- INFO POPUP (shown when clicking any birthday chip) -->
+<canvas id="confettiCanvas" style="position:fixed;inset:0;z-index:100000;pointer-events:none;display:none"></canvas>
+
+<div class="bday-popup-overlay" id="bdayPopup">
+  <div class="bday-popup">
+    <div class="bday-popup-top"></div>
+    <div class="bday-popup-body">
+      <div class="bday-nav" id="bdayNav" style="display:none">
+        <button class="bday-nav-btn" id="prevBday">‹</button>
+        <div class="bday-nav-count" id="bdayNavCount"></div>
+        <button class="bday-nav-btn" id="nextBday">›</button>
+      </div>
+      <div class="bday-popup-photo-wrap">
+        <div class="bday-star-ring"></div>
+        <div class="bday-popup-photo" id="popupPhoto"></div>
+      </div>
+      <div id="popupTodayBadge"></div>
+      <div class="bday-popup-emoji" id="popupEmoji">🎂</div>
+      <div class="bday-popup-name" id="popupName"></div>
+      <div class="bday-popup-roll" id="popupRoll"></div>
+      <div class="bday-popup-msg" id="popupMsg"></div>
+      <div class="bday-popup-date" id="popupDate"></div>
+      <button class="bday-popup-close" id="popupClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>window.NAV_ROOT = '';</script>
+<script src="nav-loader.js"></script>
+<script src="shared.js"></script>
+<script src="main.js"></script>
+<script src="nepali-date.js"></script>
+<script>
+// ── AUTO-POPULATE from STUDENT_PROFILES ──
+(function seedBirthdays(){
+  const existing = JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+  const profileRolls = Object.keys(STUDENT_PROFILES).map(Number);
+  const existingRolls = new Set(existing.map(b=>b.roll));
+  let added = false;
+  profileRolls.forEach(roll=>{
+    const p = STUDENT_PROFILES[roll];
+    if(!p||!p.dob||!p.dob.bsDay) return;
+    if(existingRolls.has(roll)) return;
+    const s = STUDENTS.find(s=>s.roll===roll);
+    if(!s) return;
+    existing.push({ roll, name: s.name, bsYear: p.dob.bsYear, bsMonth: p.dob.bsMonth, bsDay: p.dob.bsDay });
+    added = true;
+  });
+  if(added) localStorage.setItem('ec_birthdays', JSON.stringify(existing));
+})();
+
+function toTitle(s){return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
+function photoUrl(roll){
+  return getDriveFolderPhotoUrl(roll);
+}
+
+const BS_MONTHS = NepaliDate.BS_MONTHS_EN;
+
+// ── BIRTHDAY MESSAGES ──
+const MESSAGES = [
+  "May this year bring you incredible discoveries, lifelong friendships, and all the happiness you deserve. Section E is lucky to have you! 🌟",
+  "Another year wiser, another year brighter! Wishing you a day as wonderful as the energy you bring to our classroom every single day. 🎓",
+  "Here's to you — the person who makes Section E a little more special. May your birthday mark the start of your most amazing chapter yet! 📖",
+  "From all of Section E — we hope today is filled with everything that makes you smile. Happy Birthday, you absolute legend! 🏆",
+  "Science tells us you're made of stardust. Today, we celebrate the star that you are. Wishing you a truly out-of-this-world birthday! ⭐",
+  "Two years of memories, one incredible person. Happy Birthday from your Section E family — may today be as epic as you are! 🎊",
+  "The classroom is brighter because you're in it. Today we celebrate you — have a birthday as extraordinary as your potential! 🔬",
+  "May this year be full of good health, great scores, and even greater adventures. Happy Birthday from Section E with love! 💙",
+];
+function randomMsg(){return MESSAGES[Math.floor(Math.random()*MESSAGES.length)]}
+
+function loadBirthdays(){
+  return JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+}
+
+function daysUntil(bsMonth, bsDay){
+  const today = NepaliDate.todayBS();
+  const thisYear = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
+  const todayAd = new Date(); todayAd.setHours(0,0,0,0);
+  thisYear.setHours(0,0,0,0);
+  let diff = Math.round((thisYear - todayAd)/86400000);
+  if(diff <= 0){
+    const nextYear = NepaliDate.bsToAd(today.y+1, bsMonth, bsDay);
+    nextYear.setHours(0,0,0,0);
+    diff = Math.round((nextYear - todayAd)/86400000);
+  }
+  return diff;
+}
+
+function renderUpcoming(data){
+  const el = document.getElementById('upcomingList');
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">Add birthday data to see upcoming celebrations!</div>';return;}
+  const upcoming = data
+    .map(b=>({...b, days: daysUntil(b.bsMonth, b.bsDay)}))
+    .filter(b=> b.days > 0 && b.days <= 30)
+    .sort((a,b)=>a.days-b.days)
+    .slice(0,8);
+  if(!upcoming.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">No birthdays in the next 30 days.</div>';return;}
+  el.innerHTML = upcoming.map(b=>`
+    <div class="upcoming-item" onclick="openSinglePopup(${b.roll})">
+      <div class="days-bubble"><div class="days-num">${b.days}</div><div class="days-label">day${b.days!==1?'s':''}</div></div>
+      <div><div class="ui-name">${toTitle(b.name)}</div><div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div></div>
+    </div>`).join('');
+}
+
+function renderAllByMonth(data){
+  const el = document.getElementById('allBirthdays');
+  if(!data.length){el.innerHTML='<div class="empty-state">No birthdays added yet.</div>';return;}
+  const today = NepaliDate.todayBS();
+  const byMonth = {};
+  data.forEach(b=>{
+    if(!byMonth[b.bsMonth]) byMonth[b.bsMonth]=[];
+    byMonth[b.bsMonth].push(b);
+  });
+  el.innerHTML = Object.keys(byMonth).sort((a,b)=>a-b).map(m=>{
+    const group = byMonth[m].sort((a,b)=>a.bsDay-b.bsDay);
+    return `<div class="month-group">
+      <div class="month-label">${BS_MONTHS[m-1]}</div>
+      <div class="month-cards">${group.map(b=>{
+        const isToday = today.m==b.bsMonth && today.d==b.bsDay;
+        return `<div class="bday-chip ${isToday?'today-chip':''}" onclick="openSinglePopup(${b.roll})">
+          <div class="chip-day">${b.bsDay}</div>
+          <div class="chip-name">${toTitle(b.name)}</div>
+          ${isToday?'<span>🎂</span>':''}
+        </div>`;
+      }).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── CONFETTI (used in info popup for today's birthdays) ──
+function launchConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  if(!canvas) return;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display='block';
+  const ctx = canvas.getContext('2d');
+  const pieces = [];
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#ff6348','#1e90ff','#2ed573'];
+  for(let i=0;i<140;i++){
+    pieces.push({
+      x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height,
+      w: Math.random()*12+6, h: Math.random()*7+4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*Math.PI*2, rotSpeed: (Math.random()-.5)*.15,
+      vx: (Math.random()-.5)*3, vy: Math.random()*4+2,
+      alpha: 1
+    });
+  }
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      ctx.save();
+      ctx.globalAlpha=p.alpha;
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
+      if(frame>90) p.alpha-=0.012;
+    });
+    frame++;
+    if(frame<180) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  draw();
+}
+
+// ── POPUP ──
+let currentPopupList = [];
+let popupIdx = 0;
+
+function buildPopupContent(b){
+  const title = toTitle(b.name);
+  const initials = getInitials(b.name);
+  const today = NepaliDate.todayBS();
+  const isToday = today.m === b.bsMonth && today.d === b.bsDay;
+
+  document.getElementById('popupName').textContent = title;
+  document.getElementById('popupRoll').textContent = `Roll No. ${b.roll} · Section E`;
+  document.getElementById('popupEmoji').textContent = isToday ? '🎉' : '🎂';
+
+  // Show "TODAY!" badge only on actual birthday
+  const badgeEl = document.getElementById('popupTodayBadge');
+  if(isToday){
+    badgeEl.innerHTML = '<div class="bday-today-badge">🎂 TODAY\'s Birthday!</div>';
+  } else {
+    badgeEl.innerHTML = '';
+  }
+
+  // Message: custom wish on birthday, generic info otherwise
+  const p = typeof STUDENT_PROFILES !== 'undefined' ? STUDENT_PROFILES[b.roll] : null;
+  let msg = '';
+  if(isToday){
+    msg = randomMsg();
+  } else {
+    if(p && p.quote) msg = p.quote;
+    else msg = `${title} celebrates their birthday on ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS. Looking forward to celebrating together! 🎊`;
+  }
+  document.getElementById('popupMsg').textContent = msg;
+  document.getElementById('popupDate').textContent = `🎂 ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS`;
+
+  const photoEl = document.getElementById('popupPhoto');
+  photoEl.innerHTML = `<img src="${photoUrl(b.roll)}" alt="${title}"
+    onerror="this.parentElement.innerHTML='<div class=bday-popup-photo-placeholder>${initials}</div>'"
+    style="width:100%;height:100%;object-fit:cover;object-position:top center"/>`;
+
+  // Close button text based on birthday status
+  document.getElementById('popupClose').textContent = isToday ? '🎉 Wish them a Happy Birthday!' : '✕ Close';
+}
+
+function openSinglePopup(roll){
+  const data = loadBirthdays();
+  const b = data.find(x=>x.roll===roll);
+  if(!b) return;
+  currentPopupList = [b]; popupIdx = 0;
+  document.getElementById('bdayNav').style.display='none';
+  buildPopupContent(b);
+
+  // If it IS their birthday today, also launch confetti in the popup
+  const today = NepaliDate.todayBS();
+  const isToday = today.m === b.bsMonth && today.d === b.bsDay;
+
+  document.getElementById('bdayPopup').classList.add('open');
+  if(isToday) setTimeout(launchConfetti, 300);
+}
+
+document.getElementById('prevBday').onclick = ()=>{
+  popupIdx = (popupIdx-1+currentPopupList.length)%currentPopupList.length;
+  buildPopupContent(currentPopupList[popupIdx]);
+  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
+};
+document.getElementById('nextBday').onclick = ()=>{
+  popupIdx = (popupIdx+1)%currentPopupList.length;
+  buildPopupContent(currentPopupList[popupIdx]);
+  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
+};
+document.getElementById('popupClose').onclick = ()=>{
+  document.getElementById('bdayPopup').classList.remove('open');
+};
+document.getElementById('bdayPopup').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── INIT ──
+const data = loadBirthdays();
+renderUpcoming(data);
+renderAllByMonth(data);
+</script>
+</body>
+</html>

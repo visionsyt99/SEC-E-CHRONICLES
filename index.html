@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The E Chronicles — Section E | St. Xavier's College</title>
+  <link rel="stylesheet" href="main.css"/>
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 6rem 2rem 4rem;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 75% 30%, rgba(79,70,229,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 55% at 10% 75%, rgba(13,148,136,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 45% 105%, rgba(217,119,6,0.04) 0%, transparent 55%);
+    }
+    html:not(.dark) .hero-bg { opacity: 0.4; } /* mesh shows through in light */
+    .hero-dots {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.6;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .hero-left {}
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--blue-faint);
+      border: 1px solid rgba(26,58,107,0.2);
+      padding: 0.35rem 1rem; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 500; color: var(--blue);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-tag-dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; }
+    .hero-headline {
+      font-family: 'Syne', 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 700; line-height: 1.1;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero-headline .accent { color: var(--gold); font-style: italic; }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-muted); line-height: 1.75;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-ctas {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    /* Countdown card */
+    .hero-right { animation: fadeUp 0.7s 0.2s ease both; }
+    .countdown-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      padding: 2rem;
+      text-align: center;
+    }
+    .countdown-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: 0.5rem;
+    }
+    .countdown-title {
+      font-family: 'Syne', 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 600; color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .countdown-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .countdown-unit {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 0.5rem;
+    }
+    .countdown-num {
+      font-family: 'Syne', 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700; color: var(--blue);
+      line-height: 1;
+    }
+    .countdown-unit-label {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--text-faint); margin-top: 0.3rem;
+    }
+    .countdown-event {
+      font-size: 0.78rem; color: var(--text-faint);
+    }
+    .countdown-event strong { color: var(--gold); }
+    /* Stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-top: 1.25rem;
+    }
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem; text-align: center;
+    }
+    .stat-num {
+      font-family: 'Syne', 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700; color: var(--blue);
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+    /* Quick links */
+    .quick-links {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem; margin-top: 2rem;
+    }
+    .quick-link {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+      transition: all 0.25s; text-decoration: none; color: var(--text);
+    }
+    .quick-link:hover { border-color: var(--blue); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .quick-link-icon { font-size: 1.5rem; }
+    .quick-link-name { font-size: 0.85rem; font-weight: 600; }
+    .quick-link-desc { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap{
+      overflow:hidden;white-space:nowrap;
+      border-top:1px solid rgba(79,70,229,0.5);border-bottom:1px solid rgba(79,70,229,0.5);
+      background:linear-gradient(90deg,#4f46e5 0%,#3730a3 100%);
+      padding:.55rem 0;position:relative;
+    }
+    .marquee-wrap::before,.marquee-wrap::after{
+      content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;
+    }
+    .marquee-wrap::before{left:0;background:linear-gradient(90deg,#4f46e5,transparent)}
+    .marquee-wrap::after{right:0;background:linear-gradient(-90deg,#3730a3,transparent)}
+    .marquee-track{
+      display:inline-flex;align-items:center;gap:0;
+      animation:marquee-scroll 38s linear infinite;
+    }
+    .marquee-wrap:hover .marquee-track{animation-play-state:paused}
+    .marquee-item{
+      font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.12em;
+      text-transform:uppercase;color:rgba(255,255,255,.92);
+      padding:0 1.5rem;text-shadow:0 1px 3px rgba(0,0,0,.2);
+    }
+    .marquee-sep{color:rgba(255,255,255,.5);font-size:.65rem;flex-shrink:0}
+    @keyframes marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-right { order: -1; }
+      .countdown-num { font-size: 1.6rem; }
+      .stats-row { grid-template-columns: repeat(3,1fr); }
+      .quick-links { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-dots"></div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-tag">
+          <span class="hero-tag-dot"></span>
+          St. Xavier's College · Maitighar, Kathmandu
+        </div>
+        <h1 class="hero-headline">
+          The <span class="accent">E</span><br/>Chronicles
+        </h1>
+        <p class="hero-sub">Section E, Science (Biology) · Batch 2025–2027. Fifty-six stories, one unforgettable journey.</p>
+        <div class="hero-ctas">
+          <a href="members.html" class="btn btn-primary">Meet Section E →</a>
+          <a href="about.html" class="btn btn-outline">About Us</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="countdown-card">
+          <div class="countdown-label">Counting down to</div>
+          <div class="countdown-title">🎓 Grade 12 Begins — Ashad 1, 2083 (June 16, 2026)</div>
+          <div class="countdown-grid">
+            <div class="countdown-unit"><div class="countdown-num" id="cd-days">--</div><div class="countdown-unit-label">Days</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-unit-label">Hours</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-mins">--</div><div class="countdown-unit-label">Mins</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-unit-label">Secs</div></div>
+          </div>
+          <div class="countdown-event">Next milestone: <strong>Start of Grade 12</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE TICKER -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Section E · Science Biology · Batch 2025–2027</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">St. Xavier's College · Maitighar · Kathmandu</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">56 Students · One Family</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">Biology · Chemistry · Physics · Mathematics · English · Nepali</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">The E Chronicles — Where Every Story Matters</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">Section E · Science Biology · Batch 2025–2027</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">St. Xavier's College · Maitighar · Kathmandu</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">56 Students · One Family</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">Biology · Chemistry · Physics · Mathematics · English · Nepali</span>
+      <span class="marquee-sep">⬡</span>
+      <span class="marquee-item">The E Chronicles — Where Every Story Matters</span>
+      <span class="marquee-sep">⬡</span>
+    </div>
+  </div>
+  <div class="container">
+    <div class="stats-row reveal">
+      <div class="stat-box">
+        <div class="stat-num">56</div>
+        <div class="stat-label">Students</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Years Together</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Memories</div>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="section">
+      <div class="section-label reveal">// Navigate</div>
+      <h2 class="section-title reveal">Explore the Site</h2>
+      <div class="quick-links">
+        <a href="members.html" class="quick-link reveal">
+          <span class="quick-link-icon">👥</span>
+          <span class="quick-link-name">Members</span>
+          <span class="quick-link-desc">All 56 students</span>
+        </a>
+        <a href="gallery.html" class="quick-link reveal reveal-delay-1">
+          <span class="quick-link-icon">🖼️</span>
+          <span class="quick-link-name">Gallery</span>
+          <span class="quick-link-desc">Our moments</span>
+        </a>
+        <a href="schedule.html" class="quick-link reveal reveal-delay-1">
+          <span class="quick-link-icon">📅</span>
+          <span class="quick-link-name">Schedule</span>
+          <span class="quick-link-desc">Class timetable</span>
+        </a>
+        <a href="events.html" class="quick-link reveal reveal-delay-2">
+          <span class="quick-link-icon">🎉</span>
+          <span class="quick-link-name">Events</span>
+          <span class="quick-link-desc">What's coming</span>
+        </a>
+        <a href="notices.html" class="quick-link reveal reveal-delay-2">
+          <span class="quick-link-icon">📢</span>
+          <span class="quick-link-name">Notices</span>
+          <span class="quick-link-desc">Announcements</span>
+        </a>
+        <a href="resources.html" class="quick-link reveal reveal-delay-2">
+          <span class="quick-link-icon">📚</span>
+          <span class="quick-link-name">Resources</span>
+          <span class="quick-link-desc">Notes & papers</span>
+        </a>
+        <a href="achievements.html" class="quick-link reveal reveal-delay-3">
+          <span class="quick-link-icon">🏆</span>
+          <span class="quick-link-name">Achievements</span>
+          <span class="quick-link-desc">Our wins</span>
+        </a>
+        <a href="birthdays.html" class="quick-link reveal reveal-delay-3">
+          <span class="quick-link-icon">🎂</span>
+          <span class="quick-link-name">Birthdays</span>
+          <span class="quick-link-desc">Celebrate together</span>
+        </a>
+        <a href="memory-wall.html" class="quick-link reveal reveal-delay-3">
+          <span class="quick-link-icon">💬</span>
+          <span class="quick-link-name">Memory Wall</span>
+          <span class="quick-link-desc">Leave a memory</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">The E <span>Chronicles</span></div>
+    <ul class="footer-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="members.html">Members</a></li>
+      <li><a href="memory-wall.html">Memories</a></li>
+    </ul>
+    <div class="footer-text">Section E · St. Xavier's College · Batch 2025–2027 · Science (Biology)</div>
+  </footer>
+</div>
+
+<script>
+window.NAV_ROOT = '';
+</script>
+<script src="nav-loader.js"></script>
+<script src="shared.js"></script>
+<script src="nepali-date.js"></script>
+<script src="main.js"></script>
+
+<!-- ══════════════════════════════════════════════
+     SPECIAL BIRTHDAY CARD — shows on homepage only
+     on the actual birthday day, once per day.
+     ══════════════════════════════════════════════ -->
+<style>
+  /* Birthday card overlay */
+  .hb-overlay{
+    position:fixed;inset:0;z-index:999999;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(12px);
+    display:flex;align-items:center;justify-content:center;
+    padding:1rem;
+    opacity:0;pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  .hb-overlay.open{opacity:1;pointer-events:all}
+  .hb-card{
+    background:var(--surface, #fff);
+    border-radius:28px;
+    max-width:480px;width:100%;
+    overflow:hidden;
+    position:relative;
+    transform:scale(.8) translateY(30px);
+    transition:transform .6s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 30px 100px rgba(0,0,0,.5);
+    text-align:center;
+  }
+  .hb-overlay.open .hb-card{transform:scale(1) translateY(0)}
+  .hb-rainbow{
+    height:7px;
+    background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b);
+    background-size:200%;
+    animation:hb-rainbow-slide 1.8s linear infinite;
+  }
+  @keyframes hb-rainbow-slide{from{background-position:0 0}to{background-position:200% 0}}
+  .hb-body{padding:2.4rem 2rem 2rem}
+  .hb-balloons{font-size:2rem;margin-bottom:.6rem;animation:hb-float 2s ease-in-out infinite alternate}
+  @keyframes hb-float{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+  .hb-names{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:1.9rem;font-weight:700;line-height:1.2;margin-bottom:.4rem;
+    background:linear-gradient(135deg,#d97706,#4f46e5);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .hb-subtitle{font-size:.85rem;color:#6b7280;margin-bottom:1.5rem;font-style:italic}
+  .hb-photos{display:flex;justify-content:center;gap:.8rem;margin-bottom:1.5rem;flex-wrap:wrap}
+  .hb-photo-wrap{position:relative}
+  .hb-photo{
+    width:80px;height:96px;border-radius:12px;overflow:hidden;
+    border:3px solid #d97706;
+    box-shadow:0 0 0 3px rgba(217,119,6,.2),0 6px 24px rgba(217,119,6,.25);
+  }
+  .hb-photo img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .hb-photo-init{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,rgba(217,119,6,.15),rgba(79,70,229,.1));
+    font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;font-weight:700;color:#d97706;
+  }
+  .hb-photo-name{font-size:.62rem;font-weight:600;color:#6b7280;margin-top:.35rem;text-align:center;max-width:84px;line-height:1.2}
+  .hb-wish{
+    font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;
+    font-size:1.05rem;color:#374151;line-height:1.7;
+    padding:1rem 1.2rem;background:#f9fafb;border-radius:14px;
+    border-left:3px solid #d97706;margin-bottom:1.4rem;text-align:left;
+  }
+  .hb-btn{
+    width:100%;padding:.9rem;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:#fff;border:none;border-radius:12px;
+    font-size:.88rem;font-weight:700;letter-spacing:.06em;
+    cursor:pointer;transition:transform .15s,opacity .15s;
+  }
+  .hb-btn:hover{transform:translateY(-2px);opacity:.9}
+  .hb-dismiss{display:block;font-size:.7rem;color:#9ca3af;margin-top:.6rem;cursor:pointer;text-decoration:underline}
+  .hb-dismiss:hover{color:#6b7280}
+</style>
+<!-- Confetti canvas for birthday card -->
+<canvas id="hbConfetti" style="position:fixed;inset:0;z-index:999998;pointer-events:none;display:none"></canvas>
+<!-- The birthday card overlay -->
+<div class="hb-overlay" id="hbOverlay">
+  <div class="hb-card">
+    <div class="hb-rainbow"></div>
+    <div class="hb-body">
+      <div class="hb-balloons">🎉🎈🎂🎈🎉</div>
+      <div class="hb-names" id="hbNames"></div>
+      <div class="hb-subtitle">Today's Birthday Celebration — Section E 💙</div>
+      <div class="hb-photos" id="hbPhotos"></div>
+      <div class="hb-wish" id="hbWish"></div>
+      <button class="hb-btn" onclick="closeHbCard()">🎊 Happy Birthday!</button>
+      <span class="hb-dismiss" onclick="dismissHbCard()">Don't show again today</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Countdown to Ashad 1, 2083 BS = June 16, 2026 AD
+const target = new Date('2026-06-16T00:00:00');
+function updateCountdown() {
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '0';
+    document.getElementById('cd-hours').textContent = '0';
+    document.getElementById('cd-mins').textContent = '0';
+    document.getElementById('cd-secs').textContent = '0';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ── BIRTHDAY CARD (homepage, once per day on actual birthday) ──
+(function checkBirthdays(){
+  if(typeof NepaliDate === 'undefined' || typeof STUDENTS === 'undefined') return;
+  const today = NepaliDate.todayBS();
+  const shownKey = `ec_hb_shown_${today.y}_${today.m}_${today.d}`;
+  if(localStorage.getItem(shownKey)) return;
+
+  const data = JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+  const profileRolls = Object.keys(STUDENT_PROFILES || {}).map(Number);
+  const existingRolls = new Set(data.map(b=>b.roll));
+  profileRolls.forEach(roll=>{
+    const p = (STUDENT_PROFILES||{})[roll];
+    if(!p||!p.dob||!p.dob.bsDay) return;
+    if(existingRolls.has(roll)) return;
+    const s = STUDENTS.find(s=>s.roll===roll);
+    if(!s) return;
+    data.push({ roll, name: s.name, bsYear: p.dob.bsYear, bsMonth: p.dob.bsMonth, bsDay: p.dob.bsDay });
+  });
+
+  const todayBdays = data.filter(b => b.bsMonth === today.m && b.bsDay === today.d);
+  if(!todayBdays.length) return;
+
+  const BS_MONTHS_EN = NepaliDate.BS_MONTHS_EN;
+  function toTitleCase(s){return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
+  function getInit(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('')}
+
+  const names = todayBdays.map(b=>toTitleCase(b.name));
+  document.getElementById('hbNames').textContent =
+    names.length === 1 ? 'Happy Birthday, '+names[0]+'! 🎂' :
+    names.length === 2 ? 'Happy Birthday, '+names[0]+' & '+names[1]+'! 🎂' :
+    'Happy Birthday to '+names.slice(0,-1).join(', ')+' & '+names[names.length-1]+'! 🎂';
+
+  const photosEl = document.getElementById('hbPhotos');
+  photosEl.innerHTML = todayBdays.map(b=>{
+    const title = toTitleCase(b.name);
+    const init = getInit(b.name);
+    const photoSrc = (typeof getDriveFolderPhotoUrl !== 'undefined') ? getDriveFolderPhotoUrl(b.roll) : 'photos/'+b.roll+'.jpg';
+    return '<div class="hb-photo-wrap"><div class="hb-photo"><img src="'+photoSrc+'" alt="'+title+'" onerror="this.parentElement.innerHTML=\'<div class=hb-photo-init>'+init+'</div>\'" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/></div><div class="hb-photo-name">'+title.split(' ')[0]+'</div></div>';
+  }).join('');
+
+  const wishes = [
+    "May this special day bring you joy, laughter and incredible memories. Section E is so lucky to have you! 🌟",
+    "Another year of being amazing — and we're here to celebrate every moment of it. Happy Birthday from your Section E family! 🎊",
+    "Here's to you — a true part of what makes Section E unforgettable. Wishing you the most wonderful birthday! ⭐",
+    "You make our classroom brighter just by being in it. Today we celebrate you, and everything you bring to Section E! 💙",
+    "From the bottom of our hearts — may this year be your best yet. Happy Birthday, Section E legend! 🏆",
+  ];
+  document.getElementById('hbWish').textContent = wishes[Math.floor(Math.random()*wishes.length)];
+
+  setTimeout(function(){
+    launchHbConfetti();
+    document.getElementById('hbOverlay').classList.add('open');
+  }, 1200);
+})();
+
+function launchHbConfetti(){
+  const canvas = document.getElementById('hbConfetti');
+  if(!canvas) return;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#2ed573'];
+  const pieces = Array.from({length:180}, function(){return{
+    x: Math.random()*canvas.width,
+    y: -20 - Math.random()*canvas.height*0.5,
+    w: Math.random()*14+5, h: Math.random()*8+4,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*Math.PI*2, rotSpeed: (Math.random()-.5)*.18,
+    vx: (Math.random()-.5)*3.5, vy: Math.random()*5+2,
+    alpha:1
+  }});
+  var frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(function(p){
+      ctx.save(); ctx.globalAlpha=p.alpha;
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
+      if(frame>100) p.alpha-=0.01;
+    });
+    frame++;
+    if(frame<220) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  draw();
+}
+
+function closeHbCard(){
+  document.getElementById('hbOverlay').classList.remove('open');
+}
+function dismissHbCard(){
+  const today = NepaliDate.todayBS();
+  localStorage.setItem('ec_hb_shown_'+today.y+'_'+today.m+'_'+today.d, '1');
+  document.getElementById('hbOverlay').classList.remove('open');
+}
+document.getElementById('hbOverlay').addEventListener('click', function(e){
+  if(e.target === e.currentTarget) closeHbCard();
+});
+
+// ── ANIMATED MESH BACKGROUND (light theme only) ──
+(function initMesh(){
+  if(document.getElementById('ec-mesh-canvas')) return;
+  const canvas = document.createElement('canvas');
+  canvas.id = 'ec-mesh-canvas';
+  canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .5s';
+  document.body.insertBefore(canvas, document.body.firstChild);
+  const ctx = canvas.getContext('2d');
+
+  function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const N = 32;
+  const nodes = Array.from({length:N}, ()=>({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx: (Math.random()-.5)*0.4,
+    vy: (Math.random()-.5)*0.4,
+    r: Math.random()*2.8+1.2,
+    hue: Math.random()*60+210,
+  }));
+
+  let mouseX=window.innerWidth/2, mouseY=window.innerHeight/2;
+  window.addEventListener('mousemove',e=>{ mouseX=e.clientX; mouseY=e.clientY; });
+
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+
+  function draw(){
+    if(isDark()){ canvas.style.opacity='0'; requestAnimationFrame(draw); return; }
+    canvas.style.opacity='1';
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    nodes.forEach(n=>{
+      // subtle mouse repulsion
+      const dx=n.x-mouseX, dy=n.y-mouseY;
+      const md=Math.sqrt(dx*dx+dy*dy);
+      if(md<120){ n.vx+=dx/md*0.06; n.vy+=dy/md*0.06; }
+      // speed cap
+      const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+      if(spd>0.9){ n.vx=n.vx/spd*0.9; n.vy=n.vy/spd*0.9; }
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>canvas.width) n.vx*=-1;
+      if(n.y<0||n.y>canvas.height) n.vy*=-1;
+      n.hue=(n.hue+0.04)%360;
+    });
+
+    // Connections with gradient glow
+    const maxD = Math.min(canvas.width, canvas.height)*0.30;
+    for(let i=0;i<N;i++){
+      for(let j=i+1;j<N;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<maxD){
+          const t=1-dist/maxD;
+          const grad=ctx.createLinearGradient(nodes[i].x,nodes[i].y,nodes[j].x,nodes[j].y);
+          grad.addColorStop(0,`hsla(${nodes[i].hue},72%,58%,${t*0.22})`);
+          grad.addColorStop(1,`hsla(${nodes[j].hue},72%,58%,${t*0.22})`);
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=grad;
+          ctx.lineWidth=t*1.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Glowing node dots
+    nodes.forEach(n=>{
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*9);
+      g.addColorStop(0,`hsla(${n.hue},80%,60%,0.18)`);
+      g.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*9,0,Math.PI*2);
+      ctx.fillStyle=g; ctx.fill();
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${n.hue},78%,58%,0.7)`; ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

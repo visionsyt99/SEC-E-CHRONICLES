@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Gallery — The E Chronicles</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .gallery-hero { background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem; }
+    .gallery-hero-inner { max-width:1100px;margin:0 auto; }
+    .gallery-section { padding:3rem 2.5rem 5rem; }
+    .gallery-inner { max-width:1100px;margin:0 auto; }
+
+    .gallery-filters { display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem; }
+    .filter-btn {
+      padding:.4rem 1rem;font-size:.78rem;font-weight:500;border-radius:100px;
+      border:1.5px solid var(--border);background:transparent;color:var(--text2);
+      cursor:pointer;transition:all .2s;
+    }
+    .filter-btn:hover,.filter-btn.active { border-color:var(--accent);color:var(--accent);background:var(--accent-light); }
+
+    /* Masonry grid */
+    .gallery-grid { columns:4;column-gap:1rem; }
+    .gallery-item {
+      break-inside:avoid;margin-bottom:1rem;border-radius:10px;overflow:hidden;
+      cursor:pointer;position:relative;border:1px solid var(--border);
+      background:var(--surface);
+    }
+    .gallery-item img { width:100%;display:block;transition:transform .35s; }
+    .gallery-item:hover img { transform:scale(1.04); }
+    .gallery-item-overlay {
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%);
+      opacity:0;transition:opacity .25s;display:flex;align-items:flex-end;padding:.8rem;
+    }
+    .gallery-item:hover .gallery-item-overlay { opacity:1; }
+    .gallery-item-caption { font-size:.78rem;color:#fff;font-weight:500; }
+
+    /* Loading skeleton */
+    .gallery-skeleton {
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;
+    }
+    .skeleton-item {
+      aspect-ratio:4/3;background:linear-gradient(90deg,var(--surface) 25%,var(--border) 50%,var(--surface) 75%);
+      background-size:200% 100%;animation:shimmer 1.5s infinite;
+      border-radius:10px;border:1px solid var(--border);
+    }
+    @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
+
+    .drive-note{
+      background:var(--accent-light);border:1px solid rgba(26,79,160,.2);border-radius:var(--radius);
+      padding:1rem 1.4rem;margin-bottom:2rem;font-size:.82rem;color:var(--accent);line-height:1.6;
+    }
+    .drive-note code{font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px}
+
+    /* Lightbox */
+    .lightbox { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:1rem; }
+    .lightbox.open { opacity:1;pointer-events:all; }
+    .lightbox img { max-width:90vw;max-height:85vh;border-radius:8px;object-fit:contain; }
+    .lightbox-close { position:absolute;top:1.5rem;right:1.5rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+    .lightbox-close:hover { background:rgba(255,255,255,.2); }
+    .lightbox-caption{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:.4rem 1rem;border-radius:100px;font-size:.8rem;white-space:nowrap}
+
+    @media(max-width:768px) { .gallery-grid{columns:2}.gallery-hero,.gallery-section{padding-left:1.25rem;padding-right:1.25rem} }
+    @media(max-width:480px) { .gallery-grid{columns:1} }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="gallery-hero">
+    <div class="gallery-hero-inner reveal">
+      <div class="section-label">// Our memories</div>
+      <h1 class="section-title">Gallery</h1>
+      <p class="section-desc">Photos from Section E's journey — classes, events, trips, and everyday moments.</p>
+    </div>
+  </div>
+
+  <section class="gallery-section">
+    <div class="gallery-inner">
+
+      <div class="drive-note reveal" id="driveNote">
+        📁 Photos are loaded from the shared Google Drive folder. Add photos via the
+        <a href="admin-ec2027.html" style="color:var(--accent)">admin panel</a> using individual Drive file IDs,
+        or by uploading to the <code>MEMORY_FOLDER_ID</code> folder.
+        <span id="driveNoteStatus"></span>
+      </div>
+
+      <div class="gallery-filters reveal" id="filterBtns">
+        <button class="filter-btn active" data-cat="all">All Photos</button>
+        <button class="filter-btn" data-cat="class">Classroom</button>
+        <button class="filter-btn" data-cat="events">Events</button>
+        <button class="filter-btn" data-cat="trips">Trips</button>
+        <button class="filter-btn" data-cat="fun">Fun Times</button>
+      </div>
+
+      <div id="skeletonGrid" class="gallery-skeleton reveal">
+        <div class="skeleton-item"></div><div class="skeleton-item"></div>
+        <div class="skeleton-item"></div><div class="skeleton-item"></div>
+        <div class="skeleton-item"></div><div class="skeleton-item"></div>
+      </div>
+
+      <div class="gallery-grid reveal reveal-delay-1" id="galleryGrid" style="display:none"></div>
+      <div id="emptyState" class="empty-state" style="display:none">No photos added yet. Upload via the admin panel!</div>
+
+    </div>
+  </section>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <img id="lightboxImg" src="" alt=""/>
+  <div class="lightbox-caption" id="lightboxCaption" style="display:none"></div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+injectNav();
+
+// ════════════════════════════════════════════
+// GALLERY PHOTOS — Add Drive file IDs here
+// Each: { id: "DRIVE_FILE_ID", cat: "class|events|trips|fun", caption: "Caption" }
+// Photos also auto-load from ec_gallery localStorage (set via admin panel)
+// ════════════════════════════════════════════
+const GALLERY_PHOTOS_HARDCODED = [
+  // { id: "GOOGLE_DRIVE_FILE_ID", cat: "events", caption: "Sports Day 2025" },
+];
+
+function driveUrl(id, size) {
+  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
+}
+
+// Also try to load from memory folder via Apps Script
+async function loadMemoryFolderPhotos() {
+  // Load photos stored by admin in ec_gallery
+  const adminPhotos = JSON.parse(localStorage.getItem('ec_gallery') || '[]');
+  return adminPhotos;
+}
+
+let allPhotos = [];
+let currentCat = 'all';
+
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  const empty = document.getElementById('emptyState');
+  const filtered = currentCat === 'all' ? allPhotos : allPhotos.filter(p => p.cat === currentCat);
+
+  document.getElementById('skeletonGrid').style.display = 'none';
+
+  if (!allPhotos.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'block';
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:2rem 0">No photos in this category yet.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(p) {
+    var imgSrc = p.base64
+      ? 'data:image/jpeg;base64,' + p.base64
+      : driveUrl(p.id);
+    return '<div class="gallery-item" onclick="openLightbox(\'' + p.id + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\',' + (p.base64?'true':'false') + ',\'' + (p.base64||'') + '\')">' +
+      '<img src="' + imgSrc + '" alt="' + (p.caption||'Photo') + '" loading="lazy"/>' +
+      '<div class="gallery-item-overlay"><div class="gallery-item-caption">' + (p.caption||'') + '</div></div>' +
+      '</div>';
+  }).join('');
+}
+
+// Filter buttons
+document.getElementById('filterBtns').addEventListener('click', function(e) {
+  var btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  renderGallery();
+});
+
+// Lightbox
+function openLightbox(id, caption, isBase64, base64Data) {
+  var src = isBase64 ? 'data:image/jpeg;base64,' + base64Data : driveUrl(id, 'w1200');
+  document.getElementById('lightboxImg').src = src;
+  var capEl = document.getElementById('lightboxCaption');
+  if(caption) { capEl.textContent = caption; capEl.style.display='block'; }
+  else capEl.style.display='none';
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightboxClose').addEventListener('click', function() {
+  document.getElementById('lightbox').classList.remove('open');
+});
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── INIT ──
+(async function init() {
+  var adminPhotos = await loadMemoryFolderPhotos();
+  allPhotos = GALLERY_PHOTOS_HARDCODED.concat(adminPhotos);
+
+  // Update note
+  if(allPhotos.length) {
+    document.getElementById('driveNoteStatus').textContent = ' ' + allPhotos.length + ' photo' + (allPhotos.length!==1?'s':'') + ' loaded.';
+  }
+
+  renderGallery();
+})();
+</script>
+</body>
+</html>

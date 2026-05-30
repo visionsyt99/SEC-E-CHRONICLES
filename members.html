@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Members — The E Chronicles</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .page-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem;position:relative;overflow:hidden}
+    .page-hero::before{content:'';position:absolute;inset:0;background:var(--mesh,none);pointer-events:none}
+    .page-hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;position:relative;z-index:1}
+    .members-section{padding:2.5rem 2.5rem 5rem}
+    .members-inner{max-width:1200px;margin:0 auto}
+    .members-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+    .member-count-badge{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text3);letter-spacing:.1em}
+
+    /* ── PORTRAIT CARD GRID ── */
+    .members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1.2rem}
+
+    .member-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:18px;overflow:hidden;cursor:pointer;
+      transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s,border-color .2s;
+      position:relative;
+    }
+    .member-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:var(--shadow-lg);border-color:var(--border-hover)}
+
+    /* photo area */
+    .mc-photo{
+      width:100%;aspect-ratio:3/4;
+      background:var(--bg2);overflow:hidden;position:relative;
+    }
+    .mc-photo img{
+      width:100%;height:100%;object-fit:cover;object-position:top center;
+      transition:transform .45s ease;display:block;
+    }
+    .member-card:hover .mc-photo img{transform:scale(1.08)}
+    .mc-photo-placeholder{
+      width:100%;height:100%;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;
+      background:linear-gradient(135deg,var(--accent-light) 0%,var(--bg2) 100%);
+    }
+    .mc-initials{
+      font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;
+      color:var(--accent);line-height:1;
+    }
+
+    /* gradient overlay on bottom of photo */
+    .mc-photo::before{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:55%;
+      background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 100%);
+      z-index:1;pointer-events:none;
+    }
+
+    /* hover: show quote overlay */
+    .mc-quote-overlay{
+      position:absolute;inset:0;z-index:3;
+      background:linear-gradient(160deg,rgba(79,70,229,.88) 0%,rgba(13,148,136,.85) 100%);
+      display:flex;align-items:center;justify-content:center;padding:1rem;
+      opacity:0;transition:opacity .3s ease;
+    }
+    .member-card:hover .mc-quote-overlay{opacity:1}
+    .mc-quote-text{
+      font-family:'Cormorant Garamond',serif;font-style:italic;
+      font-size:.85rem;color:#fff;text-align:center;line-height:1.5;
+    }
+
+    /* badge on photo */
+    .mc-badge{
+      position:absolute;top:.6rem;right:.6rem;z-index:2;
+      font-size:.65rem;font-weight:700;letter-spacing:.06em;
+      padding:.2rem .5rem;border-radius:6px;
+      font-family:'DM Mono',monospace;
+    }
+    .mc-badge-cr{background:var(--gold);color:#fff}
+    .mc-badge-mgmt{background:var(--accent);color:#fff}
+
+    /* profile indicator dot bottom-left of photo */
+    .mc-profile-dot{
+      position:absolute;bottom:.6rem;left:.6rem;z-index:2;
+      width:8px;height:8px;border-radius:50%;
+      border:2px solid rgba(255,255,255,.7);
+    }
+    .mc-profile-dot.has-profile{background:#10b981}
+    .mc-profile-dot.no-profile{background:#6b7280}
+
+    /* CR card styling */
+    .cr-card{border-color:rgba(217,119,6,.4)!important}
+    .cr-card:hover{border-color:var(--gold)!important;box-shadow:0 10px 40px var(--gold-glow)!important}
+    .cr-card .mc-photo::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(217,119,6,.15) 0%,transparent 55%);
+      pointer-events:none;z-index:0;
+    }
+
+    /* info area */
+    .mc-info{padding:.85rem .9rem 1rem}
+    .mc-roll{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text3);letter-spacing:.1em;margin-bottom:.25rem}
+    .mc-name{font-size:.82rem;font-weight:700;line-height:1.25;color:var(--text)}
+    .mc-meta{display:flex;align-items:center;gap:.4rem;margin-top:.4rem;flex-wrap:wrap}
+    .mc-tag{
+      display:inline-flex;align-items:center;gap:.2rem;
+      font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.07em;
+      text-transform:uppercase;padding:.12rem .42rem;border-radius:5px;
+      white-space:nowrap;
+    }
+    .mc-tag-cr{background:var(--gold-light);color:var(--gold);border:1px solid rgba(217,119,6,.25)}
+    .mc-tag-mgmt{background:var(--accent-light);color:var(--accent);border:1px solid rgba(79,70,229,.2)}
+    .mc-dob{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text3);margin-top:.3rem;display:flex;align-items:center;gap:.3rem}
+
+    /* ── ADVANCED MODAL ── */
+    .modal{position:relative;max-width:400px;width:100%;display:flex;flex-direction:column;max-height:90vh;overflow:hidden}
+    .modal-inner{overflow-y:auto;padding:1.5rem 1.5rem 2rem}
+
+    .modal-header{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:1.2rem}
+    .modal-photo-sm{
+      width:90px;height:115px;flex-shrink:0;
+      border-radius:12px;overflow:hidden;background:var(--bg2);
+    }
+    .modal-photo-sm img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+    .modal-photo-sm-placeholder{
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--accent-light),var(--bg2));
+      font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--accent);
+    }
+    .cr-modal-photo{border:2px solid var(--gold);box-shadow:0 0 18px var(--gold-glow)}
+
+    .modal-header-info{flex:1;min-width:0}
+    .modal-roll{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3);letter-spacing:.12em;margin-bottom:.3rem}
+    .modal-name{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;margin-bottom:.5rem;line-height:1.2}
+    .modal-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+
+    .modal-divider{border:none;border-top:1px solid var(--border);margin:.9rem 0}
+
+    .modal-quote-block{
+      background:linear-gradient(135deg,var(--accent-light),var(--bg2));
+      border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+      padding:.85rem 1rem;margin-bottom:1rem;
+    }
+    .modal-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.02rem;color:var(--text2);line-height:1.65}
+    .modal-quote::before{content:'\201C';color:var(--accent);font-size:1.4rem;line-height:0;vertical-align:-.35rem;margin-right:.1rem}
+    .modal-quote::after{content:'\201D';color:var(--accent);font-size:1.4rem;line-height:0;vertical-align:-.35rem;margin-left:.1rem}
+
+    .modal-exp-label{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem}
+    .modal-exp{font-size:.87rem;color:var(--text2);line-height:1.65;font-style:italic;padding:.8rem 1rem;background:var(--surface2);border-radius:10px;border:1px solid var(--border)}
+
+    .modal-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:.9rem}
+    .modal-info-item{background:var(--bg2);border-radius:9px;padding:.6rem .8rem}
+    .modal-info-label{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.2rem}
+    .modal-info-val{font-size:.82rem;font-weight:600;color:var(--text)}
+
+    .no-results{grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
+
+    @media(max-width:768px){
+      .members-section{padding:2rem 1.25rem 4rem}
+      .page-hero{padding:2.5rem 1.25rem 2rem}
+      .members-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.85rem}
+    }
+    @media(max-width:400px){.members-grid{grid-template-columns:repeat(2,1fr);gap:.7rem}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="page-hero">
+    <div class="page-hero-inner reveal">
+      <div>
+        <div class="section-label">// The people</div>
+        <h1 class="section-title" style="margin-bottom:0">Members</h1>
+        <p class="section-desc" style="margin-top:.5rem">All 56 students of Section E — St. Xavier's College, Science Biology, Batch 2025–2027.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="members-section">
+    <div class="members-inner">
+      <div class="members-toolbar reveal">
+        <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search by name or roll number…"/>
+        </div>
+        <div class="member-count-badge" id="countLabel">56 students</div>
+      </div>
+      <div class="members-grid reveal reveal-delay-1" id="membersGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="memberModal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-inner" id="modalContent"></div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+injectNav();
+
+function toTitle(str){return str.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
+function getInitials(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('')}
+
+// Use the shared helper from shared.js which handles:
+// 1. Explicit photo IDs in STUDENT_PROFILES (converts drive.google.com/open?id= links too)
+// 2. Apps Script proxy for all others (serves roll.jpg from MEMBERS_FOLDER_ID)
+function getBestPhoto(roll){
+  return getDriveFolderPhotoUrl(roll);
+}
+
+function renderGrid(filter=''){
+  const grid=document.getElementById('membersGrid');
+  const f=filter.toLowerCase().trim();
+  const filtered=STUDENTS.filter(s=>!f||s.name.toLowerCase().includes(f)||String(s.roll).includes(f));
+  document.getElementById('countLabel').textContent=`${filtered.length} student${filtered.length!==1?'s':''}`;
+  if(!filtered.length){grid.innerHTML='<div class="no-results">No students found matching your search.</div>';return;}
+
+  grid.innerHTML=filtered.map(s=>{
+    const initials=getInitials(s.name);
+    const title=toTitle(s.name);
+    const crClass=s.cr?'cr-card':'';
+    const p=STUDENT_PROFILES[s.roll];
+    const hasProfile=!!p;
+    const wantsMgmt=p&&p.wantsManagement;
+    const quote=p&&p.quote?p.quote:'';
+    const photoSrc=getBestPhoto(s.roll);
+    return `
+    <div class="member-card ${crClass}" onclick="openModal(${s.roll})">
+      <div class="mc-photo">
+        <img src="${photoSrc}" alt="${title}"
+          onerror="this.parentElement.innerHTML='<div class=mc-photo-placeholder><div class=mc-initials>${initials}</div></div>'"
+          loading="lazy"/>
+        ${s.cr?'<div class="mc-badge mc-badge-cr">★ CR</div>':''}
+        ${(!s.cr&&wantsMgmt)?'<div class="mc-badge mc-badge-mgmt">⚡ MGMT</div>':''}
+        <div class="mc-profile-dot ${hasProfile?'has-profile':'no-profile'}"></div>
+        ${quote?`<div class="mc-quote-overlay"><div class="mc-quote-text">${quote.length>80?quote.substring(0,80)+'…':quote}</div></div>`:''}
+      </div>
+      <div class="mc-info">
+        <div class="mc-roll">#${s.roll}</div>
+        <div class="mc-name">${title}</div>
+        <div class="mc-meta">
+          ${s.cr?`<span class="mc-tag mc-tag-cr">★ ${s.crTitle||'Class Rep'}</span>`:''}
+          ${(!s.cr&&wantsMgmt)?'<span class="mc-tag mc-tag-mgmt">⚡ Mgmt</span>':''}
+        </div>
+        ${(p&&p.dob&&p.dob.bsDay)?`<div class="mc-dob">🎂 ${p.dob.monthName} ${p.dob.bsDay}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+const BS_MONTHS=['Baishakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+
+function openModal(roll){
+  const s=STUDENTS.find(s=>s.roll===roll);
+  if(!s) return;
+  const title=toTitle(s.name);
+  const initials=getInitials(s.name);
+  const p=STUDENT_PROFILES[s.roll];
+  const photoSrc=getBestPhoto(roll);
+  const crPhotoClass=s.cr?'cr-modal-photo':'';
+
+  let dobStr='—';
+  if(p&&p.dob){
+    const d=p.dob;
+    dobStr=d.bsDay?`${d.monthName} ${d.bsDay}, ${d.bsYear} BS`:`${d.monthName} ${d.bsYear} BS`;
+  }
+
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div class="modal-photo-sm ${crPhotoClass}">
+        <img src="${photoSrc}" alt="${title}"
+          onerror="this.parentElement.innerHTML='<div class=modal-photo-sm-placeholder>${initials}</div>'"
+          style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/>
+      </div>
+      <div class="modal-header-info">
+        <div class="modal-roll">Roll No. ${s.roll} · Section E</div>
+        <div class="modal-name">${title}</div>
+        <div class="modal-tags">
+          ${s.cr?`<span class="mc-tag mc-tag-cr">★ ${s.crTitle}</span>`:''}
+          ${(p&&p.wantsManagement)?'<span class="mc-tag mc-tag-mgmt">⚡ Management Interest</span>':''}
+        </div>
+      </div>
+    </div>
+
+    ${(p&&p.quote)?`
+    <div class="modal-quote-block">
+      <div class="modal-quote">${p.quote}</div>
+    </div>`:''}
+
+    ${(p&&p.experience)?`
+    <div class="modal-exp-label">✦ Their Section E Story</div>
+    <div class="modal-exp">${p.experience}</div>`:''}
+
+    ${(p&&(p.dob||p.email))?`
+    <div class="modal-info-grid">
+      ${p.dob?`<div class="modal-info-item"><div class="modal-info-label">🎂 Birthday (BS)</div><div class="modal-info-val">${dobStr}</div></div>`:''}
+      ${p.email?`<div class="modal-info-item"><div class="modal-info-label">✉️ Email</div><div class="modal-info-val" style="font-size:.74rem;word-break:break-all">${p.email}</div></div>`:''}
+    </div>`:''}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modalOverlay').classList.remove('open'));
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open')});
+document.getElementById('searchInput').addEventListener('input',e=>renderGrid(e.target.value));
+renderGrid();
+</script>
+</body>
+</html>

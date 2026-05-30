@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Resources — The E Chronicles</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .page-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem}
+    .page-hero-inner{max-width:1100px;margin:0 auto}
+    .res-section{padding:3rem 2.5rem 5rem}
+    .res-inner{max-width:1100px;margin:0 auto}
+
+    /* category tabs */
+    .cat-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:2.5rem}
+    .ctab{padding:.4rem 1rem;font-size:.78rem;font-weight:500;border-radius:100px;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
+    .ctab:hover,.ctab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+    .res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+
+    .res-card{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+      padding:1.3rem;display:flex;gap:1rem;align-items:flex-start;
+      text-decoration:none;color:var(--text);
+      transition:border-color .2s,transform .2s,box-shadow .2s;
+      animation:fadeUp .4s ease both;
+      position:relative;overflow:hidden;
+    }
+    .res-card::after{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:var(--accent);transform:scaleY(0);transition:transform .25s;transform-origin:bottom;
+    }
+    .res-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow)}
+    .res-card:hover::after{transform:scaleY(1)}
+
+    .res-icon{
+      width:40px;height:40px;border-radius:10px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+      border:1px solid var(--border);
+    }
+    .ri-bio   {background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.2)}
+    .ri-chem  {background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2)}
+    .ri-phy   {background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.2)}
+    .ri-math  {background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.2)}
+    .ri-eng   {background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.2)}
+    .ri-gen   {background:var(--accent-light);border-color:rgba(26,79,160,.2)}
+
+    .res-title{font-weight:600;font-size:.88rem;margin-bottom:.25rem}
+    .res-desc{font-size:.78rem;color:var(--text2);line-height:1.5;margin-bottom:.5rem}
+    .res-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+    .res-subj{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:.12rem .45rem;border-radius:4px}
+    .res-type{font-size:.72rem;color:var(--text3)}
+    .res-arrow{margin-left:auto;color:var(--accent);font-size:.9rem;opacity:0;transition:opacity .2s,transform .2s}
+    .res-card:hover .res-arrow{opacity:1;transform:translateX(3px)}
+
+    .empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2rem}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:600px){.page-hero,.res-section{padding-left:1.25rem;padding-right:1.25rem}.res-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="page-hero">
+    <div class="page-hero-inner reveal">
+      <div class="section-label">// Study materials</div>
+      <h1 class="section-title">Resources</h1>
+      <p class="section-desc">Notes, past papers, syllabus and useful links — all in one place for Section E.</p>
+    </div>
+  </div>
+  <section class="res-section">
+    <div class="res-inner">
+      <div class="cat-tabs reveal" id="catTabs">
+        <button class="ctab active" data-cat="all">All</button>
+        <button class="ctab" data-cat="Biology">🧬 Biology</button>
+        <button class="ctab" data-cat="Chemistry">⚗️ Chemistry</button>
+        <button class="ctab" data-cat="Physics">⚡ Physics</button>
+        <button class="ctab" data-cat="Mathematics">📐 Math</button>
+        <button class="ctab" data-cat="English">📖 English</button>
+        <button class="ctab" data-cat="General">📌 General</button>
+      </div>
+      <div class="res-grid reveal reveal-delay-1" id="resGrid"></div>
+    </div>
+  </section>
+</div>
+<script src="shared.js"></script>
+<script>
+injectNav();
+
+const SUBJ_ICON_CLASS = {Biology:'ri-bio',Chemistry:'ri-chem',Physics:'ri-phy',Mathematics:'ri-math',English:'ri-eng',General:'ri-gen'};
+const SUBJ_COLORS = {Biology:'rgba(34,197,94,.15)',Chemistry:'rgba(239,68,68,.15)',Physics:'rgba(59,130,246,.15)',Mathematics:'rgba(168,85,247,.15)',English:'rgba(249,115,22,.15)',General:'var(--accent-light)'};
+const SUBJ_TEXT = {Biology:'#16a34a',Chemistry:'#dc2626',Physics:'#2563eb',Mathematics:'#9333ea',English:'#ea580c',General:'var(--accent)'};
+
+let currentCat = 'all';
+
+function renderResources() {
+  const grid = document.getElementById('resGrid');
+  const resources = JSON.parse(localStorage.getItem('ec_resources') || '[]');
+  const filtered = currentCat === 'all' ? resources : resources.filter(r => r.subject === currentCat);
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state">No resources here yet. Ask your CR to add some!</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map((r,i) => {
+    const iconClass = SUBJ_ICON_CLASS[r.subject] || 'ri-gen';
+    const color = SUBJ_COLORS[r.subject] || 'var(--accent-light)';
+    const textColor = SUBJ_TEXT[r.subject] || 'var(--accent)';
+    return `
+    <a class="res-card" href="${r.link || '#'}" target="_blank" rel="noopener" style="animation-delay:${i*0.06}s">
+      <div class="res-icon ${iconClass}">${r.icon || '📄'}</div>
+      <div style="flex:1">
+        <div class="res-title">${r.title}</div>
+        <div class="res-desc">${r.desc || ''}</div>
+        <div class="res-meta">
+          <span class="res-subj" style="background:${color};color:${textColor}">${r.subject}</span>
+          <span class="res-type">${r.type || 'Resource'}</span>
+        </div>
+      </div>
+      <div class="res-arrow">→</div>
+    </a>`;
+  }).join('');
+}
+
+document.getElementById('catTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.ctab');
+  if (!btn) return;
+  document.querySelectorAll('.ctab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  renderResources();
+});
+renderResources();
+</script>
+</body>
+</html>
