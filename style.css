@@ -440,5 +440,6 @@ footer {
   0%   { color: var(--accent); }
   33%  { color: var(--teal); }
   66%  { color: var(--gold); }
+   88% { color: #e05; }
   100% { color: var(--accent); }
 }
