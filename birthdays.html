@@ -173,19 +173,20 @@
         <div id="allBirthdays"></div>
       </div>
       <div class="info-bar reveal" id="infoBar">
-  🎂 Every year, another reason to celebrate <span style="color:var(--accent);font-weight:600;">you</span> — 
-  because in Section E, birthdays are never just another day. 
-  Wishing every <span style="color:var(--teal);font-weight:500;">soul</span> here 
-  a year full of <span style="color:var(--gold);font-weight:500;">joy, growth & unforgettable moments</span>. 
-  <span id="infoStatus"></span>
-</div>
+        🎂 Every year, another reason to celebrate <span style="color:var(--accent);font-weight:600;">you</span> —
+        because in Section E, birthdays are never just another day.
+        Wishing every <span style="color:var(--teal);font-weight:500;">soul</span> here
+        a year full of <span style="color:var(--gold);font-weight:500;">joy, growth & unforgettable moments</span>.
+        <span id="infoStatus"></span>
+      </div>
     </div>
   </section>
 </div>
 
-<!-- INFO POPUP (shown when clicking any birthday chip) -->
+<!-- CONFETTI CANVAS -->
 <canvas id="confettiCanvas" style="position:fixed;inset:0;z-index:100000;pointer-events:none;display:none"></canvas>
 
+<!-- INFO POPUP -->
 <div class="bday-popup-overlay" id="bdayPopup">
   <div class="bday-popup">
     <div class="bday-popup-top"></div>
@@ -235,69 +236,73 @@
 })();
 
 function toTitle(s){return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
-function photoUrl(roll){
-  return getDriveFolderPhotoUrl(roll);
-}
+function photoUrl(roll){ return getDriveFolderPhotoUrl(roll); }
 
 const BS_MONTHS = NepaliDate.BS_MONTHS_EN;
 
 // ── BIRTHDAY MESSAGES ──
 const MESSAGES = [
   "May this year bring you incredible <span style='color:var(--teal);font-weight:500;'>discoveries</span>, lifelong <span style='color:var(--accent);font-weight:500;'>friendships</span>, and all the <span style='color:var(--gold);font-weight:500;'>happiness</span> you deserve. Section E is lucky to have you! 🌟",
-
-"Another year <span style='color:var(--teal);font-weight:500;'>wiser</span>, another year <span style='color:var(--gold);font-weight:500;'>brighter</span>! Wishing you a day as wonderful as the <span style='color:var(--accent);font-weight:500;'>energy</span> you bring to our classroom every single day. 🎓",
-
-"Here's to <span style='color:var(--accent);font-weight:600;'>you</span> — the person who makes Section E a little more <span style='color:var(--teal);font-weight:500;'>special</span>. May your birthday mark the start of your most <span style='color:var(--gold);font-weight:500;'>amazing chapter</span> yet! 📖",
-
-"From all of <span style='color:var(--accent);font-weight:600;'>Section E</span> — we hope today is filled with everything that makes you <span style='color:var(--teal);font-weight:500;'>smile</span>. Happy Birthday, you absolute <span style='color:var(--gold);font-weight:500;'>legend</span>! 🏆",
-
-"Science tells us you're made of <span style='color:var(--teal);font-weight:500;'>stardust</span>. Today, we celebrate the <span style='color:var(--gold);font-weight:500;'>star</span> that you are. Wishing you a truly <span style='color:var(--accent);font-weight:500;'>out-of-this-world</span> birthday! ⭐",
-
-"Two years of <span style='color:var(--teal);font-weight:500;'>memories</span>, one <span style='color:var(--gold);font-weight:500;'>incredible</span> person. Happy Birthday from your <span style='color:var(--accent);font-weight:600;'>Section E family</span> — may today be as epic as you are! 🎊",
-
-"The classroom is <span style='color:var(--gold);font-weight:500;'>brighter</span> because you're in it. Today we celebrate <span style='color:var(--accent);font-weight:600;'>you</span> — have a birthday as extraordinary as your <span style='color:var(--teal);font-weight:500;'>potential</span>! 🔬",
-
-"May this year be full of good <span style='color:var(--teal);font-weight:500;'>health</span>, great <span style='color:var(--gold);font-weight:500;'>scores</span>, and even greater <span style='color:var(--accent);font-weight:500;'>adventures</span>. Happy Birthday from Section E with love! 💙",
+  "Another year <span style='color:var(--teal);font-weight:500;'>wiser</span>, another year <span style='color:var(--gold);font-weight:500;'>brighter</span>! Wishing you a day as wonderful as the <span style='color:var(--accent);font-weight:500;'>energy</span> you bring to our classroom every single day. 🎓",
+  "Here's to <span style='color:var(--accent);font-weight:600;'>you</span> — the person who makes Section E a little more <span style='color:var(--teal);font-weight:500;'>special</span>. May your birthday mark the start of your most <span style='color:var(--gold);font-weight:500;'>amazing chapter</span> yet! 📖",
+  "From all of <span style='color:var(--accent);font-weight:600;'>Section E</span> — we hope today is filled with everything that makes you <span style='color:var(--teal);font-weight:500;'>smile</span>. Happy Birthday, you absolute <span style='color:var(--gold);font-weight:500;'>legend</span>! 🏆",
+  "Science tells us you're made of <span style='color:var(--teal);font-weight:500;'>stardust</span>. Today, we celebrate the <span style='color:var(--gold);font-weight:500;'>star</span> that you are. Wishing you a truly <span style='color:var(--accent);font-weight:500;'>out-of-this-world</span> birthday! ⭐",
+  "Two years of <span style='color:var(--teal);font-weight:500;'>memories</span>, one <span style='color:var(--gold);font-weight:500;'>incredible</span> person. Happy Birthday from your <span style='color:var(--accent);font-weight:600;'>Section E family</span> — may today be as epic as you are! 🎊",
+  "The classroom is <span style='color:var(--gold);font-weight:500;'>brighter</span> because you're in it. Today we celebrate <span style='color:var(--accent);font-weight:600;'>you</span> — have a birthday as extraordinary as your <span style='color:var(--teal);font-weight:500;'>potential</span>! 🔬",
+  "May this year be full of good <span style='color:var(--teal);font-weight:500;'>health</span>, great <span style='color:var(--gold);font-weight:500;'>scores</span>, and even greater <span style='color:var(--accent);font-weight:500;'>adventures</span>. Happy Birthday from Section E with love! 💙",
 ];
-function randomMsg(){return MESSAGES[Math.floor(Math.random()*MESSAGES.length)]}
+function randomMsg(){ return MESSAGES[Math.floor(Math.random()*MESSAGES.length)]; }
 
 function loadBirthdays(){
   return JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
 }
 
+// ── FIX 1: date comparison — diff < 0 (not <= 0) so today returns 0 ──
 function daysUntil(bsMonth, bsDay){
   const today = NepaliDate.todayBS();
-  const thisYear = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
   const todayAd = new Date(); todayAd.setHours(0,0,0,0);
+  const thisYear = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
   thisYear.setHours(0,0,0,0);
-  let diff = Math.round((thisYear - todayAd)/86400000);
-  if(diff <= 0){
+  let diff = Math.round((thisYear - todayAd) / 86400000);
+  if(diff < 0){
     const nextYear = NepaliDate.bsToAd(today.y+1, bsMonth, bsDay);
     nextYear.setHours(0,0,0,0);
-    diff = Math.round((nextYear - todayAd)/86400000);
+    diff = Math.round((nextYear - todayAd) / 86400000);
   }
-  return diff;
+  return diff; // 0 = today, positive = future
 }
 
 function renderUpcoming(data){
   const el = document.getElementById('upcomingList');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">Add birthday data to see upcoming celebrations!</div>';return;}
+  if(!data.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">Add birthday data to see upcoming celebrations!</div>';
+    return;
+  }
   const upcoming = data
     .map(b=>({...b, days: daysUntil(b.bsMonth, b.bsDay)}))
-    .filter(b=> b.days > 0 && b.days <= 30)
-    .sort((a,b)=>a.days-b.days)
+    .filter(b => b.days > 0 && b.days <= 30)
+    .sort((a,b) => a.days - b.days)
     .slice(0,8);
-  if(!upcoming.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">No birthdays in the next 30 days.</div>';return;}
+  if(!upcoming.length){
+    el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">No birthdays in the next 30 days.</div>';
+    return;
+  }
   el.innerHTML = upcoming.map(b=>`
     <div class="upcoming-item" onclick="openSinglePopup(${b.roll})">
-      <div class="days-bubble"><div class="days-num">${b.days}</div><div class="days-label">day${b.days!==1?'s':''}</div></div>
-      <div><div class="ui-name">${toTitle(b.name)}</div><div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div></div>
+      <div class="days-bubble">
+        <div class="days-num">${b.days}</div>
+        <div class="days-label">day${b.days!==1?'s':''}</div>
+      </div>
+      <div>
+        <div class="ui-name">${toTitle(b.name)}</div>
+        <div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div>
+      </div>
     </div>`).join('');
 }
 
 function renderAllByMonth(data){
   const el = document.getElementById('allBirthdays');
-  if(!data.length){el.innerHTML='<div class="empty-state">No birthdays added yet.</div>';return;}
+  if(!data.length){ el.innerHTML='<div class="empty-state">No birthdays added yet.</div>'; return; }
   const today = NepaliDate.todayBS();
   const byMonth = {};
   data.forEach(b=>{
@@ -309,7 +314,7 @@ function renderAllByMonth(data){
     return `<div class="month-group">
       <div class="month-label">${BS_MONTHS[m-1]}</div>
       <div class="month-cards">${group.map(b=>{
-        const isToday = today.m==b.bsMonth && today.d==b.bsDay;
+        const isToday = today.m == b.bsMonth && today.d == b.bsDay;
         return `<div class="bday-chip ${isToday?'today-chip':''}" onclick="openSinglePopup(${b.roll})">
           <div class="chip-day">${b.bsDay}</div>
           <div class="chip-name">${toTitle(b.name)}</div>
@@ -320,19 +325,20 @@ function renderAllByMonth(data){
   }).join('');
 }
 
-// ── CONFETTI (used in info popup for today's birthdays) ──
+// ── CONFETTI ──
 function launchConfetti(){
   const canvas = document.getElementById('confettiCanvas');
   if(!canvas) return;
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  canvas.style.display='block';
+  canvas.style.display = 'block';
   const ctx = canvas.getContext('2d');
   const pieces = [];
   const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#ff6348','#1e90ff','#2ed573'];
   for(let i=0;i<140;i++){
     pieces.push({
-      x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height,
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height - canvas.height,
       w: Math.random()*12+6, h: Math.random()*7+4,
       color: colors[Math.floor(Math.random()*colors.length)],
       rot: Math.random()*Math.PI*2, rotSpeed: (Math.random()-.5)*.15,
@@ -340,15 +346,15 @@ function launchConfetti(){
       alpha: 1
     });
   }
-  let frame=0;
+  let frame = 0;
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     pieces.forEach(p=>{
       ctx.save();
-      ctx.globalAlpha=p.alpha;
+      ctx.globalAlpha = p.alpha;
       ctx.translate(p.x,p.y);
       ctx.rotate(p.rot);
-      ctx.fillStyle=p.color;
+      ctx.fillStyle = p.color;
       ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
       ctx.restore();
       p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
@@ -375,15 +381,10 @@ function buildPopupContent(b){
   document.getElementById('popupRoll').textContent = `Roll No. ${b.roll} · Section E`;
   document.getElementById('popupEmoji').textContent = isToday ? '🎉' : '🎂';
 
-  // Show "TODAY!" badge only on actual birthday
   const badgeEl = document.getElementById('popupTodayBadge');
-  if(isToday){
-    badgeEl.innerHTML = '<div class="bday-today-badge">🎂 TODAY\'s Birthday!</div>';
-  } else {
-    badgeEl.innerHTML = '';
-  }
+  badgeEl.innerHTML = isToday ? '<div class="bday-today-badge">🎂 TODAY\'s Birthday!</div>' : '';
 
-  // Message: custom wish on birthday, generic info otherwise
+  // ── FIX 2: use innerHTML so colored spans render ──
   const p = typeof STUDENT_PROFILES !== 'undefined' ? STUDENT_PROFILES[b.roll] : null;
   let msg = '';
   if(isToday){
@@ -392,7 +393,8 @@ function buildPopupContent(b){
     if(p && p.quote) msg = p.quote;
     else msg = `${title} celebrates their birthday on ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS. Looking forward to celebrating together! 🎊`;
   }
-  document.getElementById('popupMsg').textContent = msg;
+  document.getElementById('popupMsg').innerHTML = msg; // ← innerHTML not textContent
+
   document.getElementById('popupDate').textContent = `🎂 ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS`;
 
   const photoEl = document.getElementById('popupPhoto');
@@ -400,7 +402,6 @@ function buildPopupContent(b){
     onerror="this.parentElement.innerHTML='<div class=bday-popup-photo-placeholder>${initials}</div>'"
     style="width:100%;height:100%;object-fit:cover;object-position:top center"/>`;
 
-  // Close button text based on birthday status
   document.getElementById('popupClose').textContent = isToday ? '🎉 Wish them a Happy Birthday!' : '✕ Close';
 }
 
@@ -409,38 +410,57 @@ function openSinglePopup(roll){
   const b = data.find(x=>x.roll===roll);
   if(!b) return;
   currentPopupList = [b]; popupIdx = 0;
-  document.getElementById('bdayNav').style.display='none';
+  document.getElementById('bdayNav').style.display = 'none';
   buildPopupContent(b);
-
-  // If it IS their birthday today, also launch confetti in the popup
   const today = NepaliDate.todayBS();
   const isToday = today.m === b.bsMonth && today.d === b.bsDay;
-
   document.getElementById('bdayPopup').classList.add('open');
   if(isToday) setTimeout(launchConfetti, 300);
 }
 
 document.getElementById('prevBday').onclick = ()=>{
-  popupIdx = (popupIdx-1+currentPopupList.length)%currentPopupList.length;
+  popupIdx = (popupIdx-1+currentPopupList.length) % currentPopupList.length;
   buildPopupContent(currentPopupList[popupIdx]);
-  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
+  document.getElementById('bdayNavCount').textContent = `${popupIdx+1} / ${currentPopupList.length}`;
 };
 document.getElementById('nextBday').onclick = ()=>{
-  popupIdx = (popupIdx+1)%currentPopupList.length;
+  popupIdx = (popupIdx+1) % currentPopupList.length;
   buildPopupContent(currentPopupList[popupIdx]);
-  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
+  document.getElementById('bdayNavCount').textContent = `${popupIdx+1} / ${currentPopupList.length}`;
 };
 document.getElementById('popupClose').onclick = ()=>{
   document.getElementById('bdayPopup').classList.remove('open');
 };
-document.getElementById('bdayPopup').addEventListener('click',e=>{
-  if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+document.getElementById('bdayPopup').addEventListener('click', e=>{
+  if(e.target === e.currentTarget) e.currentTarget.classList.remove('open');
 });
 
 // ── INIT ──
 const data = loadBirthdays();
 renderUpcoming(data);
 renderAllByMonth(data);
+
+// ── FIX 3: AUTO-POPUP for today's birthdays on page load ──
+(function autoPopupToday(){
+  const today = NepaliDate.todayBS();
+  const todayBirthdays = data.filter(b => b.bsMonth === today.m && b.bsDay === today.d);
+  if(!todayBirthdays.length) return;
+
+  setTimeout(()=>{
+    currentPopupList = todayBirthdays;
+    popupIdx = 0;
+    const nav = document.getElementById('bdayNav');
+    if(todayBirthdays.length > 1){
+      nav.style.display = 'flex';
+      document.getElementById('bdayNavCount').textContent = `1 / ${todayBirthdays.length}`;
+    } else {
+      nav.style.display = 'none';
+    }
+    buildPopupContent(todayBirthdays[0]);
+    document.getElementById('bdayPopup').classList.add('open');
+    setTimeout(launchConfetti, 300);
+  }, 800);
+})();
 </script>
 </body>
 </html>
