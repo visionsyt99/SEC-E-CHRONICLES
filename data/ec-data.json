@@ -1,5 +1,16 @@
 {
-  "notices": [],
+  "notices": [
+    {
+      "id": 1,
+      "title": "test final or ill leave",
+      "tag": "General",
+      "desc": "",
+      "icon": "📢",
+      "date": "",
+      "color": 0,
+      "pinned": 0
+    }
+  ],
   "resources": [],
   "events": [],
   "achievements": [],
@@ -10,8 +21,6 @@
   "countdown": {},
   "driveScriptUrl": "",
   "driveFolder": "",
-  "memberPhotos": {
-    "501": "1fqhu7FMXxTIAr_aK-ZBTq_kDc7dX7tZa"
-  },
+  "memberPhotos": {},
   "gallery": []
 }
