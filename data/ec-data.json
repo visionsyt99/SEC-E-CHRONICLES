@@ -1,5 +1,16 @@
 {
-  "notices": [],
+  "notices": [
+    {
+      "id": 1,
+      "title": "new testing",
+      "tag": "General",
+      "desc": "dbcsgajs",
+      "icon": "📢",
+      "date": "",
+      "color": 1,
+      "pinned": 0
+    }
+  ],
   "resources": [],
   "events": [],
   "achievements": [],
