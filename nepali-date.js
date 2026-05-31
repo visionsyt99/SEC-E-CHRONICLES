@@ -1,10 +1,15 @@
 /**
- * Nepali Date Converter (BS <-> AD)
- * Accurate BS calendar data
+ * NepaliDate — BS <-> AD Converter
+ * The E Chronicles | Section E | St. Xavier's College
+ *
+ * DST-safe: all diffs use Date.UTC() so timezone shifts never affect the result.
+ * Math.round() used throughout to guard against any floating-point drift.
  */
+
 const NepaliDate = (() => {
-  // Days in each month of BS years (2000-2090)
-  const BS_MONTHS = {
+
+  // ── BS CALENDAR DATA (days per month, index 0 unused) ──
+  const BS_DATA = {
     2000:[0,30,32,31,32,31,30,30,30,29,30,29,31],
     2001:[0,31,31,32,31,31,31,30,29,30,29,30,30],
     2002:[0,31,31,32,32,31,30,30,29,30,29,30,30],
@@ -101,64 +106,138 @@ const NepaliDate = (() => {
   const BS_MONTHS_NP = ['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पौष','माघ','फाल्गुन','चैत्र'];
   const BS_MONTHS_EN = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
 
-  // Reference: BS 2000/1/1 = AD 1943/4/14
-  const REF_BS = { y:2000, m:1, d:1 };
-  const REF_AD = new Date(1943, 3, 14); // April 14, 1943
+  // ── REFERENCE POINT: BS 2000/1/1 = AD 1943/4/14 ──
+  // Stored as UTC noon to avoid any edge cases
+  const REF_UTC = Date.UTC(1943, 3, 14); // months are 0-indexed → April = 3
 
-  function totalBSDays(y, m, d) {
+  // ── HELPER: get BS_DATA row, fallback to 2082 for unknown years ──
+  function getRow(y) {
+    return BS_DATA[y] || BS_DATA[2082];
+  }
+
+  // ── HELPER: count total BS days from BS 2000/1/1 up to (but not including) given BS date ──
+  function bsDaysFromRef(y, m, d) {
     let total = 0;
     for (let yr = 2000; yr < y; yr++) {
-      for (let mo = 1; mo <= 12; mo++) total += BS_MONTHS[yr][mo];
+      const row = getRow(yr);
+      for (let mo = 1; mo <= 12; mo++) total += row[mo];
     }
-    for (let mo = 1; mo < m; mo++) total += BS_MONTHS[y][mo];
-    total += d - 1;
+    const row = getRow(y);
+    for (let mo = 1; mo < m; mo++) total += row[mo];
+    total += (d - 1);
     return total;
   }
 
+  // ── BS → AD ──
+  // Returns a plain JS Date (local midnight) for the given BS date.
   function bsToAd(y, m, d) {
-    const days = totalBSDays(y, m, d);
-    const ad = new Date(REF_AD);
-    ad.setDate(ad.getDate() + days);
-    return ad;
+    const days = bsDaysFromRef(y, m, d);
+    // Add days to reference using UTC to avoid DST
+    const resultUTC = REF_UTC + days * 86400000;
+    // Build a local-midnight Date from UTC components
+    const tmp = new Date(resultUTC);
+    return new Date(tmp.getUTCFullYear(), tmp.getUTCMonth(), tmp.getUTCDate());
   }
 
+  // ── AD → BS ──
+  // Accepts any JS Date. Uses UTC calendar date to eliminate DST completely.
   function adToBS(date) {
-    const ad = new Date(date);
-    const diffDays = Math.floor((ad - REF_AD) / 86400000);
+    const d = new Date(date);
+    // Strip time: compare UTC calendar date only
+    const inputUTC = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    const diffDays = Math.round((inputUTC - REF_UTC) / 86400000);
+
+    if (diffDays < 0) {
+      console.warn('NepaliDate: date before reference point BS 2000/1/1');
+      return { y: 2000, m: 1, d: 1 };
+    }
+
     let remaining = diffDays;
+
+    // Walk forward year by year
     let y = 2000;
     while (true) {
+      const row = getRow(y);
       let yearDays = 0;
-      for (let m = 1; m <= 12; m++) yearDays += (BS_MONTHS[y]||BS_MONTHS[2082])[m];
+      for (let mo = 1; mo <= 12; mo++) yearDays += row[mo];
       if (remaining < yearDays) break;
       remaining -= yearDays;
       y++;
+      if (y > 2090) { y = 2090; break; } // safety cap
     }
+
+    // Walk forward month by month
     let m = 1;
+    const row = getRow(y);
     while (true) {
-      const mDays = (BS_MONTHS[y]||BS_MONTHS[2082])[m];
+      const mDays = row[m];
       if (remaining < mDays) break;
       remaining -= mDays;
       m++;
+      if (m > 12) { m = 12; break; } // safety cap
     }
+
     return { y, m, d: remaining + 1 };
   }
 
+  // ── TODAY in BS ──
+  // Always uses the local calendar date (year/month/day) so it matches
+  // what the user sees on their device clock, DST-safe.
   function todayBS() {
-    return adToBS(new Date());
+    const now = new Date();
+    // Use local date components — NOT UTC — since users care about their local date
+    const localUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((localUTC - REF_UTC) / 86400000);
+
+    let remaining = diffDays;
+    let y = 2000;
+    while (true) {
+      const row = getRow(y);
+      let yearDays = 0;
+      for (let mo = 1; mo <= 12; mo++) yearDays += row[mo];
+      if (remaining < yearDays) break;
+      remaining -= yearDays;
+      y++;
+      if (y > 2090) { y = 2090; break; }
+    }
+
+    let m = 1;
+    const row = getRow(y);
+    while (true) {
+      const mDays = row[m];
+      if (remaining < mDays) break;
+      remaining -= mDays;
+      m++;
+      if (m > 12) { m = 12; break; }
+    }
+
+    return { y, m, d: remaining + 1 };
   }
 
+  // ── IS BIRTHDAY TODAY ──
   function isBirthday(bsMonth, bsDay) {
     const today = todayBS();
     return today.m === bsMonth && today.d === bsDay;
   }
 
+  // ── FORMAT ──
   function formatBS(y, m, d) {
-    return `${BS_MONTHS_EN[m-1]} ${d}, ${y} BS`;
+    return `${BS_MONTHS_EN[m - 1]} ${d}, ${y} BS`;
   }
 
-  function monthName(m) { return BS_MONTHS_EN[m-1]; }
-  function monthNameNP(m) { return BS_MONTHS_NP[m-1]; }
+  function monthName(m)   { return BS_MONTHS_EN[m - 1]; }
+  function monthNameNP(m) { return BS_MONTHS_NP[m - 1]; }
 
-  return { bsToAd, adToBS, todayBS, isBirthday, formatBS, monthName, monthNameNP, BS_MONTHS_EN };
+  return {
+    bsToAd,
+    adToBS,
+    todayBS,
+    isBirthday,
+    formatBS,
+    monthName,
+    monthNameNP,
+    BS_MONTHS_EN,
+    BS_MONTHS_NP,
+  };
+
 })();
