@@ -80,6 +80,8 @@
   <section class="gallery-section">
     <div class="gallery-inner">
 
+      
+
       <div class="gallery-filters reveal" id="filterBtns">
         <button class="filter-btn active" data-cat="all">All Photos</button>
         <button class="filter-btn" data-cat="class">Classroom</button>
@@ -114,7 +116,7 @@ injectNav();
 // ════════════════════════════════════════════
 // GALLERY PHOTOS — Add Drive file IDs here
 // Each: { id: "DRIVE_FILE_ID", cat: "class|events|trips|fun", caption: "Caption" }
-// Photos also auto-load from data.gallery (fetched from GitHub JSON)
+// Photos also auto-load from ec_gallery localStorage (set via admin panel)
 // ════════════════════════════════════════════
 const GALLERY_PHOTOS_HARDCODED = [
   // { id: "GOOGLE_DRIVE_FILE_ID", cat: "events", caption: "Sports Day 2025" },
@@ -122,6 +124,13 @@ const GALLERY_PHOTOS_HARDCODED = [
 
 function driveUrl(id, size) {
   return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
+}
+
+// Also try to load from memory folder via Apps Script
+async function loadMemoryFolderPhotos() {
+  // Load photos stored by admin in ec_gallery
+  const adminPhotos = JSON.parse(localStorage.getItem('ec_gallery') || '[]');
+  return adminPhotos;
 }
 
 let allPhotos = [];
@@ -186,9 +195,14 @@ document.getElementById('lightbox').addEventListener('click', function(e) {
 
 // ── INIT ──
 (async function init() {
-  const siteData = await loadSiteData();
-  const adminPhotos = siteData.gallery || [];
+  var adminPhotos = await loadMemoryFolderPhotos();
   allPhotos = GALLERY_PHOTOS_HARDCODED.concat(adminPhotos);
+
+  // Update note
+  if(allPhotos.length) {
+    document.getElementById('driveNoteStatus').textContent = ' ' + allPhotos.length + ' photo' + (allPhotos.length!==1?'s':'') + ' loaded.';
+  }
+
   renderGallery();
 })();
 </script>
