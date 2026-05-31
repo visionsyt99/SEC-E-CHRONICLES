@@ -436,3 +436,9 @@ footer {
   42%       { transform: scale(1.25); }
   56%       { transform: scale(1); }
 }
+@keyframes colorShift {
+  0%   { color: var(--accent); }
+  33%  { color: var(--teal); }
+  66%  { color: var(--gold); }
+  100% { color: var(--accent); }
+}
