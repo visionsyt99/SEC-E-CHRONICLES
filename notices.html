@@ -90,9 +90,15 @@ injectNav();
 
 const COLOR_CLASSES = ['nc-blue','nc-green','nc-gold','nc-red','nc-purple','nc-teal'];
 
+// _siteData holds admin data loaded from GitHub via loadSiteData()
+let _siteData = {};
+
 function renderNotices() {
   const grid = document.getElementById('noticeGrid');
-  const notices = JSON.parse(localStorage.getItem('ec_notices') || '[]');
+  // Prefer admin data from GitHub; fall back to localStorage
+  const notices = (_siteData.notices && _siteData.notices.length)
+    ? _siteData.notices
+    : JSON.parse(localStorage.getItem('ec_notices') || '[]');
   if (!notices.length) {
     grid.innerHTML = '<div class="empty-state">No notices yet. Check back soon!</div>';
     return;
@@ -114,7 +120,12 @@ function renderNotices() {
     </div>`;
   }).join('');
 }
-renderNotices();
+
+// Wait for GitHub admin data before rendering
+(async function init() {
+  _siteData = await loadSiteData();
+  renderNotices();
+})();
 </script>
 </body>
 </html>
