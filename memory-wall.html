@@ -144,20 +144,23 @@ function driveThumb(id, size) {
   return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
 }
 
-// memoryPhotoUrl: uses the Apps Script to load from MEMORY_FOLDER_ID by filename
-// For memories stored with a driveId (file ID), we use the direct thumbnail
-// For memories stored with roll numbers in the memory folder, we use the script
 function memoryPhotoUrl(driveId) {
   return driveThumb(driveId, 'w800');
 }
 
 const ACCENT_CLASSES = ['mc-blue','mc-gold','mc-green','mc-purple'];
 
+// _siteData holds admin data loaded from GitHub via loadSiteData()
+let _siteData = {};
+
 function renderMemories() {
   const grid = document.getElementById('memoryGrid');
   const skeleton = document.getElementById('mwSkeleton');
   const empty = document.getElementById('emptyState');
-  const memories = JSON.parse(localStorage.getItem('ec_memories') || '[]');
+  // Prefer admin data from GitHub; fall back to localStorage
+  const memories = (_siteData.memories && _siteData.memories.length)
+    ? _siteData.memories
+    : JSON.parse(localStorage.getItem('ec_memories') || '[]');
 
   skeleton.style.display = 'none';
 
@@ -176,7 +179,6 @@ function renderMemories() {
   grid.innerHTML = memories.map(function(m, i) {
     var delay = (i * 0.06) + 's';
     if (m.type === 'photo') {
-      // Use Apps Script for memory folder photos (type=memory), or direct thumbnail for explicit driveIds
       var imgSrc = m.useScript
         ? DRIVE_SCRIPT_URL + '?roll=' + m.roll + '&type=memory'
         : memoryPhotoUrl(m.driveId);
@@ -213,7 +215,11 @@ document.getElementById('lightbox').addEventListener('click', function(e) {
   if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
 });
 
-renderMemories();
+// Wait for GitHub admin data before rendering
+(async function init() {
+  _siteData = await loadSiteData();
+  renderMemories();
+})();
 </script>
 </body>
 </html>
