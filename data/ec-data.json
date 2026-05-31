@@ -1,16 +1,5 @@
 {
-  "notices": [
-    {
-      "id": 1,
-      "title": "RAT TEST",
-      "tag": "General",
-      "desc": "",
-      "icon": "ð¢",
-      "date": "",
-      "color": 0,
-      "pinned": 0
-    }
-  ],
+  "notices": [],
   "resources": [],
   "events": [],
   "achievements": [],
@@ -22,13 +11,7 @@
   "driveScriptUrl": "",
   "driveFolder": "",
   "memberPhotos": {
-    "503": "1hL5rHvvijCTbA4ZQVf3JVwx9HU82vdIE"
+    "501": "1fqhu7FMXxTIAr_aK-ZBTq_kDc7dX7tZa"
   },
-  "gallery": [
-    {
-      "id": "1fqhu7FMXxTIAr_aK-ZBTq_kDc7dX7tZa",
-      "cat": "class",
-      "caption": "TESTIMONIAL"
-    }
-  ]
+  "gallery": []
 }
