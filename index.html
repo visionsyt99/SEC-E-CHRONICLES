@@ -562,73 +562,176 @@ document.getElementById('hbOverlay').addEventListener('click', function(e){
 
   function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
   resize();
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', ()=>{ resize(); if(isDark()) buildETargets(); });
 
-  const N = 32;
-  const nodes = Array.from({length:N}, ()=>({
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+
+  // ── LIGHT MODE nodes (original mesh) ──
+  const NL = 32;
+  const lightNodes = Array.from({length:NL}, ()=>({
     x: Math.random()*window.innerWidth,
     y: Math.random()*window.innerHeight,
-    vx: (Math.random()-.5)*0.4,
-    vy: (Math.random()-.5)*0.4,
+    vx: (Math.random()-.5)*.4,
+    vy: (Math.random()-.5)*.4,
     r: Math.random()*2.8+1.2,
     hue: Math.random()*60+210,
+  }));
+
+  // ── DARK MODE nodes (E mesh + random) ──
+  const ND = 52;
+  const darkNodes = Array.from({length:ND}, (_,i)=>({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx: (Math.random()-.5)*.32,
+    vy: (Math.random()-.5)*.32,
+    r: Math.random()*2.4+1.1,
+    hue: Math.random()*60+210,
+    tx: 0, ty: 0,
+    eBias: i < Math.floor(ND*0.62),
+  }));
+
+  function getEPoints(w,h){
+    const pts=[];
+    const s=Math.min(w,h)*.48, sh=Math.min(w,h)*.56;
+    const ox=w*.5-s*.18, oy=h*.5-sh*.5;
+    const d=2.2;
+    for(let t=0;t<=1;t+=d/sh) pts.push([ox+(Math.random()-.5)*3, oy+t*sh+(Math.random()-.5)*3]);
+    for(let t=0;t<=1;t+=d/(s*.64)) pts.push([ox+t*s*.64+(Math.random()-.5)*3, oy+(Math.random()-.5)*3]);
+    for(let t=0;t<=1;t+=d/(s*.5)) pts.push([ox+t*s*.5+(Math.random()-.5)*3, oy+sh*.5+(Math.random()-.5)*3]);
+    for(let t=0;t<=1;t+=d/(s*.64)) pts.push([ox+t*s*.64+(Math.random()-.5)*3, oy+sh+(Math.random()-.5)*3]);
+    pts.sort(()=>Math.random()-.5);
+    while(pts.length<ND) pts.push([Math.random()*w, Math.random()*h]);
+    return pts.slice(0,ND);
+  }
+
+  function buildETargets(){
+    const pts = getEPoints(canvas.width, canvas.height);
+    darkNodes.forEach((n,i)=>{
+      if(n.eBias){ n.tx=pts[i][0]; n.ty=pts[i][1]; }
+      else { n.tx=Math.random()*canvas.width; n.ty=Math.random()*canvas.height; }
+    });
+  }
+  buildETargets();
+
+  // random ambient extras for dark — fills canvas around E
+  const AMBIENT = Array.from({length:120}, ()=>({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx: (Math.random()-.5)*.15,
+    vy: (Math.random()-.5)*.15,
+    r: .3+Math.random()*.7,
+    hue: Math.random()*60+210,
+    phase: Math.random()*Math.PI*2,
+    spd: .004+Math.random()*.007,
+    bright: .05+Math.random()*.13,
   }));
 
   let mouseX=window.innerWidth/2, mouseY=window.innerHeight/2;
   window.addEventListener('mousemove',e=>{ mouseX=e.clientX; mouseY=e.clientY; });
 
-  function isDark(){ return document.documentElement.classList.contains('dark'); }
-
   function draw(){
-    if(isDark()){ canvas.style.opacity='0'; requestAnimationFrame(draw); return; }
-    canvas.style.opacity='1';
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const dark = isDark();
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
 
-    nodes.forEach(n=>{
-      // subtle mouse repulsion
-      const dx=n.x-mouseX, dy=n.y-mouseY;
-      const md=Math.sqrt(dx*dx+dy*dy);
-      if(md<120){ n.vx+=dx/md*0.06; n.vy+=dy/md*0.06; }
-      // speed cap
-      const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
-      if(spd>0.9){ n.vx=n.vx/spd*0.9; n.vy=n.vy/spd*0.9; }
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>canvas.width) n.vx*=-1;
-      if(n.y<0||n.y>canvas.height) n.vy*=-1;
-      n.hue=(n.hue+0.04)%360;
-    });
-
-    // Connections with gradient glow
-    const maxD = Math.min(canvas.width, canvas.height)*0.30;
-    for(let i=0;i<N;i++){
-      for(let j=i+1;j<N;j++){
-        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        const dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<maxD){
-          const t=1-dist/maxD;
-          const grad=ctx.createLinearGradient(nodes[i].x,nodes[i].y,nodes[j].x,nodes[j].y);
-          grad.addColorStop(0,`hsla(${nodes[i].hue},72%,58%,${t*0.22})`);
-          grad.addColorStop(1,`hsla(${nodes[j].hue},72%,58%,${t*0.22})`);
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.strokeStyle=grad;
-          ctx.lineWidth=t*1.6;
-          ctx.stroke();
+    if(!dark){
+      // ── LIGHT MODE — original mesh ──
+      lightNodes.forEach(n=>{
+        const dx=n.x-mouseX, dy=n.y-mouseY;
+        const md=Math.sqrt(dx*dx+dy*dy);
+        if(md<120){ n.vx+=dx/md*.06; n.vy+=dy/md*.06; }
+        const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+        if(spd>0.9){ n.vx=n.vx/spd*.9; n.vy=n.vy/spd*.9; }
+        n.x+=n.vx; n.y+=n.vy;
+        if(n.x<0||n.x>W) n.vx*=-1;
+        if(n.y<0||n.y>H) n.vy*=-1;
+        n.hue=(n.hue+0.04)%360;
+      });
+      const maxD=Math.min(W,H)*.30;
+      for(let i=0;i<NL;i++){
+        for(let j=i+1;j<NL;j++){
+          const dx=lightNodes[i].x-lightNodes[j].x, dy=lightNodes[i].y-lightNodes[j].y;
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          if(dist<maxD){
+            const t=1-dist/maxD;
+            const grad=ctx.createLinearGradient(lightNodes[i].x,lightNodes[i].y,lightNodes[j].x,lightNodes[j].y);
+            grad.addColorStop(0,`hsla(${lightNodes[i].hue},72%,58%,${t*0.22})`);
+            grad.addColorStop(1,`hsla(${lightNodes[j].hue},72%,58%,${t*0.22})`);
+            ctx.beginPath(); ctx.moveTo(lightNodes[i].x,lightNodes[i].y);
+            ctx.lineTo(lightNodes[j].x,lightNodes[j].y);
+            ctx.strokeStyle=grad; ctx.lineWidth=t*1.6; ctx.stroke();
+          }
         }
       }
-    }
+      lightNodes.forEach(n=>{
+        const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*9);
+        g.addColorStop(0,`hsla(${n.hue},80%,60%,0.18)`);
+        g.addColorStop(1,'transparent');
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*9,0,Math.PI*2);
+        ctx.fillStyle=g; ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fillStyle=`hsla(${n.hue},78%,58%,0.7)`; ctx.fill();
+      });
 
-    // Glowing node dots
-    nodes.forEach(n=>{
-      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*9);
-      g.addColorStop(0,`hsla(${n.hue},80%,60%,0.18)`);
-      g.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*9,0,Math.PI*2);
-      ctx.fillStyle=g; ctx.fill();
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle=`hsla(${n.hue},78%,58%,0.7)`; ctx.fill();
-    });
+    } else {
+      // ── DARK MODE — E mesh + ambient ──
+
+      // ambient random particles
+      AMBIENT.forEach(a=>{
+        a.phase+=a.spd;
+        const pulse=.5+.5*Math.sin(a.phase);
+        a.x+=a.vx; a.y+=a.vy;
+        if(a.x<0)a.x=W; if(a.x>W)a.x=0;
+        if(a.y<0)a.y=H; if(a.y>H)a.y=0;
+        const g=ctx.createRadialGradient(a.x,a.y,0,a.x,a.y,a.r*5);
+        g.addColorStop(0,`hsla(${a.hue},70%,65%,${a.bright*(pulse*.5+.5)})`);
+        g.addColorStop(1,'transparent');
+        ctx.beginPath(); ctx.arc(a.x,a.y,a.r*5,0,Math.PI*2);
+        ctx.fillStyle=g; ctx.fill();
+        ctx.beginPath(); ctx.arc(a.x,a.y,a.r*.5,0,Math.PI*2);
+        ctx.fillStyle=`hsla(${a.hue},75%,70%,${a.bright*(.4+pulse*.5)})`; ctx.fill();
+      });
+
+      // E-biased mesh nodes
+      darkNodes.forEach(n=>{
+        n.vx+=(n.tx-n.x)*.0032;
+        n.vy+=(n.ty-n.y)*.0032;
+        const dx=n.x-mouseX, dy=n.y-mouseY;
+        const md=Math.sqrt(dx*dx+dy*dy);
+        if(md<130){ n.vx+=dx/md*.055; n.vy+=dy/md*.055; }
+        const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+        if(spd>.82){ n.vx=n.vx/spd*.82; n.vy=n.vy/spd*.82; }
+        n.x+=n.vx; n.y+=n.vy;
+        if(n.x<20)n.vx+=.04; if(n.x>W-20)n.vx-=.04;
+        if(n.y<20)n.vy+=.04; if(n.y>H-20)n.vy-=.04;
+        n.hue=(n.hue+0.04)%360;
+      });
+
+      const maxD=Math.min(W,H)*.3;
+      for(let i=0;i<ND;i++){
+        for(let j=i+1;j<ND;j++){
+          const dx=darkNodes[i].x-darkNodes[j].x, dy=darkNodes[i].y-darkNodes[j].y;
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          if(dist<maxD){
+            const t=1-dist/maxD;
+            const grad=ctx.createLinearGradient(darkNodes[i].x,darkNodes[i].y,darkNodes[j].x,darkNodes[j].y);
+            grad.addColorStop(0,`hsla(${darkNodes[i].hue},72%,65%,${t*.18})`);
+            grad.addColorStop(1,`hsla(${darkNodes[j].hue},72%,65%,${t*.18})`);
+            ctx.beginPath(); ctx.moveTo(darkNodes[i].x,darkNodes[i].y);
+            ctx.lineTo(darkNodes[j].x,darkNodes[j].y);
+            ctx.strokeStyle=grad; ctx.lineWidth=t*1.6; ctx.stroke();
+          }
+        }
+      }
+      darkNodes.forEach(n=>{
+        const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*9);
+        g.addColorStop(0,`hsla(${n.hue},80%,70%,0.13)`);
+        g.addColorStop(1,'transparent');
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*9,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+        ctx.fillStyle=`hsla(${n.hue},78%,68%,0.78)`; ctx.fill();
+      });
+    }
 
     requestAnimationFrame(draw);
   }
