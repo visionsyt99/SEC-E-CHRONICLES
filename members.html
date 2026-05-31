@@ -200,12 +200,8 @@ injectNav();
 function toTitle(str){return str.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
 function getInitials(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('')}
 
-// Use the shared helper from shared.js which handles:
-// 1. Explicit photo IDs in STUDENT_PROFILES (converts drive.google.com/open?id= links too)
-// 2. Apps Script proxy for all others (serves roll.jpg from MEMBERS_FOLDER_ID)
-function getBestPhoto(roll){
-  return getDriveFolderPhotoUrl(roll);
-}
+// Fix 1: Removed local getBestPhoto() — now calls getDriveFolderPhotoUrl() directly
+// with _memberPhotos so admin-uploaded photo IDs are respected.
 
 function renderGrid(filter=''){
   const grid=document.getElementById('membersGrid');
@@ -222,7 +218,8 @@ function renderGrid(filter=''){
     const hasProfile=!!p;
     const wantsMgmt=p&&p.wantsManagement;
     const quote=p&&p.quote?p.quote:'';
-    const photoSrc=getBestPhoto(s.roll);
+    // Fix 3: Pass _memberPhotos so admin photo IDs are used when available
+    const photoSrc=getDriveFolderPhotoUrl(s.roll, _memberPhotos);
     return `
     <div class="member-card ${crClass}" onclick="openModal(${s.roll})">
       <div class="mc-photo">
@@ -255,7 +252,8 @@ function openModal(roll){
   const title=toTitle(s.name);
   const initials=getInitials(s.name);
   const p=STUDENT_PROFILES[s.roll];
-  const photoSrc=getBestPhoto(roll);
+  // Fix 4: Pass _memberPhotos so admin photo IDs are used in the modal too
+  const photoSrc=getDriveFolderPhotoUrl(roll, _memberPhotos);
   const crPhotoClass=s.cr?'cr-modal-photo':'';
 
   let dobStr='—';
@@ -302,7 +300,15 @@ function openModal(roll){
 document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modalOverlay').classList.remove('open'));
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open')});
 document.getElementById('searchInput').addEventListener('input',e=>renderGrid(e.target.value));
-renderGrid();
+
+// Fix 2: Wait for loadSiteData() before rendering so admin photos are available
+let _memberPhotos = {};
+
+(async function init(){
+  const siteData = await loadSiteData();
+  _memberPhotos = siteData.memberPhotos || {};
+  renderGrid();
+})();
 </script>
 </body>
 </html>
