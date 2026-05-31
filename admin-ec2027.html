@@ -17,7 +17,7 @@
     .login-box{
       background:var(--surface);border:1px solid var(--border);
       border-radius:20px;padding:2.5rem 2rem;
-      width:100%;max-width:380px;text-align:center;
+      width:100%;max-width:400px;text-align:center;
       box-shadow:var(--shadow-lg);
     }
     .login-logo{
@@ -27,15 +27,17 @@
       color:#fff;margin:0 auto 1.2rem;
     }
     .login-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:.3rem}
-    .login-sub{font-size:.82rem;color:var(--text3);margin-bottom:2rem}
+    .login-sub{font-size:.82rem;color:var(--text3);margin-bottom:1.5rem}
     .login-input{
       width:100%;padding:.75rem 1rem;
       background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;
       font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);
       outline:none;text-align:center;letter-spacing:.15em;
-      transition:border-color .2s;margin-bottom:1rem;
+      transition:border-color .2s;margin-bottom:.8rem;
+      box-sizing:border-box;
     }
     .login-input:focus{border-color:var(--accent)}
+    .login-input.token-input{letter-spacing:.04em;font-size:.82rem;font-family:'DM Mono',monospace}
     .login-btn{
       width:100%;padding:.8rem;background:var(--accent);color:#fff;border:none;
       border-radius:10px;font-size:.88rem;font-weight:700;
@@ -44,6 +46,8 @@
     .login-btn:hover{background:var(--accent2);transform:translateY(-1px)}
     .login-error{color:#dc2626;font-size:.8rem;margin-top:.6rem;display:none}
     .login-shake{animation:shake .4s ease}
+    .login-hint{font-size:.72rem;color:var(--text3);margin-top:1rem;line-height:1.5;text-align:left;background:var(--bg2);padding:.65rem .8rem;border-radius:8px;border:1px solid var(--border)}
+    .login-hint code{font-family:'DM Mono',monospace;background:var(--surface);padding:.05rem .25rem;border-radius:3px;font-size:.7rem}
     @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 
     /* ── ADMIN LAYOUT ── */
@@ -81,6 +85,19 @@
     }
     .logout-btn:hover{border-color:#dc2626;color:#dc2626}
 
+    /* sync status bar */
+    .sync-bar{
+      display:flex;align-items:center;gap:.5rem;
+      font-size:.7rem;color:var(--text3);padding:.4rem .5rem;
+      border:1px solid var(--border);border-radius:7px;margin-bottom:.8rem;
+      background:var(--bg2);
+    }
+    .sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .sync-dot.ok{background:#10b981}
+    .sync-dot.err{background:#ef4444}
+    .sync-dot.pending{background:var(--gold);animation:blink .8s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
     /* main content */
     .admin-main{flex:1;padding:2rem;overflow-y:auto;max-height:100vh}
     .admin-panel{display:none}
@@ -106,7 +123,7 @@
       background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;
       padding:.6rem .85rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
       color:var(--text);outline:none;transition:border-color .2s;
-      width:100%;
+      width:100%;box-sizing:border-box;
     }
     .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
     .field textarea{resize:vertical;min-height:80px}
@@ -117,6 +134,7 @@
     }
     .admin-btn-primary{background:var(--accent);color:#fff}
     .admin-btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+    .admin-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
     .admin-btn-danger{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
     .admin-btn-danger:hover{background:rgba(239,68,68,.15)}
 
@@ -129,7 +147,7 @@
     }
     .item-row:hover{border-color:var(--border-hover)}
     .item-row-info{flex:1;min-width:0}
-    .item-row-title{font-weight:600;font-size:.88rem;truncate;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .item-row-title{font-weight:600;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .item-row-meta{font-size:.75rem;color:var(--text3);margin-top:.15rem}
     .item-row-actions{display:flex;gap:.4rem;flex-shrink:0}
     .icon-btn{
@@ -161,6 +179,7 @@
       pointer-events:none;
     }
     .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{background:#dc2626}
 
     /* ── SCHEDULE EDITOR ── */
     .schedule-day-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem}
@@ -179,6 +198,15 @@
       transition:all .2s;margin-top:.5rem;
     }
     .period-add-btn:hover{background:var(--accent);color:#fff;border-style:solid}
+
+    /* github info banner */
+    .gh-banner{
+      display:flex;align-items:center;gap:.7rem;
+      background:rgba(26,79,160,.07);border:1px solid rgba(26,79,160,.2);
+      border-radius:10px;padding:.75rem 1rem;margin-bottom:1.5rem;
+      font-size:.78rem;color:var(--text2);line-height:1.5;
+    }
+    .gh-banner-icon{font-size:1.2rem;flex-shrink:0}
 
     @media(max-width:768px){
       .admin-sidebar{width:200px}
@@ -204,8 +232,13 @@
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">The E Chronicles · Section E</div>
     <input type="password" class="login-input" id="pwInput" placeholder="Enter password" />
+    <input type="text" class="login-input token-input" id="tokenInput" placeholder="GitHub Token (ghp_…)" autocomplete="off"/>
     <button class="login-btn" id="loginBtn">Unlock Panel →</button>
-    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+    <div class="login-error" id="loginError">Incorrect password or invalid token.</div>
+    <div class="login-hint">
+      🔑 Your GitHub token is used to sync data across all devices via the repo.<br/>
+      It is stored in <code>sessionStorage</code> and cleared when you close the tab.
+    </div>
   </div>
 </div>
 
@@ -215,6 +248,13 @@
   <!-- SIDEBAR -->
   <aside class="admin-sidebar">
     <div class="admin-brand">Admin<span>The E Chronicles</span></div>
+
+    <!-- Sync status -->
+    <div class="sync-bar" id="syncBar">
+      <div class="sync-dot pending" id="syncDot"></div>
+      <span id="syncMsg">Connecting…</span>
+    </div>
+
     <ul class="sidebar-nav">
       <li class="snav-item active" data-panel="notices"><span class="snav-icon">📢</span>Notices</li>
       <li class="snav-item" data-panel="resources"><span class="snav-icon">📚</span>Resources</li>
@@ -233,6 +273,12 @@
 
   <!-- MAIN -->
   <main class="admin-main">
+
+    <!-- GitHub banner (shown once) -->
+    <div class="gh-banner" id="ghBanner">
+      <span class="gh-banner-icon">☁️</span>
+      <span>Changes are synced to <strong>visionsyt99/SEC-E-CHRONICLES</strong> via GitHub. Every save pushes a JSON file to the repo — visible on all devices instantly.</span>
+    </div>
 
     <!-- ══════ NOTICES ══════ -->
     <div class="admin-panel active" id="panel-notices">
@@ -287,7 +333,7 @@
     <!-- ══════ EVENTS ══════ -->
     <div class="admin-panel" id="panel-events">
       <div class="admin-panel-title">🎉 Events</div>
-      <div class="admin-panel-sub">Add upcoming and past events. Mark special ones for countdown.</div>
+      <div class="admin-panel-sub">Add upcoming and past events.</div>
       <div class="admin-card">
         <div class="admin-card-title">➕ Add Event</div>
         <div class="form-row"><div class="field"><label>Title</label><input type="text" id="ev-title" placeholder="Event name"/></div><div class="field"><label>Date</label><input type="date" id="ev-date"/></div></div>
@@ -345,15 +391,13 @@
       <div class="admin-panel-title">📅 Class Schedule</div>
       <div class="admin-panel-sub">Edit the weekly timetable and control which days are visible on the public site.</div>
 
-      <!-- ── MANAGE DAYS VISIBILITY (admin only) ── -->
       <div class="admin-card" style="margin-bottom:1.2rem">
         <div class="admin-card-title">👁 Manage Visible Days</div>
-        <p style="font-size:.8rem;color:var(--text3);margin-bottom:.9rem">Toggle which days appear on the public Schedule page. Hidden days are completely removed from the front-end.</p>
+        <p style="font-size:.8rem;color:var(--text3);margin-bottom:.9rem">Toggle which days appear on the public Schedule page.</p>
         <div id="dayVisibilityToggles" style="display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:.9rem"></div>
         <button class="admin-btn admin-btn-primary" id="saveDayVisBtn">💾 Save Day Visibility</button>
       </div>
 
-      <!-- ── TIMETABLE EDITOR ── -->
       <div class="admin-card">
         <div class="admin-card-title">✏️ Edit Timetable</div>
         <div class="schedule-day-tabs" id="schDayTabs">
@@ -373,7 +417,7 @@
     <!-- ══════ PHOTO SOURCE ══════ -->
     <div class="admin-panel" id="panel-photos">
       <div class="admin-panel-title">📸 Member Photo Source</div>
-      <div class="admin-panel-sub">Set where member card photos are loaded from. Photos must be named 501.jpg, 502.jpg … 556.jpg</div>
+      <div class="admin-panel-sub">Set where member card photos are loaded from.</div>
       <div class="admin-card">
         <div class="admin-card-title">🔗 Google Apps Script Proxy URL</div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.6;margin-bottom:.9rem">
@@ -408,7 +452,6 @@
       </div>
       <div class="admin-card">
         <div class="admin-card-title">📁 Google Drive Folder Link (reference)</div>
-        <p style="font-size:.8rem;color:var(--text3);margin-bottom:.7rem">Save your folder link here for easy reference. Photos named 501.jpg–556.jpg should be in this folder.</p>
         <div class="form-row cols-1">
           <div class="field">
             <label>Drive Folder Link</label>
@@ -419,36 +462,32 @@
       </div>
     </div>
 
-    <!-- ══════ MEMBER PHOTOS (per-roll Drive ID) ══════ -->
+    <!-- ══════ MEMBER PHOTOS ══════ -->
     <div class="admin-panel" id="panel-member-photos">
       <div class="admin-panel-title">🧑‍🎓 Member Photos (Per Person)</div>
-      <div class="admin-panel-sub">Paste each student's Google Drive File ID here. This overrides the folder-based lookup for that student. Photos will load on the Members page and Birthday page. Leave blank to use the folder/script method.</div>
-
+      <div class="admin-panel-sub">Paste each student's Google Drive File ID here. Synced to GitHub — visible on all devices.</div>
       <div class="admin-card">
         <div class="admin-card-title">💡 How to get a Drive File ID</div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.6;margin-bottom:.6rem">
           Right-click the photo in Google Drive → <strong>Get link</strong> → copy the ID from the URL.<br>
-          Example: <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">https://drive.google.com/file/d/<strong>1AbCdEf...</strong>/view</code> → paste <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">1AbCdEf...</code>
+          Example: <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">https://drive.google.com/file/d/<strong>1AbCdEf...</strong>/view</code>
         </p>
       </div>
-
       <div class="admin-card">
         <div class="admin-card-title">📋 Quick Paste — All Students</div>
-        <p style="font-size:.8rem;color:var(--text3);margin-bottom:1rem">Enter a Drive File ID next to each roll number. Leave blank to skip.</p>
         <div id="memberPhotosList" style="display:flex;flex-direction:column;gap:.6rem;max-height:600px;overflow-y:auto;padding-right:.4rem"></div>
         <div style="display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap">
           <button class="admin-btn admin-btn-primary" id="saveMemberPhotosBtn">💾 Save All Member Photos</button>
           <button class="admin-btn" id="clearMemberPhotosBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All</button>
         </div>
-        <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved! Photos will update on the Members &amp; Birthdays pages.</div>
+        <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved to GitHub! Photos will update on all devices.</div>
       </div>
     </div>
 
-    <!-- ══════ GALLERY (Drive file IDs) ══════ -->
+    <!-- ══════ GALLERY ══════ -->
     <div class="admin-panel" id="panel-gallery-admin">
       <div class="admin-panel-title">🖼️ Gallery Photos</div>
-      <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Each photo will appear in the Gallery page. You can set a caption and category for each.</div>
-
+      <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Synced across all devices.</div>
       <div class="admin-card">
         <div class="admin-card-title">➕ Add New Gallery Photo</div>
         <div class="form-row">
@@ -474,7 +513,6 @@
         </div>
         <button class="admin-btn admin-btn-primary" id="addGalleryPhotoBtn">➕ Add Photo</button>
       </div>
-
       <div class="admin-card">
         <div class="admin-card-title">📷 Gallery Photos (<span id="galCountLabel">0</span>)</div>
         <div id="galleryAdminList" style="display:flex;flex-direction:column;gap:.6rem;max-height:500px;overflow-y:auto;padding-right:.4rem">
@@ -492,16 +530,15 @@
       <div class="admin-panel-sub">Update what the homepage counts down to.</div>
       <div class="admin-card">
         <div class="form-row cols-1"><div class="field"><label>Event Name</label><input type="text" id="cd-name" placeholder="e.g. Grade 12 Begins"/></div></div>
-        <div class="form-row"><div class="field"><label>Target Date</label><input type="date" id="cd-date"/></div><div class="field"><label>Display Label (shown below timer)</label><input type="text" id="cd-label" placeholder="e.g. Ashad 1, 2082 (June 15, 2026)"/></div></div>
+        <div class="form-row"><div class="field"><label>Target Date</label><input type="date" id="cd-date"/></div><div class="field"><label>Display Label</label><input type="text" id="cd-label" placeholder="e.g. Ashad 1, 2082 (June 15, 2026)"/></div></div>
         <button class="admin-btn admin-btn-primary" id="saveCountdownBtn">💾 Save Countdown</button>
-        <p style="font-size:.78rem;color:var(--text3);margin-top:.8rem">⚠️ After saving, manually update <code style="font-family:'DM Mono',monospace">index.html</code> line with TARGET date for the countdown. Or use the saved value via localStorage on index.</p>
       </div>
     </div>
 
     <!-- ══════ BIRTHDAYS ══════ -->
     <div class="admin-panel" id="panel-birthdays">
       <div class="admin-panel-title">🎂 Birthdays</div>
-      <div class="admin-panel-sub">Add student birthdays using Nepali (BS) calendar. These show on the Birthdays page and trigger the popup.</div>
+      <div class="admin-panel-sub">Add student birthdays using Nepali (BS) calendar.</div>
       <div class="admin-card">
         <div class="admin-card-title">➕ Add Birthday (BS Date)</div>
         <div class="form-row cols-3">
@@ -529,7 +566,7 @@
           <div class="field"><label>BS Day</label><input type="number" id="bd-bsday" min="1" max="32" placeholder="e.g. 15"/></div>
         </div>
         <div class="form-row cols-1">
-          <div class="field"><label>Custom Birthday Message (optional — leave blank for auto)</label>
+          <div class="field"><label>Custom Birthday Message (optional)</label>
             <textarea id="bd-msg" placeholder="Write a personal birthday message for this student…" style="min-height:60px"></textarea>
           </div>
         </div>
@@ -549,64 +586,260 @@
 
 <script src="nepali-date.js"></script>
 <script>
-const PASSWORD = 'Echronicles2527';
+// ══════════════════════════════════════════════════════
+// CONFIGURATION
+// ══════════════════════════════════════════════════════
+const PASSWORD       = 'Echronicles2527';
+const GH_OWNER       = 'visionsyt99';
+const GH_REPO        = 'SEC-E-CHRONICLES';
+const GH_DATA_FILE   = 'data/ec-data.json'; // single JSON file in repo
+
+// ══════════════════════════════════════════════════════
+// GITHUB API LAYER
+// ── All reads/writes go through this object.
+// ── ghToken is set at login and stored in sessionStorage.
+// ══════════════════════════════════════════════════════
+const GH = {
+  get token(){ return sessionStorage.getItem('ec_gh_token') || ''; },
+
+  headers(){
+    return {
+      'Authorization': `Bearer ${this.token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json'
+    };
+  },
+
+  // Fetch current file (returns {content, sha} or null)
+  async getFile(path = GH_DATA_FILE){
+    try {
+      const r = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
+        { headers: this.headers() }
+      );
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error(`GitHub GET failed: ${r.status}`);
+      const d = await r.json();
+      const text = atob(d.content.replace(/\n/g,''));
+      return { content: JSON.parse(text), sha: d.sha };
+    } catch(e) {
+      console.error('GH.getFile', e);
+      return null;
+    }
+  },
+
+  // Write/update file (upsert)
+  async putFile(data, message = 'Admin update', path = GH_DATA_FILE){
+    setSyncState('pending', 'Saving…');
+    // get current SHA (needed for update)
+    const current = await this.getFile(path);
+    const body = {
+      message,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
+      ...(current ? { sha: current.sha } : {})
+    };
+    try {
+      const r = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
+        { method: 'PUT', headers: this.headers(), body: JSON.stringify(body) }
+      );
+      if (!r.ok) {
+        const err = await r.json();
+        throw new Error(err.message || r.status);
+      }
+      setSyncState('ok', 'Synced ✓');
+      return true;
+    } catch(e) {
+      setSyncState('err', 'Sync failed ✗');
+      toastMsg('GitHub save failed: ' + e.message, true);
+      return false;
+    }
+  },
+
+  // Test token validity
+  async testToken(){
+    try {
+      const r = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`,
+        { headers: this.headers() }
+      );
+      return r.ok;
+    } catch { return false; }
+  }
+};
+
+// ── In-memory store (loaded from GitHub on login) ──
+let DB = {
+  notices: [],
+  resources: [],
+  events: [],
+  achievements: [],
+  memories: [],
+  birthdays: [],
+  schedule: null,
+  hiddenDays: [],
+  countdown: {},
+  driveScriptUrl: '',
+  driveFolder: '',
+  memberPhotos: {},
+  gallery: []
+};
+
+// ── Sync helper: write full DB to GitHub ──
+async function syncToGitHub(msg = 'Admin update'){
+  return await GH.putFile(DB, msg);
+}
+
+// ──────────────────────────────────────────────────────
+// AUTH
+// ──────────────────────────────────────────────────────
 const loginScreen = document.getElementById('loginScreen');
 const adminWrap   = document.getElementById('adminWrap');
 const pwInput     = document.getElementById('pwInput');
+const tokenInput  = document.getElementById('tokenInput');
 const loginError  = document.getElementById('loginError');
 
-function checkAuth() {
-  if (sessionStorage.getItem('ec_admin') === '1') unlock();
+async function checkAuth(){
+  if (sessionStorage.getItem('ec_admin') === '1') {
+    const ok = await GH.testToken();
+    if (ok) { unlock(false); }
+    else {
+      sessionStorage.removeItem('ec_admin');
+      sessionStorage.removeItem('ec_gh_token');
+    }
+  }
 }
-function unlock() {
+
+async function unlock(doLoad = true){
   loginScreen.style.display = 'none';
   adminWrap.classList.add('visible');
-  loadAll();
+  if (doLoad) await loadAll();
 }
-document.getElementById('loginBtn').addEventListener('click', () => {
-  if (pwInput.value === PASSWORD) {
-    sessionStorage.setItem('ec_admin','1');
-    unlock();
-  } else {
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const pw    = pwInput.value;
+  const token = tokenInput.value.trim();
+  if (pw !== PASSWORD || !token) {
     loginError.style.display = 'block';
+    loginError.textContent = pw !== PASSWORD
+      ? 'Incorrect password.'
+      : 'Please paste your GitHub token.';
     document.getElementById('loginBox').classList.add('login-shake');
     setTimeout(()=>document.getElementById('loginBox').classList.remove('login-shake'),500);
-    pwInput.value = ''; pwInput.focus();
+    pwInput.value=''; pwInput.focus();
+    return;
   }
+  // Store token
+  sessionStorage.setItem('ec_gh_token', token);
+  setSyncState('pending','Verifying token…');
+  const ok = await GH.testToken();
+  if (!ok) {
+    loginError.style.display='block';
+    loginError.textContent='GitHub token is invalid or lacks repo access.';
+    sessionStorage.removeItem('ec_gh_token');
+    setSyncState('err','Token invalid');
+    return;
+  }
+  sessionStorage.setItem('ec_admin','1');
+  await unlock(true);
 });
-pwInput.addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('loginBtn').click(); });
+
+pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tokenInput.focus(); });
+tokenInput.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('loginBtn').click(); });
+
 document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem('ec_admin');
+  sessionStorage.removeItem('ec_gh_token');
   location.reload();
 });
+
 checkAuth();
 
-// ── SIDEBAR NAV ──
+// ──────────────────────────────────────────────────────
+// SYNC STATUS BAR
+// ──────────────────────────────────────────────────────
+function setSyncState(state, msg){
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncMsg');
+  dot.className = 'sync-dot ' + state;
+  txt.textContent = msg;
+}
+
+// ──────────────────────────────────────────────────────
+// SIDEBAR NAV
+// ──────────────────────────────────────────────────────
 document.querySelectorAll('.snav-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.snav-item').forEach(i=>i.classList.remove('active'));
     document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
     item.classList.add('active');
     document.getElementById('panel-'+item.dataset.panel).classList.add('active');
+    const p = item.dataset.panel;
+    if (p === 'member-photos') renderMemberPhotosList();
+    if (p === 'gallery-admin') renderGalleryAdmin();
   });
 });
 
-// ── TOAST ──
-function toast(msg='Saved!') {
+// ──────────────────────────────────────────────────────
+// TOAST
+// ──────────────────────────────────────────────────────
+function toastMsg(msg='Saved!', isErr=false){
   const t = document.getElementById('toast');
-  t.textContent = '✓ '+msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2500);
+  t.textContent = isErr ? '✗ '+msg : '✓ '+msg;
+  t.className = 'toast' + (isErr?' error':'') + ' show';
+  setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-// ── STORAGE HELPERS ──
-const KEYS = {notices:'ec_notices',resources:'ec_resources',events:'ec_events',achievements:'ec_achievements',memories:'ec_memories',birthdays:'ec_birthdays'};
-function load(key){ return JSON.parse(localStorage.getItem(KEYS[key]||key)||'[]'); }
-function save(key,data){ localStorage.setItem(KEYS[key]||key,JSON.stringify(data)); }
+// ──────────────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────────────
 function nextId(arr){ return arr.length ? Math.max(...arr.map(i=>i.id||0))+1 : 1; }
 function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
 
-// ── COLOR PICKER ──
+// ──────────────────────────────────────────────────────
+// LOAD ALL FROM GITHUB
+// ──────────────────────────────────────────────────────
+async function loadAll(){
+  setSyncState('pending','Loading from GitHub…');
+  const file = await GH.getFile();
+  if (file && file.content) {
+    // Merge loaded data into DB (preserve defaults for missing keys)
+    Object.keys(DB).forEach(k => {
+      if (file.content[k] !== undefined) DB[k] = file.content[k];
+    });
+    setSyncState('ok','Loaded ✓');
+  } else {
+    setSyncState('ok','New repo — ready to save');
+  }
+  renderAll();
+}
+
+function renderAll(){
+  renderNoticesList();
+  renderResourcesList();
+  renderEventsList();
+  renderAchievementsList();
+  renderMemoriesList();
+  renderScheduleEditor();
+  renderDayVisibilityToggles();
+  renderBirthdaysList();
+  renderMemberPhotosList();
+  renderGalleryAdmin();
+  // Load photo settings into fields
+  if(document.getElementById('drive-script-url')) document.getElementById('drive-script-url').value = DB.driveScriptUrl||'';
+  if(document.getElementById('drive-folder-link')) document.getElementById('drive-folder-link').value = DB.driveFolder||'';
+  // Load countdown
+  if(DB.countdown){
+    if(document.getElementById('cd-name')) document.getElementById('cd-name').value = DB.countdown.name||'';
+    if(document.getElementById('cd-date')) document.getElementById('cd-date').value = DB.countdown.date||'';
+    if(document.getElementById('cd-label')) document.getElementById('cd-label').value = DB.countdown.label||'';
+  }
+}
+
+// ──────────────────────────────────────────────────────
+// COLOR PICKER
+// ──────────────────────────────────────────────────────
 let selectedColor = 0;
 document.getElementById('n-color-picker').addEventListener('click', e=>{
   const sw = e.target.closest('.color-swatch');
@@ -623,29 +856,28 @@ document.getElementById('mem-type').addEventListener('change', e=>{
   document.getElementById('mem-text-field').style.display  = isPhoto ? 'none' : 'block';
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // NOTICES
-// ══════════════════════════════
-function renderNoticesList() {
-  const data = load('notices');
+// ══════════════════════════════════════════════════════
+function renderNoticesList(){
   const el = document.getElementById('notices-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No notices yet.</div>';return;}
-  el.innerHTML = data.map(n=>`
+  if(!DB.notices.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No notices yet.</div>';return;}
+  el.innerHTML = DB.notices.map(n=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${n.icon||'📢'}</div>
       <div class="item-row-info"><div class="item-row-title">${n.title}</div><div class="item-row-meta">${n.tag||''} · ${n.date}</div></div>
       <div class="item-row-actions">
-        <button class="icon-btn icon-btn-pin" onclick="togglePin('notices',${n.id})" title="${n.pinned?'Unpin':'Pin'}">📌</button>
+        <button class="icon-btn icon-btn-pin" onclick="togglePin(${n.id})" title="${n.pinned?'Unpin':'Pin'}">📌</button>
         <button class="icon-btn icon-btn-del" onclick="delItem('notices',${n.id})">🗑</button>
       </div>
     </div>`).join('');
 }
-document.getElementById('addNoticeBtn').addEventListener('click',()=>{
+
+document.getElementById('addNoticeBtn').addEventListener('click', async ()=>{
   const title = document.getElementById('n-title').value.trim();
   if(!title) return alert('Please enter a title.');
-  const data = load('notices');
-  data.push({
-    id:nextId(data), title,
+  DB.notices.push({
+    id:nextId(DB.notices), title,
     tag: document.getElementById('n-tag').value.trim()||'General',
     desc: document.getElementById('n-desc').value.trim(),
     icon: document.getElementById('n-icon').value.trim()||'📢',
@@ -653,123 +885,121 @@ document.getElementById('addNoticeBtn').addEventListener('click',()=>{
     color: selectedColor,
     pinned: document.getElementById('n-pin').checked ? 1 : 0
   });
-  save('notices',data);
-  renderNoticesList();
-  toast('Notice added!');
+  const ok = await syncToGitHub('Add notice: '+title);
+  if(ok){ renderNoticesList(); toastMsg('Notice added!'); }
   ['n-title','n-tag','n-desc','n-icon','n-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('n-pin').checked=false;
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // RESOURCES
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderResourcesList(){
-  const data=load('resources');
   const el=document.getElementById('resources-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No resources yet.</div>';return;}
-  el.innerHTML=data.map(r=>`
+  if(!DB.resources.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No resources yet.</div>';return;}
+  el.innerHTML=DB.resources.map(r=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${r.icon||'📄'}</div>
       <div class="item-row-info"><div class="item-row-title">${r.title}</div><div class="item-row-meta">${r.subject} · ${r.type||''}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('resources',${r.id})">🗑</button></div>
     </div>`).join('');
 }
-document.getElementById('addResourceBtn').addEventListener('click',()=>{
+
+document.getElementById('addResourceBtn').addEventListener('click', async ()=>{
   const title=document.getElementById('r-title').value.trim();
   if(!title) return alert('Please enter a title.');
-  const data=load('resources');
-  data.push({
-    id:nextId(data), title,
+  DB.resources.push({
+    id:nextId(DB.resources), title,
     subject:document.getElementById('r-subject').value,
     desc:document.getElementById('r-desc').value.trim(),
     type:document.getElementById('r-type').value.trim(),
     link:document.getElementById('r-link').value.trim(),
     icon:document.getElementById('r-icon').value.trim()||'📄'
   });
-  save('resources',data); renderResourcesList(); toast('Resource added!');
+  const ok = await syncToGitHub('Add resource: '+title);
+  if(ok){ renderResourcesList(); toastMsg('Resource added!'); }
   ['r-title','r-desc','r-type','r-link','r-icon'].forEach(id=>document.getElementById(id).value='');
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // EVENTS
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderEventsList(){
-  const data=load('events');
   const el=document.getElementById('events-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No events yet.</div>';return;}
-  el.innerHTML=data.map(e=>`
+  if(!DB.events.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No events yet.</div>';return;}
+  el.innerHTML=DB.events.map(e=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${e.status==='special'?'⭐':e.status==='upcoming'?'🟢':'⚫'}</div>
       <div class="item-row-info"><div class="item-row-title">${e.title}</div><div class="item-row-meta">${e.date} · ${e.venue||''}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('events',${e.id})">🗑</button></div>
     </div>`).join('');
 }
-document.getElementById('addEventBtn').addEventListener('click',()=>{
+
+document.getElementById('addEventBtn').addEventListener('click', async ()=>{
   const title=document.getElementById('ev-title').value.trim();
   if(!title) return alert('Please enter a title.');
-  const data=load('events');
-  data.push({
-    id:nextId(data), title,
+  DB.events.push({
+    id:nextId(DB.events), title,
     date:document.getElementById('ev-date').value,
     time:document.getElementById('ev-time').value.trim(),
     venue:document.getElementById('ev-venue').value.trim(),
     desc:document.getElementById('ev-desc').value.trim(),
     status:document.getElementById('ev-status').value
   });
-  save('events',data); renderEventsList(); toast('Event added!');
+  const ok = await syncToGitHub('Add event: '+title);
+  if(ok){ renderEventsList(); toastMsg('Event added!'); }
   ['ev-title','ev-date','ev-time','ev-venue','ev-desc'].forEach(id=>document.getElementById(id).value='');
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // ACHIEVEMENTS
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderAchievementsList(){
-  const data=load('achievements');
   const el=document.getElementById('achievements-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No achievements yet.</div>';return;}
-  el.innerHTML=data.map(a=>`
+  if(!DB.achievements.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No achievements yet.</div>';return;}
+  el.innerHTML=DB.achievements.map(a=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${a.emoji||'🏆'}</div>
       <div class="item-row-info"><div class="item-row-title">${a.name} — ${a.title}</div><div class="item-row-meta">${a.category||''} · ${a.date}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('achievements',${a.id})">🗑</button></div>
     </div>`).join('');
 }
-document.getElementById('addAchBtn').addEventListener('click',()=>{
+
+document.getElementById('addAchBtn').addEventListener('click', async ()=>{
   const name=document.getElementById('ac-name').value.trim();
   const title=document.getElementById('ac-title').value.trim();
   if(!name||!title) return alert('Please fill name and title.');
-  const data=load('achievements');
-  data.push({
-    id:nextId(data), name, title,
+  DB.achievements.push({
+    id:nextId(DB.achievements), name, title,
     category:document.getElementById('ac-cat').value.trim(),
     date:fmtDate(document.getElementById('ac-date').value),
     desc:document.getElementById('ac-desc').value.trim(),
     emoji:document.getElementById('ac-emoji').value.trim()||'🏆'
   });
-  save('achievements',data); renderAchievementsList(); toast('Achievement added!');
+  const ok = await syncToGitHub('Add achievement: '+name);
+  if(ok){ renderAchievementsList(); toastMsg('Achievement added!'); }
   ['ac-name','ac-title','ac-cat','ac-date','ac-desc','ac-emoji'].forEach(id=>document.getElementById(id).value='');
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // MEMORIES
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderMemoriesList(){
-  const data=load('memories');
   const el=document.getElementById('memories-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No memories yet.</div>';return;}
-  el.innerHTML=data.map(m=>`
+  if(!DB.memories.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No memories yet.</div>';return;}
+  el.innerHTML=DB.memories.map(m=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${m.type==='photo'?'📷':'✍️'}</div>
-      <div class="item-row-info"><div class="item-row-title">${m.author}</div><div class="item-row-meta">${m.type==='photo'?'Photo · '+m.driveId.slice(0,20)+'…':m.text.slice(0,40)+'…'}</div></div>
+      <div class="item-row-info"><div class="item-row-title">${m.author}</div><div class="item-row-meta">${m.type==='photo'?'Photo · '+(m.driveId||'').slice(0,20)+'…':(m.text||'').slice(0,40)+'…'}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('memories',${m.id})">🗑</button></div>
     </div>`).join('');
 }
-document.getElementById('addMemoryBtn').addEventListener('click',()=>{
+
+document.getElementById('addMemoryBtn').addEventListener('click', async ()=>{
   const type=document.getElementById('mem-type').value;
   const author=document.getElementById('mem-author').value.trim();
   if(!author) return alert('Please enter a name.');
-  const data=load('memories');
-  const entry={id:nextId(data),type,author,date:fmtDate(document.getElementById('mem-date').value)};
+  const entry={id:nextId(DB.memories),type,author,date:fmtDate(document.getElementById('mem-date').value)};
   if(type==='photo'){
     const id=document.getElementById('mem-drive').value.trim();
     if(!id) return alert('Please enter a Google Drive file ID.');
@@ -779,14 +1009,15 @@ document.getElementById('addMemoryBtn').addEventListener('click',()=>{
     if(!txt) return alert('Please enter memory text.');
     entry.text=txt;
   }
-  data.push(entry);
-  save('memories',data); renderMemoriesList(); toast('Memory added!');
+  DB.memories.push(entry);
+  const ok = await syncToGitHub('Add memory: '+author);
+  if(ok){ renderMemoriesList(); toastMsg('Memory added!'); }
   ['mem-author','mem-drive','mem-text','mem-date'].forEach(id=>document.getElementById(id).value='');
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // SCHEDULE
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 const SCHEDULE_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 let schedDay=0;
 const DEFAULT_SCHEDULE={
@@ -800,12 +1031,11 @@ const DEFAULT_SCHEDULE={
 };
 for(let i=1;i<6;i++) DEFAULT_SCHEDULE[i]=[...DEFAULT_SCHEDULE[0]];
 
-function getSchedule(){ return JSON.parse(localStorage.getItem('ec_schedule_admin')||JSON.stringify(DEFAULT_SCHEDULE)); }
-function setSchedule(d){ localStorage.setItem('ec_schedule_admin',JSON.stringify(d)); }
+function getScheduleDB(){ return DB.schedule || DEFAULT_SCHEDULE; }
 
 function renderScheduleEditor(){
-  const sch=getSchedule();
-  const rows=sch[schedDay]||[];
+  const sch = getScheduleDB();
+  const rows = sch[schedDay]||[];
   document.getElementById('scheduleEditor').innerHTML=rows.map((r,i)=>`
     <div class="period-row" data-idx="${i}">
       <input class="pe-period" value="${r.period}" placeholder="No."/>
@@ -815,31 +1045,37 @@ function renderScheduleEditor(){
       <button class="icon-btn icon-btn-del" onclick="removePeriod(${i})" style="font-size:.75rem">🗑</button>
     </div>`).join('');
 }
+
 function removePeriod(idx){
-  const sch=getSchedule(); sch[schedDay].splice(idx,1);
-  setSchedule(sch); renderScheduleEditor();
+  const sch = getScheduleDB();
+  sch[schedDay].splice(idx,1);
+  DB.schedule = sch;
+  renderScheduleEditor();
 }
+
 document.getElementById('addPeriodBtn').addEventListener('click',()=>{
-  const sch=getSchedule();
+  const sch = getScheduleDB();
   if(!sch[schedDay]) sch[schedDay]=[];
   sch[schedDay].push({period:String(sch[schedDay].length+1),time:'',subject:'',teacher:'',room:''});
-  setSchedule(sch); renderScheduleEditor();
+  DB.schedule = sch;
+  renderScheduleEditor();
 });
-document.getElementById('saveScheduleBtn').addEventListener('click',()=>{
-  const sch=getSchedule();
-  const rows=document.querySelectorAll('.period-row');
-  sch[schedDay]=Array.from(rows).map(row=>({
+
+document.getElementById('saveScheduleBtn').addEventListener('click', async ()=>{
+  const sch = getScheduleDB();
+  const rows = document.querySelectorAll('.period-row');
+  sch[schedDay] = Array.from(rows).map(row=>({
     period:row.querySelector('.pe-period').value,
     time:row.querySelector('.pe-time').value,
     subject:row.querySelector('.pe-subject').value,
     teacher:row.querySelector('.pe-teacher').value,
     room:''
   }));
-  setSchedule(sch); toast('Schedule saved!');
-  // also sync to public schedule key
-  const pub=getSchedule();
-  localStorage.setItem('ec_schedule',JSON.stringify(pub));
+  DB.schedule = sch;
+  const ok = await syncToGitHub('Update schedule: '+SCHEDULE_DAYS[schedDay]);
+  if(ok) toastMsg('Schedule saved!');
 });
+
 document.getElementById('schDayTabs').addEventListener('click',e=>{
   const btn=e.target.closest('.sdt');
   if(!btn) return;
@@ -849,10 +1085,10 @@ document.getElementById('schDayTabs').addEventListener('click',e=>{
   renderScheduleEditor();
 });
 
-// ── DAY VISIBILITY MANAGEMENT (admin only) ──
+// ── DAY VISIBILITY ──
 const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 function renderDayVisibilityToggles(){
-  const hidden = JSON.parse(localStorage.getItem('ec_hidden_days')||'[]');
+  const hidden = DB.hiddenDays || [];
   const wrap = document.getElementById('dayVisibilityToggles');
   if(!wrap) return;
   wrap.innerHTML = DAY_LABELS.map((lbl,i)=>{
@@ -868,28 +1104,27 @@ function renderDayVisibilityToggles(){
     </label>`;
   }).join('');
 }
-document.getElementById('saveDayVisBtn').addEventListener('click',()=>{
+
+document.getElementById('saveDayVisBtn').addEventListener('click', async ()=>{
   const checkboxes = document.querySelectorAll('#dayVisibilityToggles input[data-day]');
   const hidden = [];
-  checkboxes.forEach(cb=>{
-    if(!cb.checked) hidden.push(parseInt(cb.dataset.day));
-  });
-  localStorage.setItem('ec_hidden_days', JSON.stringify(hidden));
-  renderDayVisibilityToggles();
-  toast('Day visibility saved! Public schedule updated.');
+  checkboxes.forEach(cb=>{ if(!cb.checked) hidden.push(parseInt(cb.dataset.day)); });
+  DB.hiddenDays = hidden;
+  const ok = await syncToGitHub('Update day visibility');
+  if(ok){ renderDayVisibilityToggles(); toastMsg('Day visibility saved!'); }
 });
-document.getElementById('dayVisibilityToggles').addEventListener('change', renderDayVisibilityToggles);
-renderDayVisibilityToggles();
 
-// ══════════════════════════════
-// BIRTHDAYS (BS dates)
-// ══════════════════════════════
+document.getElementById('dayVisibilityToggles').addEventListener('change', renderDayVisibilityToggles);
+
+// ══════════════════════════════════════════════════════
+// BIRTHDAYS
+// ══════════════════════════════════════════════════════
 const BS_MN = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+
 function renderBirthdaysList(){
-  const data=load('birthdays');
   const el=document.getElementById('birthdays-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>';return;}
-  const sorted=[...data].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
+  if(!DB.birthdays.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>';return;}
+  const sorted=[...DB.birthdays].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
   el.innerHTML=sorted.map(b=>`
     <div class="item-row">
       <div style="font-size:1rem">🎂</div>
@@ -900,7 +1135,8 @@ function renderBirthdaysList(){
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('birthdays',${b.id})">🗑</button></div>
     </div>`).join('');
 }
-document.getElementById('addBdBtn').addEventListener('click',()=>{
+
+document.getElementById('addBdBtn').addEventListener('click', async ()=>{
   const roll=parseInt(document.getElementById('bd-roll').value);
   const name=document.getElementById('bd-name').value.trim();
   const bsYear=parseInt(document.getElementById('bd-bsyear').value)||0;
@@ -908,61 +1144,49 @@ document.getElementById('addBdBtn').addEventListener('click',()=>{
   const bsDay=parseInt(document.getElementById('bd-bsday').value);
   const customMsg=document.getElementById('bd-msg').value.trim();
   if(!name||!bsMonth||!bsDay) return alert('Please fill name, month and day.');
-  const data=load('birthdays');
-  data.push({id:nextId(data),roll,name,bsYear,bsMonth,bsDay,customMsg:customMsg||null});
-  save('birthdays',data);
-  renderBirthdaysList(); toast('Birthday added!');
+  DB.birthdays.push({id:nextId(DB.birthdays),roll,name,bsYear,bsMonth,bsDay,customMsg:customMsg||null});
+  const ok = await syncToGitHub('Add birthday: '+name);
+  if(ok){ renderBirthdaysList(); toastMsg('Birthday added!'); }
   ['bd-roll','bd-name','bd-bsyear','bd-bsday','bd-msg'].forEach(id=>document.getElementById(id).value='');
 });
 
-// ══════════════════════════════
-// COUNTDOWN (info only)
-// ══════════════════════════════
-document.getElementById('saveCountdownBtn').addEventListener('click',()=>{
-  localStorage.setItem('ec_countdown',JSON.stringify({
+// ══════════════════════════════════════════════════════
+// COUNTDOWN
+// ══════════════════════════════════════════════════════
+document.getElementById('saveCountdownBtn').addEventListener('click', async ()=>{
+  DB.countdown = {
     name:document.getElementById('cd-name').value,
     date:document.getElementById('cd-date').value,
     label:document.getElementById('cd-label').value
-  }));
-  toast('Countdown info saved! Update index.html TARGET date.');
+  };
+  const ok = await syncToGitHub('Update countdown');
+  if(ok) toastMsg('Countdown saved!');
 });
 
-// ══════════════════════════════
+// ══════════════════════════════════════════════════════
 // SHARED DELETE + PIN
-// ══════════════════════════════
-function delItem(key,id){
+// ══════════════════════════════════════════════════════
+async function delItem(key, id){
   if(!confirm('Delete this item?')) return;
-  const data=load(key).filter(i=>i.id!==id);
-  save(key,data);
-  loadAll(); toast('Deleted.');
+  DB[key] = DB[key].filter(i=>i.id!==id);
+  const ok = await syncToGitHub('Delete '+key+' #'+id);
+  if(ok){ renderAll(); toastMsg('Deleted.'); }
 }
-function togglePin(key,id){
-  const data=load(key);
-  const item=data.find(i=>i.id===id);
+
+async function togglePin(id){
+  const item = DB.notices.find(i=>i.id===id);
   if(item) item.pinned = item.pinned ? 0 : 1;
-  save(key,data); renderNoticesList(); toast(item.pinned?'Pinned!':'Unpinned.');
+  const ok = await syncToGitHub('Toggle pin notice #'+id);
+  if(ok){ renderNoticesList(); toastMsg(item.pinned?'Pinned!':'Unpinned.'); }
 }
 
-function loadAll(){
-  renderNoticesList();
-  renderResourcesList();
-  renderEventsList();
-  renderAchievementsList();
-  renderMemoriesList();
-  renderScheduleEditor();
-  renderBirthdaysList();
-  // load photo settings
-  const savedScript = localStorage.getItem('ec_drive_script_url')||'';
-  const savedFolder = localStorage.getItem('ec_drive_folder')||'';
-  if(document.getElementById('drive-script-url')) document.getElementById('drive-script-url').value=savedScript;
-  if(document.getElementById('drive-folder-link')) document.getElementById('drive-folder-link').value=savedFolder;
-}
-
-// ── PHOTO SETTINGS ──
-document.getElementById('saveDriveScriptBtn').addEventListener('click',async()=>{
+// ══════════════════════════════════════════════════════
+// PHOTO SETTINGS
+// ══════════════════════════════════════════════════════
+document.getElementById('saveDriveScriptBtn').addEventListener('click', async ()=>{
   const url = document.getElementById('drive-script-url').value.trim();
-  if(!url){ toast('Please enter a URL'); return; }
-  localStorage.setItem('ec_drive_script_url', url);
+  if(!url){ toastMsg('Please enter a URL'); return; }
+  DB.driveScriptUrl = url;
   const res = document.getElementById('drive-test-result');
   res.style.display='block';
   res.textContent='Testing with roll 501…';
@@ -975,17 +1199,19 @@ document.getElementById('saveDriveScriptBtn').addEventListener('click',async()=>
   } catch(e){
     res.textContent='❌ Could not connect. Check URL and Apps Script permissions.'; res.style.color='#ef4444';
   }
-  toast('Script URL saved!');
-});
-document.getElementById('saveDriveFolderBtn').addEventListener('click',()=>{
-  const link = document.getElementById('drive-folder-link').value.trim();
-  localStorage.setItem('ec_drive_folder', link);
-  toast('Folder link saved!');
+  const ok = await syncToGitHub('Update drive script URL');
+  if(ok) toastMsg('Script URL saved!');
 });
 
-// ══════════════════════════════
-// MEMBER PHOTOS (per-roll Drive ID)
-// ══════════════════════════════
+document.getElementById('saveDriveFolderBtn').addEventListener('click', async ()=>{
+  DB.driveFolder = document.getElementById('drive-folder-link').value.trim();
+  const ok = await syncToGitHub('Update drive folder link');
+  if(ok) toastMsg('Folder link saved!');
+});
+
+// ══════════════════════════════════════════════════════
+// MEMBER PHOTOS
+// ══════════════════════════════════════════════════════
 const ALL_STUDENTS = [
   {roll:501,name:"ROHIT KUMAR YADAV"},{roll:502,name:"SAUMYA DONGOL"},
   {roll:503,name:"RONISHA KHADKA"},{roll:504,name:"RUBY YADAV"},
@@ -1017,10 +1243,10 @@ const ALL_STUDENTS = [
   {roll:555,name:"SAURAV LUITEL"},{roll:556,name:"SAURAV NEUPANE"}
 ];
 
-function renderMemberPhotosList() {
+function renderMemberPhotosList(){
   const container = document.getElementById('memberPhotosList');
   if (!container) return;
-  const saved = JSON.parse(localStorage.getItem('ec_member_photos') || '{}');
+  const saved = DB.memberPhotos || {};
   container.innerHTML = ALL_STUDENTS.map(s => {
     const val = saved[s.roll] || '';
     return `
@@ -1037,44 +1263,39 @@ function renderMemberPhotosList() {
   }).join('');
 }
 
-document.getElementById('saveMemberPhotosBtn').addEventListener('click', () => {
+document.getElementById('saveMemberPhotosBtn').addEventListener('click', async () => {
   const inputs = document.querySelectorAll('.member-photo-id-input');
   const result = {};
   inputs.forEach(inp => {
-    const roll = inp.dataset.roll;
     const val = inp.value.trim();
-    if (val) result[roll] = val;
+    if (val) result[inp.dataset.roll] = val;
   });
-  localStorage.setItem('ec_member_photos', JSON.stringify(result));
-  const msg = document.getElementById('memberPhotosSavedMsg');
-  msg.style.display = 'block';
-  setTimeout(() => msg.style.display='none', 4000);
-  toast('Member photos saved! 🎉');
-  renderMemberPhotosList();
+  DB.memberPhotos = result;
+  const ok = await syncToGitHub('Update member photos');
+  if(ok){
+    const msg = document.getElementById('memberPhotosSavedMsg');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',4000);
+    toastMsg('Member photos saved! 🎉');
+    renderMemberPhotosList();
+  }
 });
 
-document.getElementById('clearMemberPhotosBtn').addEventListener('click', () => {
+document.getElementById('clearMemberPhotosBtn').addEventListener('click', async () => {
   if (!confirm('Clear all member photo IDs?')) return;
-  localStorage.removeItem('ec_member_photos');
-  renderMemberPhotosList();
-  toast('Cleared all member photos.');
+  DB.memberPhotos = {};
+  const ok = await syncToGitHub('Clear member photos');
+  if(ok){ renderMemberPhotosList(); toastMsg('Cleared all member photos.'); }
 });
 
-// ══════════════════════════════
-// GALLERY ADMIN
-// ══════════════════════════════
-function loadGallery() {
-  return JSON.parse(localStorage.getItem('ec_gallery') || '[]');
-}
-function saveGallery(data) {
-  localStorage.setItem('ec_gallery', JSON.stringify(data));
-}
-
-function renderGalleryAdmin() {
+// ══════════════════════════════════════════════════════
+// GALLERY
+// ══════════════════════════════════════════════════════
+function renderGalleryAdmin(){
   const list = document.getElementById('galleryAdminList');
   const countLabel = document.getElementById('galCountLabel');
   if (!list) return;
-  const photos = loadGallery();
+  const photos = DB.gallery || [];
   countLabel.textContent = photos.length;
   if (!photos.length) {
     list.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>';
@@ -1087,7 +1308,7 @@ function renderGalleryAdmin() {
         onerror="this.style.display='none'"/>
       <div style="flex:1;min-width:0">
         <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.15rem">${p.caption||'(no caption)'}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3)">${p.id.slice(0,28)}…</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3)">${(p.id||'').slice(0,28)}…</div>
         <div style="font-size:.65rem;color:var(--accent);margin-top:.15rem">${catLabel[p.cat]||p.cat}</div>
       </div>
       <button onclick="deleteGalleryPhoto(${i})"
@@ -1095,49 +1316,47 @@ function renderGalleryAdmin() {
     </div>`).join('');
 }
 
-function deleteGalleryPhoto(index) {
+async function deleteGalleryPhoto(index){
   if (!confirm('Remove this photo from gallery?')) return;
-  const photos = loadGallery();
-  photos.splice(index, 1);
-  saveGallery(photos);
-  renderGalleryAdmin();
-  toast('Photo removed.');
+  DB.gallery.splice(index,1);
+  const ok = await syncToGitHub('Delete gallery photo #'+index);
+  if(ok){ renderGalleryAdmin(); toastMsg('Photo removed.'); }
 }
 
-document.getElementById('addGalleryPhotoBtn').addEventListener('click', () => {
+document.getElementById('addGalleryPhotoBtn').addEventListener('click', async () => {
   const id = document.getElementById('gal-drive-id').value.trim();
   const cat = document.getElementById('gal-cat').value;
   const caption = document.getElementById('gal-caption').value.trim();
-  if (!id) { toast('Please enter a Drive File ID'); return; }
-  // Strip full URLs to just the ID
-  const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)/);
+  if (!id) { toastMsg('Please enter a Drive File ID', true); return; }
+  const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)\//);
   const cleanId = urlMatch ? urlMatch[1] : id;
-  const photos = loadGallery();
-  photos.push({ id: cleanId, cat, caption });
-  saveGallery(photos);
-  document.getElementById('gal-drive-id').value = '';
-  document.getElementById('gal-caption').value = '';
-  renderGalleryAdmin();
-  toast('Photo added to gallery! ✅');
+  if(!DB.gallery) DB.gallery=[];
+  DB.gallery.push({ id: cleanId, cat, caption });
+  const ok = await syncToGitHub('Add gallery photo');
+  if(ok){
+    document.getElementById('gal-drive-id').value='';
+    document.getElementById('gal-caption').value='';
+    renderGalleryAdmin();
+    toastMsg('Photo added to gallery! ✅');
+  }
 });
 
-document.getElementById('clearAllGalleryBtn').addEventListener('click', () => {
+document.getElementById('clearAllGalleryBtn').addEventListener('click', async () => {
   if (!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
-  saveGallery([]);
-  renderGalleryAdmin();
-  toast('Gallery cleared.');
+  DB.gallery=[];
+  const ok = await syncToGitHub('Clear gallery');
+  if(ok){ renderGalleryAdmin(); toastMsg('Gallery cleared.'); }
 });
 
-// init new panels when switching to them
-document.querySelectorAll('.snav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const p = item.dataset.panel;
-    if (p === 'member-photos') renderMemberPhotosList();
-    if (p === 'gallery-admin') renderGalleryAdmin();
-  });
-});
+// ══════════════════════════════════════════════════════
+// Make delItem & deleteGalleryPhoto global (called from onclick)
+// ══════════════════════════════════════════════════════
+window.delItem = delItem;
+window.togglePin = togglePin;
+window.removePeriod = removePeriod;
+window.deleteGalleryPhoto = deleteGalleryPhoto;
 
-// init on load if already on those panels
+// Init gallery on load
 renderGalleryAdmin();
 </script>
 </body>
