@@ -592,12 +592,10 @@
 const PASSWORD       = 'Echronicles2527';
 const GH_OWNER       = 'visionsyt99';
 const GH_REPO        = 'SEC-E-CHRONICLES';
-const GH_DATA_FILE   = 'data/ec-data.json'; // single JSON file in repo
+const GH_DATA_FILE   = 'data/ec-data.json';
 
 // ══════════════════════════════════════════════════════
 // GITHUB API LAYER
-// ── All reads/writes go through this object.
-// ── ghToken is set at login and stored in sessionStorage.
 // ══════════════════════════════════════════════════════
 const GH = {
   get token(){ return sessionStorage.getItem('ec_gh_token') || ''; },
@@ -611,12 +609,12 @@ const GH = {
     };
   },
 
-  // Fetch current file (returns {content, sha} or null)
+  // Fetch current file — returns { content, sha } or null
   async getFile(path = GH_DATA_FILE){
     try {
       const r = await fetch(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { headers: this.headers() }
+        { headers: this.headers(), cache: 'no-store' }
       );
       if (r.status === 404) return null;
       if (!r.ok) throw new Error(`GitHub GET failed: ${r.status}`);
@@ -629,16 +627,22 @@ const GH = {
     }
   },
 
-  // Write/update file (upsert)
-  async putFile(data, message = 'Admin update', path = GH_DATA_FILE){
+  // Write file — accepts an optional pre-fetched sha to avoid a double round-trip
+  async putFile(data, message = 'Admin update', path = GH_DATA_FILE, sha = null){
     setSyncState('pending', 'Saving…');
-    // get current SHA (needed for update)
-    const current = await this.getFile(path);
+
+    // Only fetch SHA separately when not already provided
+    if (!sha) {
+      const current = await this.getFile(path);
+      sha = current ? current.sha : null;
+    }
+
     const body = {
       message,
       content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
-      ...(current ? { sha: current.sha } : {})
+      ...(sha ? { sha } : {})
     };
+
     try {
       const r = await fetch(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
@@ -686,9 +690,31 @@ let DB = {
   gallery: []
 };
 
-// ── Sync helper: write full DB to GitHub ──
-async function syncToGitHub(msg = 'Admin update'){
-  return await GH.putFile(DB, msg);
+// ══════════════════════════════════════════════════════
+// CORE FIX: read-merge-write pattern
+//
+// Always fetch the latest data from GitHub first, merge
+// our in-memory DB on top of it, then write back.
+// This guarantees we never blank out a key (e.g. memberPhotos)
+// that was changed in a previous session and not reloaded.
+// ══════════════════════════════════════════════════════
+async function syncToGitHub(msg = 'Admin update') {
+  setSyncState('pending', 'Saving…');
+
+  // 1. Fetch the authoritative current state from GitHub
+  const current = await GH.getFile();
+  const serverData = (current && current.content) ? current.content : {};
+  const sha = current ? current.sha : null;
+
+  // 2. Merge: server is the base, our in-memory DB overlays it.
+  //    Keys that exist on the server but were never touched in this
+  //    session are preserved from serverData. Keys we've edited in
+  //    DB overwrite the server copy.
+  const merged = { ...serverData, ...DB };
+
+  // 3. Write the merged result back, passing the sha to skip a
+  //    second getFile() call inside putFile().
+  return await GH.putFile(merged, msg, GH_DATA_FILE, sha);
 }
 
 // ──────────────────────────────────────────────────────
@@ -730,7 +756,6 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     pwInput.value=''; pwInput.focus();
     return;
   }
-  // Store token
   sessionStorage.setItem('ec_gh_token', token);
   setSyncState('pending','Verifying token…');
   const ok = await GH.testToken();
@@ -810,7 +835,10 @@ async function loadAll(){
     });
     setSyncState('ok','Loaded ✓');
   } else {
-    setSyncState('ok','New repo — ready to save');
+    // Warn the admin clearly — saving now risks overwriting remote data
+    setSyncState('err', 'Load failed — refresh before saving!');
+    toastMsg('⚠️ Could not load data from GitHub. Refresh before making changes.', true);
+    return; // Do not renderAll with a potentially empty DB
   }
   renderAll();
 }
@@ -826,10 +854,8 @@ function renderAll(){
   renderBirthdaysList();
   renderMemberPhotosList();
   renderGalleryAdmin();
-  // Load photo settings into fields
   if(document.getElementById('drive-script-url')) document.getElementById('drive-script-url').value = DB.driveScriptUrl||'';
   if(document.getElementById('drive-folder-link')) document.getElementById('drive-folder-link').value = DB.driveFolder||'';
-  // Load countdown
   if(DB.countdown){
     if(document.getElementById('cd-name')) document.getElementById('cd-name').value = DB.countdown.name||'';
     if(document.getElementById('cd-date')) document.getElementById('cd-date').value = DB.countdown.date||'';
@@ -1349,7 +1375,7 @@ document.getElementById('clearAllGalleryBtn').addEventListener('click', async ()
 });
 
 // ══════════════════════════════════════════════════════
-// Make delItem & deleteGalleryPhoto global (called from onclick)
+// Expose functions called from inline onclick attributes
 // ══════════════════════════════════════════════════════
 window.delItem = delItem;
 window.togglePin = togglePin;
