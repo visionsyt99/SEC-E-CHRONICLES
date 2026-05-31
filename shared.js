@@ -336,15 +336,43 @@ const STUDENT_PROFILES = {
   }
 };
 
+// ── LOAD SITE DATA FROM GITHUB ──
+// Single source of truth: data/ec-data.json in the repo.
+// Uses the GitHub Contents API (not raw.githubusercontent.com) to bypass CDN cache.
+const _GH_OWNER = 'visionsyt99';
+const _GH_REPO  = 'SEC-E-CHRONICLES';
+const _GH_FILE  = 'data/ec-data.json';
+
+let _siteDataCache = null;
+
+async function loadSiteData() {
+  if (_siteDataCache) return _siteDataCache;
+  try {
+    const url = `https://api.github.com/repos/${_GH_OWNER}/${_GH_REPO}/contents/${_GH_FILE}`;
+    const r = await fetch(url, {
+      headers: { 'Accept': 'application/vnd.github+json' },
+      cache: 'no-store'
+    });
+    if (!r.ok) { console.warn('loadSiteData: GitHub returned', r.status); return {}; }
+    const d = await r.json();
+    const text = atob(d.content.replace(/\n/g, ''));
+    _siteDataCache = JSON.parse(text);
+    return _siteDataCache;
+  } catch (e) {
+    console.error('loadSiteData failed:', e);
+    return {};
+  }
+}
+
 // ── PHOTO URL HELPER ──
 // Priority:
-//  1. Admin-panel per-member Drive File ID (ec_member_photos localStorage)
+//  1. Admin-panel per-member Drive File ID (from ec-data.json memberPhotos)
 //  2. Explicit photo in STUDENT_PROFILES (hardcoded)
 //  3. Apps Script proxy (roll.jpg from folder)
-function getDriveFolderPhotoUrl(roll) {
-  // 1. Admin-panel override: ec_member_photos = { "501": "DRIVE_FILE_ID", ... }
+function getDriveFolderPhotoUrl(roll, memberPhotosFromDB) {
+  // 1. Admin-panel override from GitHub data
   try {
-    const adminPhotos = JSON.parse(localStorage.getItem('ec_member_photos') || '{}');
+    const adminPhotos = memberPhotosFromDB || {};
     if (adminPhotos[roll] && adminPhotos[roll].trim()) {
       return `https://drive.google.com/thumbnail?id=${adminPhotos[roll].trim()}&sz=w400`;
     }
@@ -362,9 +390,9 @@ function getDriveFolderPhotoUrl(roll) {
   return `${DRIVE_SCRIPT_URL}?roll=${roll}&type=member`;
 }
 
-// Alias used by members.html
-function getBestPhoto(roll) {
-  return getDriveFolderPhotoUrl(roll);
+// Alias used by members.html (pass memberPhotos from loadSiteData if available)
+function getBestPhoto(roll, memberPhotosFromDB) {
+  return getDriveFolderPhotoUrl(roll, memberPhotosFromDB);
 }
 
 function getInitials(name) {
