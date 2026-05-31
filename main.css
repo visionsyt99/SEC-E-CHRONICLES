@@ -110,7 +110,7 @@ a { color: inherit; text-decoration: none; }
 /* ── MESH CANVAS VISIBILITY ── */
 #ec-mesh-canvas { opacity: 0; transition: opacity .5s; }
 html:not(.dark) #ec-mesh-canvas { opacity: 1; }
-html.dark #ec-mesh-canvas { opacity: 0 !important; }
+html.dark #ec-mesh-canvas { opacity: 1 !important; }
 
 /* ── GLASSMORPHISM CARDS (light mode + mesh) ── */
 html:not(.dark) .countdown-card,
