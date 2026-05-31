@@ -1,16 +1,5 @@
 {
-  "notices": [
-    {
-      "id": 1,
-      "title": "test final or ill leave",
-      "tag": "General",
-      "desc": "",
-      "icon": "📢",
-      "date": "",
-      "color": 0,
-      "pinned": 0
-    }
-  ],
+  "notices": [],
   "resources": [],
   "events": [],
   "achievements": [],
