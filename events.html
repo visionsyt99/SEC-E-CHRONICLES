@@ -33,7 +33,7 @@
     .ecc-meta{font-size:.82rem;opacity:.8;position:relative}
     .ecc-countdown{display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap;position:relative}
     .ecc-unit{background:rgba(0,0,0,.2);border-radius:8px;padding:.6rem .8rem;min-width:58px;text-align:center}
-    .ecc-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;line-height:1}
+   .ecc-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700;line-height:1}
     .ecc-label{font-size:.6rem;opacity:.7;letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem}
 
     /* regular event card */
@@ -49,7 +49,7 @@
       flex-shrink:0;background:var(--bg2);border:1px solid var(--border);
       border-radius:10px;padding:.7rem .9rem;text-align:center;min-width:56px;
     }
-    .edb-day{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;line-height:1;color:var(--accent)}
+    .edb-day{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;line-height:1;color:var(--accent)}
     .edb-month{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);font-family:'DM Mono',monospace;margin-top:.2rem}
     .event-info{flex:1}
     .event-title{font-weight:600;font-size:.95rem;margin-bottom:.25rem}
@@ -97,10 +97,10 @@ injectNav();
 // ── EVENTS DATA (editable from admin panel) ──
 // status: 'upcoming' | 'past' | 'special' (special = has countdown)
 let EVENTS = JSON.parse(localStorage.getItem('ec_events') || 'null') || [
-  { id:1, title:"Grade 12 Begins", date:"2026-06-15", time:"6:00 AM", venue:"St. Xavier's College", desc:"First day of Grade 12 — the final chapter begins!", status:"special" },
+  { id:1, title:"Grade 12 Begins", date:"2026-06-15", time:"9:30 AM", venue:"St. Xavier's College", desc:"First day of Grade 12 — the final chapter begins!", status:"special" },
   { id:2, title:"NEB Board Exams", date:"2027-03-20", time:"7:00 AM", venue:"Examination Centre", desc:"National Examinations Board — our big moment.", status:"special" },
   { id:3, title:"Section E Orientation", date:"2025-08-01", time:"10:00 AM", venue:"Main Hall", desc:"Welcome session for all new Section E students.", status:"past" },
-  { id:4, title:"First Internal Exam", date:"2025-10-15", time:"6:15 AM", venue:"Section E Classroom", desc:"First internal assessment of Grade 11.", status:"past" },
+  { id:4, title:"First Internal Exam", date:"2025-10-15", time:"9:45 AM", venue:"Section E Classroom", desc:"First internal assessment of Grade 11.", status:"past" },
 ];
 
 let currentFilter = 'all';
@@ -141,7 +141,7 @@ function renderEvents() {
       container.appendChild(div);
       // start countdown — pass raw string so getCountdown() parses as local midnight
       function tick() {
-        const c = getCountdown(ev.date);
+        const c = getCountdown(ev.date + 'T00:00:00+05:45');
         if (c.passed) { document.getElementById(`ecc-${ev.id}`).innerHTML = '<span style="font-size:1rem;opacity:.8">🎉 This event has passed!</span>'; return; }
         document.getElementById(`d-${ev.id}`).textContent = String(c.days).padStart(2,'0');
         document.getElementById(`h-${ev.id}`).textContent = String(c.hours).padStart(2,'0');
