@@ -172,7 +172,13 @@
         <div class="sub-title">📅 All Birthdays by Month</div>
         <div id="allBirthdays"></div>
       </div>
-      <div class="admin-note reveal">ℹ️ Add birthdays in the <a href="admin-ec2027.html" style="color:var(--accent)">admin panel</a> using BS dates, or directly in the <code>ec_birthdays</code> localStorage key as <code>[{"roll":501,"name":"NAME","bsMonth":4,"bsDay":15,"bsYear":2064}]</code></div>
+      <div class="info-bar reveal" id="infoBar">
+  🎂 Every year, another reason to celebrate <span style="color:var(--accent);font-weight:600;">you</span> — 
+  because in Section E, birthdays are never just another day. 
+  Wishing every <span style="color:var(--teal);font-weight:500;">soul</span> here 
+  a year full of <span style="color:var(--gold);font-weight:500;">joy, growth & unforgettable moments</span>. 
+  <span id="infoStatus"></span>
+</div>
     </div>
   </section>
 </div>
@@ -237,14 +243,21 @@ const BS_MONTHS = NepaliDate.BS_MONTHS_EN;
 
 // ── BIRTHDAY MESSAGES ──
 const MESSAGES = [
-  "May this year bring you incredible discoveries, lifelong friendships, and all the happiness you deserve. Section E is lucky to have you! 🌟",
-  "Another year wiser, another year brighter! Wishing you a day as wonderful as the energy you bring to our classroom every single day. 🎓",
-  "Here's to you — the person who makes Section E a little more special. May your birthday mark the start of your most amazing chapter yet! 📖",
-  "From all of Section E — we hope today is filled with everything that makes you smile. Happy Birthday, you absolute legend! 🏆",
-  "Science tells us you're made of stardust. Today, we celebrate the star that you are. Wishing you a truly out-of-this-world birthday! ⭐",
-  "Two years of memories, one incredible person. Happy Birthday from your Section E family — may today be as epic as you are! 🎊",
-  "The classroom is brighter because you're in it. Today we celebrate you — have a birthday as extraordinary as your potential! 🔬",
-  "May this year be full of good health, great scores, and even greater adventures. Happy Birthday from Section E with love! 💙",
+  "May this year bring you incredible <span style='color:var(--teal);font-weight:500;'>discoveries</span>, lifelong <span style='color:var(--accent);font-weight:500;'>friendships</span>, and all the <span style='color:var(--gold);font-weight:500;'>happiness</span> you deserve. Section E is lucky to have you! 🌟",
+
+"Another year <span style='color:var(--teal);font-weight:500;'>wiser</span>, another year <span style='color:var(--gold);font-weight:500;'>brighter</span>! Wishing you a day as wonderful as the <span style='color:var(--accent);font-weight:500;'>energy</span> you bring to our classroom every single day. 🎓",
+
+"Here's to <span style='color:var(--accent);font-weight:600;'>you</span> — the person who makes Section E a little more <span style='color:var(--teal);font-weight:500;'>special</span>. May your birthday mark the start of your most <span style='color:var(--gold);font-weight:500;'>amazing chapter</span> yet! 📖",
+
+"From all of <span style='color:var(--accent);font-weight:600;'>Section E</span> — we hope today is filled with everything that makes you <span style='color:var(--teal);font-weight:500;'>smile</span>. Happy Birthday, you absolute <span style='color:var(--gold);font-weight:500;'>legend</span>! 🏆",
+
+"Science tells us you're made of <span style='color:var(--teal);font-weight:500;'>stardust</span>. Today, we celebrate the <span style='color:var(--gold);font-weight:500;'>star</span> that you are. Wishing you a truly <span style='color:var(--accent);font-weight:500;'>out-of-this-world</span> birthday! ⭐",
+
+"Two years of <span style='color:var(--teal);font-weight:500;'>memories</span>, one <span style='color:var(--gold);font-weight:500;'>incredible</span> person. Happy Birthday from your <span style='color:var(--accent);font-weight:600;'>Section E family</span> — may today be as epic as you are! 🎊",
+
+"The classroom is <span style='color:var(--gold);font-weight:500;'>brighter</span> because you're in it. Today we celebrate <span style='color:var(--accent);font-weight:600;'>you</span> — have a birthday as extraordinary as your <span style='color:var(--teal);font-weight:500;'>potential</span>! 🔬",
+
+"May this year be full of good <span style='color:var(--teal);font-weight:500;'>health</span>, great <span style='color:var(--gold);font-weight:500;'>scores</span>, and even greater <span style='color:var(--accent);font-weight:500;'>adventures</span>. Happy Birthday from Section E with love! 💙",
 ];
 function randomMsg(){return MESSAGES[Math.floor(Math.random()*MESSAGES.length)]}
 
