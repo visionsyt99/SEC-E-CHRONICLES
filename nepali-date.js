@@ -4,6 +4,13 @@
  *
  * DST-safe: all diffs use Date.UTC() so timezone shifts never affect the result.
  * Math.round() used throughout to guard against any floating-point drift.
+ *
+ * Fixes applied (v2):
+ *   • BS 2081 row: Shrawan (month 4) corrected from 31 → 32  (year must be 366 days:
+ *     April 13 2024 → April 14 2025 crosses Feb 29 2024, so 366 days total)
+ *   • BS 2083 row: Jestha (month 2) corrected from 32 → 31,
+ *                  Ashadh (month 3) corrected from 31 → 32
+ *     (Jestha 1, 2083 = May 15 2026; Ashadh 1, 2083 = June 15 2026 — verified)
  */
 
 const NepaliDate = (() => {
@@ -91,9 +98,13 @@ const NepaliDate = (() => {
     2078:[0,31,31,32,32,31,30,30,29,30,29,30,30],
     2079:[0,31,32,31,32,31,30,30,30,29,29,30,31],
     2080:[0,31,31,31,32,31,31,30,29,30,29,30,30],
-    2081:[0,31,31,32,31,31,31,30,29,30,29,30,30],
+    // FIXED: Shrawan (month 4) was 31 → corrected to 32
+    // BS 2081 = Apr 13 2024 → Apr 13 2025; crosses Feb 29 2024 → 366 days
+    2081:[0,31,31,32,32,31,31,30,29,30,29,30,30],
     2082:[0,31,31,32,32,31,30,30,29,30,29,30,30],
-    2083:[0,31,32,31,32,31,30,30,30,29,29,30,31],
+    // FIXED: Jestha (month 2) was 32 → 31; Ashadh (month 3) was 31 → 32
+    // Jestha 1, 2083 = May 15 2026; Ashadh 1, 2083 = June 15 2026 (verified)
+    2083:[0,31,31,32,32,31,30,30,30,29,29,30,31],
     2084:[0,31,31,31,32,31,31,30,29,30,29,30,30],
     2085:[0,31,31,32,31,31,31,30,29,30,29,30,30],
     2086:[0,31,31,32,32,31,30,30,29,30,29,30,30],
