@@ -54,7 +54,7 @@ const FOOTER_HTML = `
 <footer>
   <div class="footer-brand">The E Chronicles</div>
   <div class="footer-text">Section E · St. Xavier's College · Batch 2025–2027 · Science (Biology)</div>
- <div class="footer-text" style="font-size:0.72rem;opacity:0.6;">Made with 💜 by <a href="https://saurav-pandey999.github.io/worldofvisions/" target="_blank" style="color:var(--accent);text-decoration:underline;">Vision-S</a></div>
+<div class="footer-text" style="font-size:0.72rem;opacity:0.6;">Made with 💜 by <a href="https://saurav-pandey999.github.io/worldofvisions/" target="_blank" style="color:var(--accent);text-decoration:none;animation:visionGlow 3s ease-in-out infinite;">Vision-S</a></div>
 </footer>`;
 
 // ── NAV for index (root level) ──
