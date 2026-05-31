@@ -60,9 +60,16 @@
 <script src="shared.js"></script>
 <script>
 injectNav();
+
+// _siteData holds admin data loaded from GitHub via loadSiteData()
+let _siteData = {};
+
 function renderAchievements() {
   const grid = document.getElementById('achGrid');
-  const data = JSON.parse(localStorage.getItem('ec_achievements') || '[]');
+  // Prefer admin data from GitHub; fall back to localStorage
+  const data = (_siteData.achievements && _siteData.achievements.length)
+    ? _siteData.achievements
+    : JSON.parse(localStorage.getItem('ec_achievements') || '[]');
   if (!data.length) {
     grid.innerHTML = '<div class="empty-state">No achievements added yet. Every win counts — add yours!</div>';
     return;
@@ -79,7 +86,12 @@ function renderAchievements() {
       </div>
     </div>`).join('');
 }
-renderAchievements();
+
+// Wait for GitHub admin data before rendering
+(async function init() {
+  _siteData = await loadSiteData();
+  renderAchievements();
+})();
 </script>
 </body>
 </html>
