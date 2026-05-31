@@ -381,8 +381,8 @@ function getDriveFolderPhotoUrl(roll, memberPhotosFromDB) {
   // 2. Hardcoded profile photo
   const p = STUDENT_PROFILES[roll];
   if (p && p.photo) {
-    const m = p.photo.match(/[?&]id=([^&]+)/);
-    if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+    const m = p.photo.match(/[?&]id=([^&]+)/) || p.photo.match(/\/d\/([^/]+)\//);
+    if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`;
     return p.photo;
   }
 
@@ -500,3 +500,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   initMeshBackground();
 });
+
