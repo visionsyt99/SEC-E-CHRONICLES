@@ -1,0 +1,26 @@
+{
+  "notices": [
+    {
+      "id": 1,
+      "title": "RAT TEST",
+      "tag": "General",
+      "desc": "",
+      "icon": "📢",
+      "date": "",
+      "color": 0,
+      "pinned": 0
+    }
+  ],
+  "resources": [],
+  "events": [],
+  "achievements": [],
+  "memories": [],
+  "birthdays": [],
+  "schedule": null,
+  "hiddenDays": [],
+  "countdown": {},
+  "driveScriptUrl": "",
+  "driveFolder": "",
+  "memberPhotos": {},
+  "gallery": []
+}
