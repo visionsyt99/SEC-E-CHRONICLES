@@ -75,8 +75,7 @@
       .day-tabs{gap:.25rem}
       .day-tab{padding:.35rem .65rem;font-size:.72rem}
     }
-  </style><!-- ✅ ADD THIS LINE — must be FIRST script -->
-
+  </style>
 </head>
 <body>
 <div class="page">
@@ -189,8 +188,8 @@ const SCHEDULE = {
   ]},
 };
 
-// ── READ hidden days from admin settings (read-only on front) ──
-const hiddenDays = JSON.parse(localStorage.getItem('ec_hidden_days')||'[]');
+// ── Hidden days — loaded from admin data (falls back to localStorage) ──
+let hiddenDays = JSON.parse(localStorage.getItem('ec_hidden_days')||'[]');
 let activeDay = null;
 
 function getVisibleDays(){ return Object.keys(SCHEDULE).map(Number).filter(d=>!hiddenDays.includes(d)); }
@@ -225,13 +224,20 @@ function renderDay(dayIdx){
 }
 
 // ── INIT ──
-const today = new Date().getDay(); // 0=Sun … 6=Sat
-const nepDay = today === 6 ? 0 : today; // Saturday → Sunday
-const visible = getVisibleDays();
-activeDay = visible.includes(nepDay) ? nepDay : (visible[0]??null);
-renderTabs();
-if(activeDay!==null) renderDay(activeDay);
-else document.getElementById('scheduleBody').innerHTML='<tr><td colspan="5" class="no-schedule">No schedule available.</td></tr>';
+(async function init() {
+  const siteData = await loadSiteData();
+  // Prefer admin hidden-days from GitHub; fall back to localStorage
+  if (siteData.hiddenDays) hiddenDays = siteData.hiddenDays;
+
+  const today = new Date().getDay(); // 0=Sun … 6=Sat
+  const nepDay = today === 6 ? 0 : today; // Saturday → Sunday
+  const visible = getVisibleDays();
+  activeDay = visible.includes(nepDay) ? nepDay : (visible[0]??null);
+  renderTabs();
+  if(activeDay!==null) renderDay(activeDay);
+  else document.getElementById('scheduleBody').innerHTML='<tr><td colspan="5" class="no-schedule">No schedule available.</td></tr>';
+})();
 </script>
 </body>
 </html>
+
