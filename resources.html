@@ -92,10 +92,15 @@ const SUBJ_COLORS = {Biology:'rgba(34,197,94,.15)',Chemistry:'rgba(239,68,68,.15
 const SUBJ_TEXT = {Biology:'#16a34a',Chemistry:'#dc2626',Physics:'#2563eb',Mathematics:'#9333ea',English:'#ea580c',General:'var(--accent)'};
 
 let currentCat = 'all';
+// _siteData holds admin data loaded from GitHub via loadSiteData()
+let _siteData = {};
 
 function renderResources() {
   const grid = document.getElementById('resGrid');
-  const resources = JSON.parse(localStorage.getItem('ec_resources') || '[]');
+  // Prefer admin data from GitHub; fall back to localStorage
+  const resources = (_siteData.resources && _siteData.resources.length)
+    ? _siteData.resources
+    : JSON.parse(localStorage.getItem('ec_resources') || '[]');
   const filtered = currentCat === 'all' ? resources : resources.filter(r => r.subject === currentCat);
   if (!filtered.length) {
     grid.innerHTML = '<div class="empty-state">No resources here yet. Ask your CR to add some!</div>';
@@ -129,7 +134,12 @@ document.getElementById('catTabs').addEventListener('click', e => {
   currentCat = btn.dataset.cat;
   renderResources();
 });
-renderResources();
+
+// Wait for GitHub admin data before rendering
+(async function init() {
+  _siteData = await loadSiteData();
+  renderResources();
+})();
 </script>
 </body>
 </html>
