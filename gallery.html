@@ -126,13 +126,6 @@ function driveUrl(id, size) {
   return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
 }
 
-// Also try to load from memory folder via Apps Script
-async function loadMemoryFolderPhotos() {
-  // Load photos stored by admin in ec_gallery
-  const adminPhotos = JSON.parse(localStorage.getItem('ec_gallery') || '[]');
-  return adminPhotos;
-}
-
 let allPhotos = [];
 let currentCat = 'all';
 
@@ -195,14 +188,12 @@ document.getElementById('lightbox').addEventListener('click', function(e) {
 
 // ── INIT ──
 (async function init() {
-  var adminPhotos = await loadMemoryFolderPhotos();
+  const siteData = await loadSiteData();
+  // Prefer admin gallery data from GitHub; fall back to localStorage
+  const adminPhotos = (siteData.gallery && siteData.gallery.length)
+    ? siteData.gallery
+    : JSON.parse(localStorage.getItem('ec_gallery') || '[]');
   allPhotos = GALLERY_PHOTOS_HARDCODED.concat(adminPhotos);
-
-  // Update note
-  if(allPhotos.length) {
-    document.getElementById('driveNoteStatus').textContent = ' ' + allPhotos.length + ' photo' + (allPhotos.length!==1?'s':'') + ' loaded.';
-  }
-
   renderGallery();
 })();
 </script>
