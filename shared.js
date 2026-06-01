@@ -327,13 +327,21 @@ const STUDENT_PROFILES = {
     dob: { bsYear: 2066, bsMonth: 2, bsDay: 5, monthName: "Baishakh" }
   },
   540: {
-    photo: null,
+    photo: "https://drive.google.com/uc?export=view&id=1m_Inr2guEhS6V3zZDcWCwD8YtepfF1Ls",
     quote: "\"Some wait for the spark. I bring the fire.\" Not just leading. Building the vision.",
     experience: "Leading Section E as Class Representative — building systems, fostering unity, and making sure everyone's voice is heard.",
     wantsManagement: true,
-    email: "025neb540@sxc.edu.np",
-    dob: null
-  }
+    email: "visionsyt99@gmail.com",
+    dob: { bsYear: 2067, bsMonth: 12, bsDay: 1, monthName: "Chaitra" }
+  },
+   548: {
+  photo: "https://drive.google.com/uc?export=view&id=1zbe2AbwKFLc0zSAkpn01YZaHVBTvn446",
+  quote: "Serene 🙂‍↔️",
+  experience: "👍",
+  wantsManagement: false,
+  email: "pokhrelshreeji07@gmail.com",
+  dob: { bsYear: 2065, bsMonth: 12, bsDay: 25, monthName: "Chaitra" }
+}
 };
 
 // ── LOAD SITE DATA FROM GITHUB ──
