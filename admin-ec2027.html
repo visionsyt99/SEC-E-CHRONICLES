@@ -54,7 +54,6 @@
     .admin-wrap{display:none;min-height:100vh}
     .admin-wrap.visible{display:flex}
 
-    /* sidebar */
     .admin-sidebar{
       width:230px;flex-shrink:0;
       background:var(--surface);border-right:1px solid var(--border);
@@ -75,17 +74,13 @@
     }
     .snav-item:hover,.snav-item.active{background:var(--accent-light);color:var(--accent)}
     .snav-icon{font-size:1rem;width:20px;text-align:center}
-    .sidebar-logout{
-      margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border);margin-top:2rem;
-    }
+    .sidebar-logout{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border);margin-top:2rem}
     .logout-btn{
       width:100%;padding:.6rem;background:transparent;border:1.5px solid var(--border);
-      border-radius:8px;color:var(--text3);font-size:.8rem;cursor:pointer;
-      transition:all .2s;
+      border-radius:8px;color:var(--text3);font-size:.8rem;cursor:pointer;transition:all .2s;
     }
     .logout-btn:hover{border-color:#dc2626;color:#dc2626}
 
-    /* sync status bar */
     .sync-bar{
       display:flex;align-items:center;gap:.5rem;
       font-size:.7rem;color:var(--text3);padding:.4rem .5rem;
@@ -98,21 +93,13 @@
     .sync-dot.pending{background:var(--gold);animation:blink .8s infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-    /* main content */
     .admin-main{flex:1;padding:2rem;overflow-y:auto;max-height:100vh}
     .admin-panel{display:none}
     .admin-panel.active{display:block}
-    .admin-panel-title{
-      font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;
-      margin-bottom:.4rem;
-    }
+    .admin-panel-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;margin-bottom:.4rem}
     .admin-panel-sub{font-size:.85rem;color:var(--text3);margin-bottom:2rem}
 
-    /* ── FORM ELEMENTS ── */
-    .admin-card{
-      background:var(--surface);border:1px solid var(--border);
-      border-radius:var(--radius);padding:1.5rem;margin-bottom:1.2rem;
-    }
+    .admin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.2rem}
     .admin-card-title{font-weight:700;font-size:.9rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
     .form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
@@ -122,8 +109,7 @@
     .field input,.field textarea,.field select{
       background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;
       padding:.6rem .85rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
-      color:var(--text);outline:none;transition:border-color .2s;
-      width:100%;box-sizing:border-box;
+      color:var(--text);outline:none;transition:border-color .2s;width:100%;box-sizing:border-box;
     }
     .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
     .field textarea{resize:vertical;min-height:80px}
@@ -135,15 +121,11 @@
     .admin-btn-primary{background:var(--accent);color:#fff}
     .admin-btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
     .admin-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
-    .admin-btn-danger{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
-    .admin-btn-danger:hover{background:rgba(239,68,68,.15)}
 
-    /* items list */
     .items-list{display:flex;flex-direction:column;gap:.6rem;margin-top:1.2rem}
     .item-row{
       background:var(--bg2);border:1px solid var(--border);border-radius:8px;
-      padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;
-      transition:border-color .15s;
+      padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;transition:border-color .15s;
     }
     .item-row:hover{border-color:var(--border-hover)}
     .item-row-info{flex:1;min-width:0}
@@ -157,49 +139,34 @@
     }
     .icon-btn-del{color:#dc2626}
     .icon-btn-del:hover{background:rgba(239,68,68,.1)}
-    .icon-btn-edit{color:var(--accent)}
-    .icon-btn-edit:hover{background:var(--accent-light)}
     .icon-btn-pin{color:var(--gold)}
     .icon-btn-pin:hover{background:var(--gold-light)}
 
-    /* color picker row */
     .color-picker{display:flex;gap:.5rem;flex-wrap:wrap}
-    .color-swatch{
-      width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;
-      transition:transform .15s,border-color .15s;
-    }
+    .color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s}
     .color-swatch:hover,.color-swatch.selected{transform:scale(1.15);border-color:var(--text)}
 
-    /* success toast */
     .toast{
       position:fixed;bottom:2rem;right:2rem;z-index:9999;
       background:var(--accent);color:#fff;
       padding:.75rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:600;
-      transform:translateY(100px);opacity:0;transition:all .3s;
-      pointer-events:none;
+      transform:translateY(100px);opacity:0;transition:all .3s;pointer-events:none;
     }
     .toast.show{transform:translateY(0);opacity:1}
     .toast.error{background:#dc2626}
 
-    /* ── SCHEDULE EDITOR ── */
     .schedule-day-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1rem}
     .sdt{padding:.35rem .8rem;font-size:.75rem;font-weight:500;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
     .sdt.active,.sdt:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-
-    .period-row{
-      display:grid;grid-template-columns:60px 1fr 1fr 1fr 30px;gap:.5rem;align-items:center;
-      margin-bottom:.5rem;
-    }
+    .period-row{display:grid;grid-template-columns:60px 1fr 1fr 1fr 30px;gap:.5rem;align-items:center;margin-bottom:.5rem}
     .period-row input{padding:.45rem .6rem;font-size:.82rem}
     .period-add-btn{
       padding:.5rem 1rem;background:var(--accent-light);color:var(--accent);
       border:1.5px dashed rgba(26,79,160,.3);border-radius:8px;
-      font-size:.82rem;font-weight:500;cursor:pointer;width:100%;
-      transition:all .2s;margin-top:.5rem;
+      font-size:.82rem;font-weight:500;cursor:pointer;width:100%;transition:all .2s;margin-top:.5rem;
     }
     .period-add-btn:hover{background:var(--accent);color:#fff;border-style:solid}
 
-    /* github info banner */
     .gh-banner{
       display:flex;align-items:center;gap:.7rem;
       background:rgba(26,79,160,.07);border:1px solid rgba(26,79,160,.2);
@@ -208,11 +175,7 @@
     }
     .gh-banner-icon{font-size:1.2rem;flex-shrink:0}
 
-    @media(max-width:768px){
-      .admin-sidebar{width:200px}
-      .form-row{grid-template-columns:1fr}
-      .form-row.cols-3{grid-template-columns:1fr 1fr}
-    }
+    @media(max-width:768px){.admin-sidebar{width:200px}.form-row{grid-template-columns:1fr}.form-row.cols-3{grid-template-columns:1fr 1fr}}
     @media(max-width:600px){
       .admin-wrap{flex-direction:column}
       .admin-sidebar{width:100%;height:auto;position:relative;padding:1rem}
@@ -244,17 +207,12 @@
 
 <!-- ADMIN -->
 <div class="admin-wrap" id="adminWrap">
-
-  <!-- SIDEBAR -->
   <aside class="admin-sidebar">
     <div class="admin-brand">Admin<span>The E Chronicles</span></div>
-
-    <!-- Sync status -->
     <div class="sync-bar" id="syncBar">
       <div class="sync-dot pending" id="syncDot"></div>
       <span id="syncMsg">Connecting…</span>
     </div>
-
     <ul class="sidebar-nav">
       <li class="snav-item active" data-panel="notices"><span class="snav-icon">📢</span>Notices</li>
       <li class="snav-item" data-panel="resources"><span class="snav-icon">📚</span>Resources</li>
@@ -271,16 +229,13 @@
     <div class="sidebar-logout"><button class="logout-btn" id="logoutBtn">🔓 Logout</button></div>
   </aside>
 
-  <!-- MAIN -->
   <main class="admin-main">
-
-    <!-- GitHub banner (shown once) -->
     <div class="gh-banner" id="ghBanner">
       <span class="gh-banner-icon">☁️</span>
-      <span>Changes are synced to <strong>visionsyt99/SEC-E-CHRONICLES</strong> via GitHub. Every save pushes a JSON file to the repo — visible on all devices instantly.</span>
+      <span>Changes sync to <strong>visionsyt99/SEC-E-CHRONICLES</strong>. Every save reads the latest GitHub data first, merges your change on top, then writes — so nothing from other sessions is ever lost.</span>
     </div>
 
-    <!-- ══════ NOTICES ══════ -->
+    <!-- NOTICES -->
     <div class="admin-panel active" id="panel-notices">
       <div class="admin-panel-title">📢 Notices</div>
       <div class="admin-panel-sub">Add, edit and pin announcements for Section E.</div>
@@ -288,10 +243,7 @@
         <div class="admin-card-title">➕ Add New Notice</div>
         <div class="form-row"><div class="field"><label>Title</label><input type="text" id="n-title" placeholder="Notice title"/></div><div class="field"><label>Tag</label><input type="text" id="n-tag" placeholder="e.g. Exam, Fee, Event"/></div></div>
         <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="n-desc" placeholder="Full notice details…"></textarea></div></div>
-        <div class="form-row">
-          <div class="field"><label>Icon (emoji)</label><input type="text" id="n-icon" placeholder="📢" maxlength="4"/></div>
-          <div class="field"><label>Date</label><input type="date" id="n-date"/></div>
-        </div>
+        <div class="form-row"><div class="field"><label>Icon (emoji)</label><input type="text" id="n-icon" placeholder="📢" maxlength="4"/></div><div class="field"><label>Date</label><input type="date" id="n-date"/></div></div>
         <div class="field" style="margin-bottom:1rem"><label>Card Colour</label>
           <div class="color-picker" id="n-color-picker">
             <div class="color-swatch selected" data-val="0" style="background:rgba(26,79,160,.4)"></div>
@@ -307,13 +259,10 @@
           <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;cursor:pointer"><input type="checkbox" id="n-pin"/> Pin to top</label>
         </div>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Current Notices</div>
-        <div class="items-list" id="notices-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Current Notices</div><div class="items-list" id="notices-list"></div></div>
     </div>
 
-    <!-- ══════ RESOURCES ══════ -->
+    <!-- RESOURCES -->
     <div class="admin-panel" id="panel-resources">
       <div class="admin-panel-title">📚 Resources</div>
       <div class="admin-panel-sub">Add study materials, notes and useful links.</div>
@@ -324,13 +273,10 @@
         <div class="form-row"><div class="field"><label>Link (URL)</label><input type="url" id="r-link" placeholder="https://drive.google.com/…"/></div><div class="field"><label>Icon (emoji)</label><input type="text" id="r-icon" placeholder="📄" maxlength="4"/></div></div>
         <button class="admin-btn admin-btn-primary" id="addResourceBtn">Add Resource</button>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Current Resources</div>
-        <div class="items-list" id="resources-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Current Resources</div><div class="items-list" id="resources-list"></div></div>
     </div>
 
-    <!-- ══════ EVENTS ══════ -->
+    <!-- EVENTS -->
     <div class="admin-panel" id="panel-events">
       <div class="admin-panel-title">🎉 Events</div>
       <div class="admin-panel-sub">Add upcoming and past events.</div>
@@ -339,18 +285,13 @@
         <div class="form-row"><div class="field"><label>Title</label><input type="text" id="ev-title" placeholder="Event name"/></div><div class="field"><label>Date</label><input type="date" id="ev-date"/></div></div>
         <div class="form-row"><div class="field"><label>Time</label><input type="text" id="ev-time" placeholder="e.g. 10:00 AM"/></div><div class="field"><label>Venue</label><input type="text" id="ev-venue" placeholder="Location"/></div></div>
         <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="ev-desc" placeholder="Event details…"></textarea></div></div>
-        <div class="form-row">
-          <div class="field"><label>Status</label><select id="ev-status"><option value="upcoming">Upcoming</option><option value="past">Past</option><option value="special">⭐ Special (with countdown)</option></select></div>
-        </div>
+        <div class="form-row"><div class="field"><label>Status</label><select id="ev-status"><option value="upcoming">Upcoming</option><option value="past">Past</option><option value="special">⭐ Special (with countdown)</option></select></div></div>
         <button class="admin-btn admin-btn-primary" id="addEventBtn">Add Event</button>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Current Events</div>
-        <div class="items-list" id="events-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Current Events</div><div class="items-list" id="events-list"></div></div>
     </div>
 
-    <!-- ══════ ACHIEVEMENTS ══════ -->
+    <!-- ACHIEVEMENTS -->
     <div class="admin-panel" id="panel-achievements">
       <div class="admin-panel-title">🏆 Achievements</div>
       <div class="admin-panel-sub">Celebrate every win from Section E students.</div>
@@ -358,17 +299,14 @@
         <div class="admin-card-title">➕ Add Achievement</div>
         <div class="form-row"><div class="field"><label>Student Name</label><input type="text" id="ac-name" placeholder="Full name"/></div><div class="field"><label>Achievement Title</label><input type="text" id="ac-title" placeholder="e.g. 1st in District Olympiad"/></div></div>
         <div class="form-row"><div class="field"><label>Category</label><input type="text" id="ac-cat" placeholder="e.g. Academic, Sports, Arts"/></div><div class="field"><label>Date</label><input type="date" id="ac-date"/></div></div>
-        <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="ac-desc" placeholder="Brief description of the achievement…"></textarea></div></div>
+        <div class="form-row cols-1"><div class="field"><label>Description</label><textarea id="ac-desc" placeholder="Brief description…"></textarea></div></div>
         <div class="form-row"><div class="field"><label>Emoji / Trophy Icon</label><input type="text" id="ac-emoji" placeholder="🏆" maxlength="4"/></div></div>
         <button class="admin-btn admin-btn-primary" id="addAchBtn">Add Achievement</button>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Current Achievements</div>
-        <div class="items-list" id="achievements-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Current Achievements</div><div class="items-list" id="achievements-list"></div></div>
     </div>
 
-    <!-- ══════ MEMORY WALL ══════ -->
+    <!-- MEMORY WALL -->
     <div class="admin-panel" id="panel-memories">
       <div class="admin-panel-title">💬 Memory Wall</div>
       <div class="admin-panel-sub">Add photos (via Google Drive ID) or text memories.</div>
@@ -380,24 +318,19 @@
         <div class="form-row"><div class="field"><label>Date</label><input type="date" id="mem-date"/></div></div>
         <button class="admin-btn admin-btn-primary" id="addMemoryBtn">Add to Memory Wall</button>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Current Memories</div>
-        <div class="items-list" id="memories-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Current Memories</div><div class="items-list" id="memories-list"></div></div>
     </div>
 
-    <!-- ══════ SCHEDULE ══════ -->
+    <!-- SCHEDULE -->
     <div class="admin-panel" id="panel-schedule">
       <div class="admin-panel-title">📅 Class Schedule</div>
       <div class="admin-panel-sub">Edit the weekly timetable and control which days are visible on the public site.</div>
-
       <div class="admin-card" style="margin-bottom:1.2rem">
         <div class="admin-card-title">👁 Manage Visible Days</div>
         <p style="font-size:.8rem;color:var(--text3);margin-bottom:.9rem">Toggle which days appear on the public Schedule page.</p>
         <div id="dayVisibilityToggles" style="display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:.9rem"></div>
         <button class="admin-btn admin-btn-primary" id="saveDayVisBtn">💾 Save Day Visibility</button>
       </div>
-
       <div class="admin-card">
         <div class="admin-card-title">✏️ Edit Timetable</div>
         <div class="schedule-day-tabs" id="schDayTabs">
@@ -414,7 +347,7 @@
       </div>
     </div>
 
-    <!-- ══════ PHOTO SOURCE ══════ -->
+    <!-- PHOTO SOURCE -->
     <div class="admin-panel" id="panel-photos">
       <div class="admin-panel-title">📸 Member Photo Source</div>
       <div class="admin-panel-sub">Set where member card photos are loaded from.</div>
@@ -441,76 +374,51 @@
 }</code>
           3. Paste the deployed Web App URL below.
         </p>
-        <div class="form-row cols-1">
-          <div class="field">
-            <label>Apps Script Web App URL</label>
-            <input type="text" id="drive-script-url" placeholder="https://script.google.com/macros/s/.../exec"/>
-          </div>
-        </div>
+        <div class="form-row cols-1"><div class="field"><label>Apps Script Web App URL</label><input type="text" id="drive-script-url" placeholder="https://script.google.com/macros/s/.../exec"/></div></div>
         <button class="admin-btn admin-btn-primary" id="saveDriveScriptBtn">💾 Save & Test</button>
         <div id="drive-test-result" style="margin-top:.7rem;font-size:.78rem;display:none"></div>
       </div>
       <div class="admin-card">
         <div class="admin-card-title">📁 Google Drive Folder Link (reference)</div>
-        <div class="form-row cols-1">
-          <div class="field">
-            <label>Drive Folder Link</label>
-            <input type="text" id="drive-folder-link" placeholder="https://drive.google.com/drive/folders/..."/>
-          </div>
-        </div>
+        <div class="form-row cols-1"><div class="field"><label>Drive Folder Link</label><input type="text" id="drive-folder-link" placeholder="https://drive.google.com/drive/folders/..."/></div></div>
         <button class="admin-btn" id="saveDriveFolderBtn">Save Folder Link</button>
       </div>
     </div>
 
-    <!-- ══════ MEMBER PHOTOS ══════ -->
+    <!-- MEMBER PHOTOS -->
     <div class="admin-panel" id="panel-member-photos">
       <div class="admin-panel-title">🧑‍🎓 Member Photos (Per Person)</div>
-      <div class="admin-panel-sub">Paste each student's Google Drive File ID here. Synced to GitHub — visible on all devices.</div>
+      <div class="admin-panel-sub">Paste each student's Google Drive File ID. Blank fields keep whatever is already saved — nothing is deleted unless you use "Clear All".</div>
       <div class="admin-card">
         <div class="admin-card-title">💡 How to get a Drive File ID</div>
         <p style="font-size:.8rem;color:var(--text3);line-height:1.6;margin-bottom:.6rem">
           Right-click the photo in Google Drive → <strong>Get link</strong> → copy the ID from the URL.<br>
-          Example: <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">https://drive.google.com/file/d/<strong>1AbCdEf...</strong>/view</code>
+          Example: <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px">https://drive.google.com/file/d/<strong>1AbCdEf...</strong>/view</code><br><br>
+          <strong style="color:var(--accent)">ℹ️ Safe saves:</strong> Only the fields you fill in are updated. Blank fields preserve whatever photo was previously saved for that student — across all sessions.
         </p>
       </div>
       <div class="admin-card">
         <div class="admin-card-title">📋 Quick Paste — All Students</div>
         <div id="memberPhotosList" style="display:flex;flex-direction:column;gap:.6rem;max-height:600px;overflow-y:auto;padding-right:.4rem"></div>
         <div style="display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap">
-          <button class="admin-btn admin-btn-primary" id="saveMemberPhotosBtn">💾 Save All Member Photos</button>
+          <button class="admin-btn admin-btn-primary" id="saveMemberPhotosBtn">💾 Save Changes</button>
           <button class="admin-btn" id="clearMemberPhotosBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All</button>
         </div>
         <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved to GitHub! Photos will update on all devices.</div>
       </div>
     </div>
 
-    <!-- ══════ GALLERY ══════ -->
+    <!-- GALLERY -->
     <div class="admin-panel" id="panel-gallery-admin">
       <div class="admin-panel-title">🖼️ Gallery Photos</div>
       <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Synced across all devices.</div>
       <div class="admin-card">
         <div class="admin-card-title">➕ Add New Gallery Photo</div>
         <div class="form-row">
-          <div class="field">
-            <label>Google Drive File ID</label>
-            <input type="text" id="gal-drive-id" placeholder="1AbCdEfGhIjKlMnOpQr..."/>
-          </div>
-          <div class="field">
-            <label>Category</label>
-            <select id="gal-cat">
-              <option value="class">Classroom</option>
-              <option value="events">Events</option>
-              <option value="trips">Trips</option>
-              <option value="fun">Fun Times</option>
-            </select>
-          </div>
+          <div class="field"><label>Google Drive File ID</label><input type="text" id="gal-drive-id" placeholder="1AbCdEfGhIjKlMnOpQr..."/></div>
+          <div class="field"><label>Category</label><select id="gal-cat"><option value="class">Classroom</option><option value="events">Events</option><option value="trips">Trips</option><option value="fun">Fun Times</option></select></div>
         </div>
-        <div class="form-row cols-1">
-          <div class="field">
-            <label>Caption (optional)</label>
-            <input type="text" id="gal-caption" placeholder="e.g. Sports Day 2025"/>
-          </div>
-        </div>
+        <div class="form-row cols-1"><div class="field"><label>Caption (optional)</label><input type="text" id="gal-caption" placeholder="e.g. Sports Day 2025"/></div></div>
         <button class="admin-btn admin-btn-primary" id="addGalleryPhotoBtn">➕ Add Photo</button>
       </div>
       <div class="admin-card">
@@ -524,7 +432,7 @@
       </div>
     </div>
 
-    <!-- ══════ COUNTDOWN ══════ -->
+    <!-- COUNTDOWN -->
     <div class="admin-panel" id="panel-countdown">
       <div class="admin-panel-title">⏱️ Countdown</div>
       <div class="admin-panel-sub">Update what the homepage counts down to.</div>
@@ -535,7 +443,7 @@
       </div>
     </div>
 
-    <!-- ══════ BIRTHDAYS ══════ -->
+    <!-- BIRTHDAYS -->
     <div class="admin-panel" id="panel-birthdays">
       <div class="admin-panel-title">🎂 Birthdays</div>
       <div class="admin-panel-sub">Add student birthdays using Nepali (BS) calendar.</div>
@@ -549,39 +457,25 @@
         <div class="form-row">
           <div class="field"><label>BS Month (1=Baisakh … 12=Chaitra)</label>
             <select id="bd-bsmonth">
-              <option value="1">1 — Baisakh (बैशाख)</option>
-              <option value="2">2 — Jestha (जेठ)</option>
-              <option value="3">3 — Ashadh (असार)</option>
-              <option value="4">4 — Shrawan (श्रावण)</option>
-              <option value="5">5 — Bhadra (भाद्र)</option>
-              <option value="6">6 — Ashwin (आश्विन)</option>
-              <option value="7">7 — Kartik (कार्तिक)</option>
-              <option value="8">8 — Mangsir (मंसिर)</option>
-              <option value="9">9 — Poush (पौष)</option>
-              <option value="10">10 — Magh (माघ)</option>
-              <option value="11">11 — Falgun (फाल्गुन)</option>
-              <option value="12">12 — Chaitra (चैत्र)</option>
+              <option value="1">1 — Baisakh (बैशाख)</option><option value="2">2 — Jestha (जेठ)</option>
+              <option value="3">3 — Ashadh (असार)</option><option value="4">4 — Shrawan (श्रावण)</option>
+              <option value="5">5 — Bhadra (भाद्र)</option><option value="6">6 — Ashwin (आश्विन)</option>
+              <option value="7">7 — Kartik (कार्तिक)</option><option value="8">8 — Mangsir (मंसिर)</option>
+              <option value="9">9 — Poush (पौष)</option><option value="10">10 — Magh (माघ)</option>
+              <option value="11">11 — Falgun (फाल्गुन)</option><option value="12">12 — Chaitra (चैत्र)</option>
             </select>
           </div>
           <div class="field"><label>BS Day</label><input type="number" id="bd-bsday" min="1" max="32" placeholder="e.g. 15"/></div>
         </div>
-        <div class="form-row cols-1">
-          <div class="field"><label>Custom Birthday Message (optional)</label>
-            <textarea id="bd-msg" placeholder="Write a personal birthday message for this student…" style="min-height:60px"></textarea>
-          </div>
-        </div>
+        <div class="form-row cols-1"><div class="field"><label>Custom Birthday Message (optional)</label><textarea id="bd-msg" placeholder="Write a personal birthday message…" style="min-height:60px"></textarea></div></div>
         <button class="admin-btn admin-btn-primary" id="addBdBtn">Add Birthday</button>
       </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Birthday List</div>
-        <div class="items-list" id="birthdays-list"></div>
-      </div>
+      <div class="admin-card"><div class="admin-card-title">📋 Birthday List</div><div class="items-list" id="birthdays-list"></div></div>
     </div>
 
   </main>
-</div><!-- admin-wrap -->
+</div>
 
-<!-- TOAST -->
 <div class="toast" id="toast">✓ Saved successfully</div>
 
 <script src="nepali-date.js"></script>
@@ -589,10 +483,10 @@
 // ══════════════════════════════════════════════════════
 // CONFIGURATION
 // ══════════════════════════════════════════════════════
-const PASSWORD       = 'Echronicles2527';
-const GH_OWNER       = 'visionsyt99';
-const GH_REPO        = 'SEC-E-CHRONICLES';
-const GH_DATA_FILE   = 'data/ec-data.json';
+const PASSWORD     = 'Echronicles2527';
+const GH_OWNER     = 'visionsyt99';
+const GH_REPO      = 'SEC-E-CHRONICLES';
+const GH_DATA_FILE = 'data/ec-data.json';
 
 // ══════════════════════════════════════════════════════
 // GITHUB API LAYER
@@ -614,54 +508,44 @@ const GH = {
     try {
       const r = await fetch(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { headers: this.headers(), cache: 'no-store' }
+        { headers: this.headers() }
       );
-      if (r.status === 404) return null;
-      if (!r.ok) throw new Error(`GitHub GET failed: ${r.status}`);
+      if(r.status === 404) return null;
+      if(!r.ok) throw new Error(`GitHub GET failed: ${r.status}`);
       const d = await r.json();
       const text = atob(d.content.replace(/\n/g,''));
       return { content: JSON.parse(text), sha: d.sha };
-    } catch(e) {
+    } catch(e){
       console.error('GH.getFile', e);
       return null;
     }
   },
 
-  // Write file — accepts an optional pre-fetched sha to avoid a double round-trip
+  // Write file — sha must be provided to avoid double round-trips
   async putFile(data, message = 'Admin update', path = GH_DATA_FILE, sha = null){
-    setSyncState('pending', 'Saving…');
-
-    // Only fetch SHA separately when not already provided
-    if (!sha) {
-      const current = await this.getFile(path);
-      sha = current ? current.sha : null;
-    }
-
     const body = {
       message,
       content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
       ...(sha ? { sha } : {})
     };
-
     try {
       const r = await fetch(
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { method: 'PUT', headers: this.headers(), body: JSON.stringify(body) }
+        { method:'PUT', headers: this.headers(), body: JSON.stringify(body) }
       );
-      if (!r.ok) {
+      if(!r.ok){
         const err = await r.json();
         throw new Error(err.message || r.status);
       }
-      setSyncState('ok', 'Synced ✓');
+      setSyncState('ok','Synced ✓');
       return true;
-    } catch(e) {
-      setSyncState('err', 'Sync failed ✗');
+    } catch(e){
+      setSyncState('err','Sync failed ✗');
       toastMsg('GitHub save failed: ' + e.message, true);
       return false;
     }
   },
 
-  // Test token validity
   async testToken(){
     try {
       const r = await fetch(
@@ -673,63 +557,62 @@ const GH = {
   }
 };
 
-// ── In-memory store (loaded from GitHub on login) ──
+// ── In-memory store ──
 let DB = {
-  notices: [],
-  resources: [],
-  events: [],
-  achievements: [],
-  memories: [],
-  birthdays: [],
-  schedule: null,
-  hiddenDays: [],
-  countdown: {},
-  driveScriptUrl: '',
-  driveFolder: '',
-  memberPhotos: {},
-  gallery: []
+  notices:[], resources:[], events:[], achievements:[],
+  memories:[], birthdays:[], schedule:null, hiddenDays:[],
+  countdown:{}, driveScriptUrl:'', driveFolder:'',
+  memberPhotos:{}, gallery:[]
 };
 
 // ══════════════════════════════════════════════════════
-// CORE FIX: read-merge-write pattern
+// CORE SYNC  ─  READ → MERGE → WRITE
 //
-// Always fetch the latest data from GitHub first, merge
-// our in-memory DB on top of it, then write back.
-// This guarantees we never blank out a key (e.g. memberPhotos)
-// that was changed in a previous session and not reloaded.
+// Every save operation:
+//   1. Fetches the current file from GitHub (gets latest data + SHA)
+//   2. Deep-merges our in-memory DB on top of it:
+//        • memberPhotos: key-level merge  →  only the rolls you touched
+//          are updated; all other rolls keep their GitHub value
+//        • arrays (notices, events, etc.): in-memory wins — we loaded
+//          the full list at login and have been mutating it consistently
+//   3. Writes the merged result back (using the fresh SHA)
+//
+// This means: photos added in a previous session (or another device)
+// are NEVER overwritten by a save that didn't touch them.
 // ══════════════════════════════════════════════════════
-async function syncToGitHub(msg = 'Admin update') {
-  setSyncState('pending', 'Saving…');
+async function syncToGitHub(msg = 'Admin update'){
+  setSyncState('pending','Saving…');
 
-  // 1. Fetch the authoritative current state from GitHub
-  const current = await GH.getFile();
+  // Step 1 — read latest from GitHub (single round-trip, also gets SHA)
+  const current    = await GH.getFile();
   const serverData = (current && current.content) ? current.content : {};
-  const sha = current ? current.sha : null;
+  const sha        = current ? current.sha : null;
 
-  // 2. Merge: server is the base, our in-memory DB overlays it.
-  //    Keys that exist on the server but were never touched in this
-  //    session are preserved from serverData. Keys we've edited in
-  //    DB overwrite the server copy.
-  const merged = { ...serverData, ...DB };
+  // Step 2 — build merged payload
+  //   For memberPhotos: spread server first, then our session's entries.
+  //   Rolls we never touched stay as the server had them.
+  const mergedPhotos = {
+    ...(serverData.memberPhotos || {}),
+    ...(DB.memberPhotos || {})
+  };
 
-  // 3. Write the merged result back, passing the sha to skip a
-  //    second getFile() call inside putFile().
+  const merged = {
+    ...serverData,          // preserve everything on the server
+    ...DB,                  // overlay our in-memory state
+    memberPhotos: mergedPhotos  // but always use the deep-merged photos
+  };
+
+  // Step 3 — write back
   return await GH.putFile(merged, msg, GH_DATA_FILE, sha);
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // AUTH
-// ──────────────────────────────────────────────────────
-const loginScreen = document.getElementById('loginScreen');
-const adminWrap   = document.getElementById('adminWrap');
-const pwInput     = document.getElementById('pwInput');
-const tokenInput  = document.getElementById('tokenInput');
-const loginError  = document.getElementById('loginError');
-
+// ══════════════════════════════════════════════════════
 async function checkAuth(){
-  if (sessionStorage.getItem('ec_admin') === '1') {
+  if(sessionStorage.getItem('ec_admin') === '1'){
     const ok = await GH.testToken();
-    if (ok) { unlock(false); }
+    if(ok){ unlock(false); }
     else {
       sessionStorage.removeItem('ec_admin');
       sessionStorage.removeItem('ec_gh_token');
@@ -738,30 +621,31 @@ async function checkAuth(){
 }
 
 async function unlock(doLoad = true){
-  loginScreen.style.display = 'none';
-  adminWrap.classList.add('visible');
-  if (doLoad) await loadAll();
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminWrap').classList.add('visible');
+  if(doLoad) await loadAll();
 }
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
-  const pw    = pwInput.value;
-  const token = tokenInput.value.trim();
-  if (pw !== PASSWORD || !token) {
-    loginError.style.display = 'block';
-    loginError.textContent = pw !== PASSWORD
-      ? 'Incorrect password.'
-      : 'Please paste your GitHub token.';
+  const pw    = document.getElementById('pwInput').value;
+  const token = document.getElementById('tokenInput').value.trim();
+  if(pw !== PASSWORD || !token){
+    const err = document.getElementById('loginError');
+    err.style.display = 'block';
+    err.textContent = pw !== PASSWORD ? 'Incorrect password.' : 'Please paste your GitHub token.';
     document.getElementById('loginBox').classList.add('login-shake');
-    setTimeout(()=>document.getElementById('loginBox').classList.remove('login-shake'),500);
-    pwInput.value=''; pwInput.focus();
+    setTimeout(() => document.getElementById('loginBox').classList.remove('login-shake'), 500);
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
     return;
   }
   sessionStorage.setItem('ec_gh_token', token);
   setSyncState('pending','Verifying token…');
   const ok = await GH.testToken();
-  if (!ok) {
-    loginError.style.display='block';
-    loginError.textContent='GitHub token is invalid or lacks repo access.';
+  if(!ok){
+    const err = document.getElementById('loginError');
+    err.style.display = 'block';
+    err.textContent = 'GitHub token is invalid or lacks repo access.';
     sessionStorage.removeItem('ec_gh_token');
     setSyncState('err','Token invalid');
     return;
@@ -770,9 +654,8 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   await unlock(true);
 });
 
-pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tokenInput.focus(); });
-tokenInput.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('loginBtn').click(); });
-
+document.getElementById('pwInput').addEventListener('keydown',    e => { if(e.key==='Enter') document.getElementById('tokenInput').focus(); });
+document.getElementById('tokenInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginBtn').click(); });
 document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem('ec_admin');
   sessionStorage.removeItem('ec_gh_token');
@@ -781,105 +664,100 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 
 checkAuth();
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // SYNC STATUS BAR
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 function setSyncState(state, msg){
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncMsg');
-  dot.className = 'sync-dot ' + state;
-  txt.textContent = msg;
+  document.getElementById('syncDot').className = 'sync-dot ' + state;
+  document.getElementById('syncMsg').textContent = msg;
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // SIDEBAR NAV
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 document.querySelectorAll('.snav-item').forEach(item => {
   item.addEventListener('click', () => {
-    document.querySelectorAll('.snav-item').forEach(i=>i.classList.remove('active'));
-    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.snav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
     item.classList.add('active');
-    document.getElementById('panel-'+item.dataset.panel).classList.add('active');
+    document.getElementById('panel-' + item.dataset.panel).classList.add('active');
     const p = item.dataset.panel;
-    if (p === 'member-photos') renderMemberPhotosList();
-    if (p === 'gallery-admin') renderGalleryAdmin();
+    if(p === 'member-photos') renderMemberPhotosList();
+    if(p === 'gallery-admin') renderGalleryAdmin();
   });
 });
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // TOAST
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 function toastMsg(msg='Saved!', isErr=false){
   const t = document.getElementById('toast');
   t.textContent = isErr ? '✗ '+msg : '✓ '+msg;
-  t.className = 'toast' + (isErr?' error':'') + ' show';
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  t.className = 'toast'+(isErr?' error':'')+' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // HELPERS
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 function nextId(arr){ return arr.length ? Math.max(...arr.map(i=>i.id||0))+1 : 1; }
 function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // LOAD ALL FROM GITHUB
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 async function loadAll(){
   setSyncState('pending','Loading from GitHub…');
   const file = await GH.getFile();
-  if (file && file.content) {
-    // Merge loaded data into DB (preserve defaults for missing keys)
+  if(file && file.content){
     Object.keys(DB).forEach(k => {
-      if (file.content[k] !== undefined) DB[k] = file.content[k];
+      if(file.content[k] !== undefined) DB[k] = file.content[k];
     });
     setSyncState('ok','Loaded ✓');
   } else {
-    // Warn the admin clearly — saving now risks overwriting remote data
-    setSyncState('err', 'Load failed — refresh before saving!');
-    toastMsg('⚠️ Could not load data from GitHub. Refresh before making changes.', true);
-    return; // Do not renderAll with a potentially empty DB
+    // Do not proceed silently — empty DB would wipe remote data on next save
+    setSyncState('err','Could not load data — refresh before saving!');
+    toastMsg('⚠️ Failed to load data from GitHub. Please refresh the page before making any changes.', true);
+    return;
   }
   renderAll();
 }
 
 function renderAll(){
-  renderNoticesList();
-  renderResourcesList();
-  renderEventsList();
-  renderAchievementsList();
-  renderMemoriesList();
-  renderScheduleEditor();
-  renderDayVisibilityToggles();
-  renderBirthdaysList();
-  renderMemberPhotosList();
-  renderGalleryAdmin();
-  if(document.getElementById('drive-script-url')) document.getElementById('drive-script-url').value = DB.driveScriptUrl||'';
-  if(document.getElementById('drive-folder-link')) document.getElementById('drive-folder-link').value = DB.driveFolder||'';
+  renderNoticesList(); renderResourcesList(); renderEventsList();
+  renderAchievementsList(); renderMemoriesList();
+  renderScheduleEditor(); renderDayVisibilityToggles();
+  renderBirthdaysList(); renderMemberPhotosList(); renderGalleryAdmin();
+  const dsu = document.getElementById('drive-script-url');
+  const dfl = document.getElementById('drive-folder-link');
+  if(dsu) dsu.value = DB.driveScriptUrl || '';
+  if(dfl) dfl.value = DB.driveFolder    || '';
   if(DB.countdown){
-    if(document.getElementById('cd-name')) document.getElementById('cd-name').value = DB.countdown.name||'';
-    if(document.getElementById('cd-date')) document.getElementById('cd-date').value = DB.countdown.date||'';
-    if(document.getElementById('cd-label')) document.getElementById('cd-label').value = DB.countdown.label||'';
+    const n = document.getElementById('cd-name');
+    const d = document.getElementById('cd-date');
+    const l = document.getElementById('cd-label');
+    if(n) n.value = DB.countdown.name  || '';
+    if(d) d.value = DB.countdown.date  || '';
+    if(l) l.value = DB.countdown.label || '';
   }
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 // COLOR PICKER
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════
 let selectedColor = 0;
-document.getElementById('n-color-picker').addEventListener('click', e=>{
+document.getElementById('n-color-picker').addEventListener('click', e => {
   const sw = e.target.closest('.color-swatch');
   if(!sw) return;
-  document.querySelectorAll('#n-color-picker .color-swatch').forEach(s=>s.classList.remove('selected'));
+  document.querySelectorAll('#n-color-picker .color-swatch').forEach(s => s.classList.remove('selected'));
   sw.classList.add('selected');
   selectedColor = parseInt(sw.dataset.val);
 });
 
-// ── MEMORY TYPE TOGGLE ──
-document.getElementById('mem-type').addEventListener('change', e=>{
+document.getElementById('mem-type').addEventListener('change', e => {
   const isPhoto = e.target.value === 'photo';
   document.getElementById('mem-drive-field').style.display = isPhoto ? 'block' : 'none';
-  document.getElementById('mem-text-field').style.display  = isPhoto ? 'none' : 'block';
+  document.getElementById('mem-text-field').style.display  = isPhoto ? 'none'  : 'block';
 });
 
 // ══════════════════════════════════════════════════════
@@ -887,7 +765,7 @@ document.getElementById('mem-type').addEventListener('change', e=>{
 // ══════════════════════════════════════════════════════
 function renderNoticesList(){
   const el = document.getElementById('notices-list');
-  if(!DB.notices.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No notices yet.</div>';return;}
+  if(!DB.notices.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No notices yet.</div>'; return; }
   el.innerHTML = DB.notices.map(n=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${n.icon||'📢'}</div>
@@ -898,49 +776,47 @@ function renderNoticesList(){
       </div>
     </div>`).join('');
 }
-
-document.getElementById('addNoticeBtn').addEventListener('click', async ()=>{
+document.getElementById('addNoticeBtn').addEventListener('click', async () => {
   const title = document.getElementById('n-title').value.trim();
   if(!title) return alert('Please enter a title.');
   DB.notices.push({
     id:nextId(DB.notices), title,
-    tag: document.getElementById('n-tag').value.trim()||'General',
-    desc: document.getElementById('n-desc').value.trim(),
-    icon: document.getElementById('n-icon').value.trim()||'📢',
-    date: fmtDate(document.getElementById('n-date').value),
-    color: selectedColor,
+    tag:    document.getElementById('n-tag').value.trim()  || 'General',
+    desc:   document.getElementById('n-desc').value.trim(),
+    icon:   document.getElementById('n-icon').value.trim() || '📢',
+    date:   fmtDate(document.getElementById('n-date').value),
+    color:  selectedColor,
     pinned: document.getElementById('n-pin').checked ? 1 : 0
   });
   const ok = await syncToGitHub('Add notice: '+title);
   if(ok){ renderNoticesList(); toastMsg('Notice added!'); }
   ['n-title','n-tag','n-desc','n-icon','n-date'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('n-pin').checked=false;
+  document.getElementById('n-pin').checked = false;
 });
 
 // ══════════════════════════════════════════════════════
 // RESOURCES
 // ══════════════════════════════════════════════════════
 function renderResourcesList(){
-  const el=document.getElementById('resources-list');
-  if(!DB.resources.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No resources yet.</div>';return;}
-  el.innerHTML=DB.resources.map(r=>`
+  const el = document.getElementById('resources-list');
+  if(!DB.resources.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No resources yet.</div>'; return; }
+  el.innerHTML = DB.resources.map(r=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${r.icon||'📄'}</div>
       <div class="item-row-info"><div class="item-row-title">${r.title}</div><div class="item-row-meta">${r.subject} · ${r.type||''}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('resources',${r.id})">🗑</button></div>
     </div>`).join('');
 }
-
-document.getElementById('addResourceBtn').addEventListener('click', async ()=>{
-  const title=document.getElementById('r-title').value.trim();
+document.getElementById('addResourceBtn').addEventListener('click', async () => {
+  const title = document.getElementById('r-title').value.trim();
   if(!title) return alert('Please enter a title.');
   DB.resources.push({
     id:nextId(DB.resources), title,
-    subject:document.getElementById('r-subject').value,
-    desc:document.getElementById('r-desc').value.trim(),
-    type:document.getElementById('r-type').value.trim(),
-    link:document.getElementById('r-link').value.trim(),
-    icon:document.getElementById('r-icon').value.trim()||'📄'
+    subject: document.getElementById('r-subject').value,
+    desc:    document.getElementById('r-desc').value.trim(),
+    type:    document.getElementById('r-type').value.trim(),
+    link:    document.getElementById('r-link').value.trim(),
+    icon:    document.getElementById('r-icon').value.trim() || '📄'
   });
   const ok = await syncToGitHub('Add resource: '+title);
   if(ok){ renderResourcesList(); toastMsg('Resource added!'); }
@@ -951,26 +827,25 @@ document.getElementById('addResourceBtn').addEventListener('click', async ()=>{
 // EVENTS
 // ══════════════════════════════════════════════════════
 function renderEventsList(){
-  const el=document.getElementById('events-list');
-  if(!DB.events.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No events yet.</div>';return;}
-  el.innerHTML=DB.events.map(e=>`
+  const el = document.getElementById('events-list');
+  if(!DB.events.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No events yet.</div>'; return; }
+  el.innerHTML = DB.events.map(e=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${e.status==='special'?'⭐':e.status==='upcoming'?'🟢':'⚫'}</div>
       <div class="item-row-info"><div class="item-row-title">${e.title}</div><div class="item-row-meta">${e.date} · ${e.venue||''}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('events',${e.id})">🗑</button></div>
     </div>`).join('');
 }
-
-document.getElementById('addEventBtn').addEventListener('click', async ()=>{
-  const title=document.getElementById('ev-title').value.trim();
+document.getElementById('addEventBtn').addEventListener('click', async () => {
+  const title = document.getElementById('ev-title').value.trim();
   if(!title) return alert('Please enter a title.');
   DB.events.push({
     id:nextId(DB.events), title,
-    date:document.getElementById('ev-date').value,
-    time:document.getElementById('ev-time').value.trim(),
-    venue:document.getElementById('ev-venue').value.trim(),
-    desc:document.getElementById('ev-desc').value.trim(),
-    status:document.getElementById('ev-status').value
+    date:   document.getElementById('ev-date').value,
+    time:   document.getElementById('ev-time').value.trim(),
+    venue:  document.getElementById('ev-venue').value.trim(),
+    desc:   document.getElementById('ev-desc').value.trim(),
+    status: document.getElementById('ev-status').value
   });
   const ok = await syncToGitHub('Add event: '+title);
   if(ok){ renderEventsList(); toastMsg('Event added!'); }
@@ -981,26 +856,25 @@ document.getElementById('addEventBtn').addEventListener('click', async ()=>{
 // ACHIEVEMENTS
 // ══════════════════════════════════════════════════════
 function renderAchievementsList(){
-  const el=document.getElementById('achievements-list');
-  if(!DB.achievements.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No achievements yet.</div>';return;}
-  el.innerHTML=DB.achievements.map(a=>`
+  const el = document.getElementById('achievements-list');
+  if(!DB.achievements.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No achievements yet.</div>'; return; }
+  el.innerHTML = DB.achievements.map(a=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${a.emoji||'🏆'}</div>
       <div class="item-row-info"><div class="item-row-title">${a.name} — ${a.title}</div><div class="item-row-meta">${a.category||''} · ${a.date}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('achievements',${a.id})">🗑</button></div>
     </div>`).join('');
 }
-
-document.getElementById('addAchBtn').addEventListener('click', async ()=>{
-  const name=document.getElementById('ac-name').value.trim();
-  const title=document.getElementById('ac-title').value.trim();
+document.getElementById('addAchBtn').addEventListener('click', async () => {
+  const name  = document.getElementById('ac-name').value.trim();
+  const title = document.getElementById('ac-title').value.trim();
   if(!name||!title) return alert('Please fill name and title.');
   DB.achievements.push({
     id:nextId(DB.achievements), name, title,
-    category:document.getElementById('ac-cat').value.trim(),
-    date:fmtDate(document.getElementById('ac-date').value),
-    desc:document.getElementById('ac-desc').value.trim(),
-    emoji:document.getElementById('ac-emoji').value.trim()||'🏆'
+    category: document.getElementById('ac-cat').value.trim(),
+    date:     fmtDate(document.getElementById('ac-date').value),
+    desc:     document.getElementById('ac-desc').value.trim(),
+    emoji:    document.getElementById('ac-emoji').value.trim() || '🏆'
   });
   const ok = await syncToGitHub('Add achievement: '+name);
   if(ok){ renderAchievementsList(); toastMsg('Achievement added!'); }
@@ -1011,29 +885,28 @@ document.getElementById('addAchBtn').addEventListener('click', async ()=>{
 // MEMORIES
 // ══════════════════════════════════════════════════════
 function renderMemoriesList(){
-  const el=document.getElementById('memories-list');
-  if(!DB.memories.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No memories yet.</div>';return;}
-  el.innerHTML=DB.memories.map(m=>`
+  const el = document.getElementById('memories-list');
+  if(!DB.memories.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No memories yet.</div>'; return; }
+  el.innerHTML = DB.memories.map(m=>`
     <div class="item-row">
       <div style="font-size:1.1rem">${m.type==='photo'?'📷':'✍️'}</div>
       <div class="item-row-info"><div class="item-row-title">${m.author}</div><div class="item-row-meta">${m.type==='photo'?'Photo · '+(m.driveId||'').slice(0,20)+'…':(m.text||'').slice(0,40)+'…'}</div></div>
       <div class="item-row-actions"><button class="icon-btn icon-btn-del" onclick="delItem('memories',${m.id})">🗑</button></div>
     </div>`).join('');
 }
-
-document.getElementById('addMemoryBtn').addEventListener('click', async ()=>{
-  const type=document.getElementById('mem-type').value;
-  const author=document.getElementById('mem-author').value.trim();
+document.getElementById('addMemoryBtn').addEventListener('click', async () => {
+  const type   = document.getElementById('mem-type').value;
+  const author = document.getElementById('mem-author').value.trim();
   if(!author) return alert('Please enter a name.');
-  const entry={id:nextId(DB.memories),type,author,date:fmtDate(document.getElementById('mem-date').value)};
+  const entry = { id:nextId(DB.memories), type, author, date:fmtDate(document.getElementById('mem-date').value) };
   if(type==='photo'){
-    const id=document.getElementById('mem-drive').value.trim();
+    const id = document.getElementById('mem-drive').value.trim();
     if(!id) return alert('Please enter a Google Drive file ID.');
-    entry.driveId=id;
+    entry.driveId = id;
   } else {
-    const txt=document.getElementById('mem-text').value.trim();
+    const txt = document.getElementById('mem-text').value.trim();
     if(!txt) return alert('Please enter memory text.');
-    entry.text=txt;
+    entry.text = txt;
   }
   DB.memories.push(entry);
   const ok = await syncToGitHub('Add memory: '+author);
@@ -1044,9 +917,9 @@ document.getElementById('addMemoryBtn').addEventListener('click', async ()=>{
 // ══════════════════════════════════════════════════════
 // SCHEDULE
 // ══════════════════════════════════════════════════════
-const SCHEDULE_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
-let schedDay=0;
-const DEFAULT_SCHEDULE={
+const SCHEDULE_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+let schedDay = 0;
+const DEFAULT_SCHEDULE = {
   0:[{period:'1',time:'6:15–7:00',subject:'Biology',teacher:'',room:''},
      {period:'2',time:'7:00–7:45',subject:'Chemistry',teacher:'',room:''},
      {period:'3',time:'7:45–8:30',subject:'Physics',teacher:'',room:''},
@@ -1060,12 +933,12 @@ for(let i=1;i<6;i++) DEFAULT_SCHEDULE[i]=[...DEFAULT_SCHEDULE[0]];
 function getScheduleDB(){ return DB.schedule || DEFAULT_SCHEDULE; }
 
 function renderScheduleEditor(){
-  const sch = getScheduleDB();
-  const rows = sch[schedDay]||[];
-  document.getElementById('scheduleEditor').innerHTML=rows.map((r,i)=>`
+  const sch  = getScheduleDB();
+  const rows = sch[schedDay] || [];
+  document.getElementById('scheduleEditor').innerHTML = rows.map((r,i)=>`
     <div class="period-row" data-idx="${i}">
-      <input class="pe-period" value="${r.period}" placeholder="No."/>
-      <input class="pe-time" value="${r.time}" placeholder="Time"/>
+      <input class="pe-period"  value="${r.period}"  placeholder="No."/>
+      <input class="pe-time"    value="${r.time}"    placeholder="Time"/>
       <input class="pe-subject" value="${r.subject}" placeholder="Subject"/>
       <input class="pe-teacher" value="${r.teacher}" placeholder="Teacher"/>
       <button class="icon-btn icon-btn-del" onclick="removePeriod(${i})" style="font-size:.75rem">🗑</button>
@@ -1079,7 +952,7 @@ function removePeriod(idx){
   renderScheduleEditor();
 }
 
-document.getElementById('addPeriodBtn').addEventListener('click',()=>{
+document.getElementById('addPeriodBtn').addEventListener('click', ()=>{
   const sch = getScheduleDB();
   if(!sch[schedDay]) sch[schedDay]=[];
   sch[schedDay].push({period:String(sch[schedDay].length+1),time:'',subject:'',teacher:'',room:''});
@@ -1088,34 +961,34 @@ document.getElementById('addPeriodBtn').addEventListener('click',()=>{
 });
 
 document.getElementById('saveScheduleBtn').addEventListener('click', async ()=>{
-  const sch = getScheduleDB();
+  const sch  = getScheduleDB();
   const rows = document.querySelectorAll('.period-row');
   sch[schedDay] = Array.from(rows).map(row=>({
-    period:row.querySelector('.pe-period').value,
-    time:row.querySelector('.pe-time').value,
-    subject:row.querySelector('.pe-subject').value,
-    teacher:row.querySelector('.pe-teacher').value,
-    room:''
+    period:  row.querySelector('.pe-period').value,
+    time:    row.querySelector('.pe-time').value,
+    subject: row.querySelector('.pe-subject').value,
+    teacher: row.querySelector('.pe-teacher').value,
+    room:    ''
   }));
   DB.schedule = sch;
   const ok = await syncToGitHub('Update schedule: '+SCHEDULE_DAYS[schedDay]);
   if(ok) toastMsg('Schedule saved!');
 });
 
-document.getElementById('schDayTabs').addEventListener('click',e=>{
-  const btn=e.target.closest('.sdt');
+document.getElementById('schDayTabs').addEventListener('click', e=>{
+  const btn = e.target.closest('.sdt');
   if(!btn) return;
   document.querySelectorAll('.sdt').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  schedDay=parseInt(btn.dataset.d);
+  schedDay = parseInt(btn.dataset.d);
   renderScheduleEditor();
 });
 
-// ── DAY VISIBILITY ──
+// DAY VISIBILITY
 const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 function renderDayVisibilityToggles(){
   const hidden = DB.hiddenDays || [];
-  const wrap = document.getElementById('dayVisibilityToggles');
+  const wrap   = document.getElementById('dayVisibilityToggles');
   if(!wrap) return;
   wrap.innerHTML = DAY_LABELS.map((lbl,i)=>{
     const isHidden = hidden.includes(i);
@@ -1148,10 +1021,10 @@ document.getElementById('dayVisibilityToggles').addEventListener('change', rende
 const BS_MN = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
 
 function renderBirthdaysList(){
-  const el=document.getElementById('birthdays-list');
-  if(!DB.birthdays.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>';return;}
-  const sorted=[...DB.birthdays].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
-  el.innerHTML=sorted.map(b=>`
+  const el = document.getElementById('birthdays-list');
+  if(!DB.birthdays.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>'; return; }
+  const sorted = [...DB.birthdays].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
+  el.innerHTML = sorted.map(b=>`
     <div class="item-row">
       <div style="font-size:1rem">🎂</div>
       <div class="item-row-info">
@@ -1163,12 +1036,12 @@ function renderBirthdaysList(){
 }
 
 document.getElementById('addBdBtn').addEventListener('click', async ()=>{
-  const roll=parseInt(document.getElementById('bd-roll').value);
-  const name=document.getElementById('bd-name').value.trim();
-  const bsYear=parseInt(document.getElementById('bd-bsyear').value)||0;
-  const bsMonth=parseInt(document.getElementById('bd-bsmonth').value);
-  const bsDay=parseInt(document.getElementById('bd-bsday').value);
-  const customMsg=document.getElementById('bd-msg').value.trim();
+  const roll      = parseInt(document.getElementById('bd-roll').value);
+  const name      = document.getElementById('bd-name').value.trim();
+  const bsYear    = parseInt(document.getElementById('bd-bsyear').value)||0;
+  const bsMonth   = parseInt(document.getElementById('bd-bsmonth').value);
+  const bsDay     = parseInt(document.getElementById('bd-bsday').value);
+  const customMsg = document.getElementById('bd-msg').value.trim();
   if(!name||!bsMonth||!bsDay) return alert('Please fill name, month and day.');
   DB.birthdays.push({id:nextId(DB.birthdays),roll,name,bsYear,bsMonth,bsDay,customMsg:customMsg||null});
   const ok = await syncToGitHub('Add birthday: '+name);
@@ -1181,9 +1054,9 @@ document.getElementById('addBdBtn').addEventListener('click', async ()=>{
 // ══════════════════════════════════════════════════════
 document.getElementById('saveCountdownBtn').addEventListener('click', async ()=>{
   DB.countdown = {
-    name:document.getElementById('cd-name').value,
-    date:document.getElementById('cd-date').value,
-    label:document.getElementById('cd-label').value
+    name:  document.getElementById('cd-name').value,
+    date:  document.getElementById('cd-date').value,
+    label: document.getElementById('cd-label').value
   };
   const ok = await syncToGitHub('Update countdown');
   if(ok) toastMsg('Countdown saved!');
@@ -1211,17 +1084,15 @@ async function togglePin(id){
 // ══════════════════════════════════════════════════════
 document.getElementById('saveDriveScriptBtn').addEventListener('click', async ()=>{
   const url = document.getElementById('drive-script-url').value.trim();
-  if(!url){ toastMsg('Please enter a URL'); return; }
+  if(!url){ toastMsg('Please enter a URL', true); return; }
   DB.driveScriptUrl = url;
   const res = document.getElementById('drive-test-result');
-  res.style.display='block';
-  res.textContent='Testing with roll 501…';
-  res.style.color='var(--text3)';
+  res.style.display='block'; res.textContent='Testing with roll 501…'; res.style.color='var(--text3)';
   try {
     const r = await fetch(`${url}?roll=501`);
     const d = await r.json();
     if(d.url){ res.textContent='✅ Success! Photo URL found for roll 501.'; res.style.color='#10b981'; }
-    else { res.textContent='⚠️ Connected but no photo found for 501.jpg — check your folder.'; res.style.color='var(--gold)'; }
+    else      { res.textContent='⚠️ Connected but no photo found for 501.jpg — check your folder.'; res.style.color='var(--gold)'; }
   } catch(e){
     res.textContent='❌ Could not connect. Check URL and Apps Script permissions.'; res.style.color='#ef4444';
   }
@@ -1271,7 +1142,7 @@ const ALL_STUDENTS = [
 
 function renderMemberPhotosList(){
   const container = document.getElementById('memberPhotosList');
-  if (!container) return;
+  if(!container) return;
   const saved = DB.memberPhotos || {};
   container.innerHTML = ALL_STUDENTS.map(s => {
     const val = saved[s.roll] || '';
@@ -1281,22 +1152,37 @@ function renderMemberPhotosList(){
       <div style="font-size:.78rem;font-weight:600;flex:1;min-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name.split(' ').slice(0,2).join(' ')}</div>
       <input type="text" data-roll="${s.roll}"
         value="${val}"
-        placeholder="Drive File ID (leave blank to skip)"
+        placeholder="Drive File ID (blank = keep existing)"
         style="flex:2;min-width:0;font-family:'DM Mono',monospace;font-size:.72rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;color:var(--text);outline:none"
         class="member-photo-id-input"/>
-      ${val ? `<img src="https://drive.google.com/thumbnail?id=${val}&sz=w60" style="width:36px;height:46px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0" onerror="this.style.display='none'"/>` : '<div style="width:36px;height:46px;background:var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--text3)">—</div>'}
+      ${val
+        ? `<img src="https://drive.google.com/thumbnail?id=${val}&sz=w60" style="width:36px;height:46px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0" onerror="this.style.display='none'"/>`
+        : `<div style="width:36px;height:46px;background:var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--text3)">—</div>`
+      }
     </div>`;
   }).join('');
 }
 
 document.getElementById('saveMemberPhotosBtn').addEventListener('click', async () => {
   const inputs = document.querySelectorAll('.member-photo-id-input');
-  const result = {};
+
+  // Only collect fields that have been filled in.
+  // Blank inputs are intentionally ignored — the syncToGitHub merge
+  // ensures whatever is already on GitHub for those rolls is preserved.
+  const updates = {};
   inputs.forEach(inp => {
     const val = inp.value.trim();
-    if (val) result[inp.dataset.roll] = val;
+    if(val) updates[inp.dataset.roll] = val;
   });
-  DB.memberPhotos = result;
+
+  if(!Object.keys(updates).length){
+    toastMsg('No new photo IDs entered — nothing to save.', false);
+    return;
+  }
+
+  // Merge into local DB so the UI refreshes correctly
+  DB.memberPhotos = { ...(DB.memberPhotos || {}), ...updates };
+
   const ok = await syncToGitHub('Update member photos');
   if(ok){
     const msg = document.getElementById('memberPhotosSavedMsg');
@@ -1308,9 +1194,9 @@ document.getElementById('saveMemberPhotosBtn').addEventListener('click', async (
 });
 
 document.getElementById('clearMemberPhotosBtn').addEventListener('click', async () => {
-  if (!confirm('Clear all member photo IDs?')) return;
+  if(!confirm('Clear ALL member photo IDs? This removes every saved photo across all sessions.')) return;
   DB.memberPhotos = {};
-  const ok = await syncToGitHub('Clear member photos');
+  const ok = await syncToGitHub('Clear all member photos');
   if(ok){ renderMemberPhotosList(); toastMsg('Cleared all member photos.'); }
 });
 
@@ -1318,19 +1204,17 @@ document.getElementById('clearMemberPhotosBtn').addEventListener('click', async 
 // GALLERY
 // ══════════════════════════════════════════════════════
 function renderGalleryAdmin(){
-  const list = document.getElementById('galleryAdminList');
+  const list       = document.getElementById('galleryAdminList');
   const countLabel = document.getElementById('galCountLabel');
-  if (!list) return;
+  if(!list) return;
   const photos = DB.gallery || [];
   countLabel.textContent = photos.length;
-  if (!photos.length) {
-    list.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>';
-    return;
-  }
+  if(!photos.length){ list.innerHTML='<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>'; return; }
   const catLabel = {class:'Classroom',events:'Events',trips:'Trips',fun:'Fun Times'};
-  list.innerHTML = photos.map((p,i) => `
+  list.innerHTML = photos.map((p,i)=>`
     <div style="display:flex;align-items:center;gap:.75rem;background:var(--bg2);border-radius:10px;padding:.6rem .9rem;border:1px solid var(--border)">
-      <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w80" style="width:52px;height:52px;object-fit:cover;border-radius:7px;border:1px solid var(--border);flex-shrink:0"
+      <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w80"
+        style="width:52px;height:52px;object-fit:cover;border-radius:7px;border:1px solid var(--border);flex-shrink:0"
         onerror="this.style.display='none'"/>
       <div style="flex:1;min-width:0">
         <div style="font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.15rem">${p.caption||'(no caption)'}</div>
@@ -1343,21 +1227,21 @@ function renderGalleryAdmin(){
 }
 
 async function deleteGalleryPhoto(index){
-  if (!confirm('Remove this photo from gallery?')) return;
+  if(!confirm('Remove this photo from gallery?')) return;
   DB.gallery.splice(index,1);
   const ok = await syncToGitHub('Delete gallery photo #'+index);
   if(ok){ renderGalleryAdmin(); toastMsg('Photo removed.'); }
 }
 
 document.getElementById('addGalleryPhotoBtn').addEventListener('click', async () => {
-  const id = document.getElementById('gal-drive-id').value.trim();
-  const cat = document.getElementById('gal-cat').value;
+  const id      = document.getElementById('gal-drive-id').value.trim();
+  const cat     = document.getElementById('gal-cat').value;
   const caption = document.getElementById('gal-caption').value.trim();
-  if (!id) { toastMsg('Please enter a Drive File ID', true); return; }
+  if(!id){ toastMsg('Please enter a Drive File ID', true); return; }
   const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)\//);
-  const cleanId = urlMatch ? urlMatch[1] : id;
+  const cleanId  = urlMatch ? urlMatch[1] : id;
   if(!DB.gallery) DB.gallery=[];
-  DB.gallery.push({ id: cleanId, cat, caption });
+  DB.gallery.push({id:cleanId, cat, caption});
   const ok = await syncToGitHub('Add gallery photo');
   if(ok){
     document.getElementById('gal-drive-id').value='';
@@ -1368,22 +1252,19 @@ document.getElementById('addGalleryPhotoBtn').addEventListener('click', async ()
 });
 
 document.getElementById('clearAllGalleryBtn').addEventListener('click', async () => {
-  if (!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
+  if(!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
   DB.gallery=[];
   const ok = await syncToGitHub('Clear gallery');
   if(ok){ renderGalleryAdmin(); toastMsg('Gallery cleared.'); }
 });
 
 // ══════════════════════════════════════════════════════
-// Expose functions called from inline onclick attributes
+// GLOBALS  (called from inline onclick attributes)
 // ══════════════════════════════════════════════════════
-window.delItem = delItem;
-window.togglePin = togglePin;
-window.removePeriod = removePeriod;
+window.delItem            = delItem;
+window.togglePin          = togglePin;
+window.removePeriod       = removePeriod;
 window.deleteGalleryPhoto = deleteGalleryPhoto;
-
-// Init gallery on load
-renderGalleryAdmin();
 </script>
 </body>
 </html>
