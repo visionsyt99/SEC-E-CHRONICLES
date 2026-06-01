@@ -341,6 +341,14 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "pokhrelshreeji07@gmail.com",
   dob: { bsYear: 2065, bsMonth: 12, bsDay: 25, monthName: "Chaitra" }
+},
+   533: {
+  photo: "https://drive.google.com/uc?export=view&id=1HhI6hDgRNua6zkDY5FxNVRm-a4IDe6UM",
+  quote: "Wanderer",
+  experience: "The best",
+  wantsManagement: false,
+  email: "025neb533@sxc.edu.np",
+  dob: { bsYear: 2065, bsMonth: 11, bsDay: 1, monthName: "Fagun" }
 }
 };
 
