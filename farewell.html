@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farewell & Time Capsule — The E Chronicles</title>
+<link rel="stylesheet" href="style.css"> <!-- your existing stylesheet -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  /* ── Page-specific styles (extend your existing style.css) ── */
+  :root {
+    --e-blue: #1a1a6e;
+    --e-accent: #4f46e5;
+    --e-soft: #eef2ff;
+    --card-radius: 16px;
+  }
+
+  .farewell-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .farewell-hero .tag {
+    display: inline-block;
+    background: var(--e-soft);
+    color: var(--e-accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .farewell-hero h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--e-blue);
+    margin: 0 0 0.5rem;
+  }
+  .farewell-hero p {
+    color: #6b7280;
+    max-width: 540px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  /* ── Auth gate ── */
+  #auth-gate {
+    max-width: 420px;
+    margin: 2rem auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--card-radius);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  #auth-gate .lock-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  #auth-gate h3 { font-size: 1.1rem; color: var(--e-blue); margin-bottom: 0.5rem; }
+  #auth-gate p  { color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  #g-signin-btn { display: flex; justify-content: center; }
+
+  /* ── Submit form ── */
+  #submit-section {
+    max-width: 620px;
+    margin: 2rem auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--card-radius);
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    display: none;
+  }
+  #submit-section h3 {
+    font-size: 1.1rem;
+    color: var(--e-blue);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--e-soft);
+    border-radius: 999px;
+    padding: 6px 14px 6px 6px;
+    font-size: 0.85rem;
+    color: var(--e-accent);
+    margin-bottom: 1.5rem;
+  }
+  .user-pill img {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #111827;
+    background: #fafafa;
+    box-sizing: border-box;
+    transition: border 0.2s;
+    resize: vertical;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--e-accent);
+    background: #fff;
+  }
+  .form-group textarea { min-height: 140px; }
+  .char-count { font-size: 0.78rem; color: #9ca3af; text-align: right; margin-top: 4px; }
+
+  /* ── Theme picker ── */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .theme-opt {
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .theme-opt .th-preview {
+    width: 100%;
+    height: 36px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .theme-opt.selected { border-color: var(--e-accent); background: var(--e-soft); }
+
+  /* themes */
+  .th-midnight  { background: linear-gradient(135deg,#1a1a6e,#4f46e5); }
+  .th-sunset    { background: linear-gradient(135deg,#f97316,#ec4899); }
+  .th-forest    { background: linear-gradient(135deg,#065f46,#34d399); }
+  .th-ocean     { background: linear-gradient(135deg,#0c4a6e,#38bdf8); }
+  .th-sakura    { background: linear-gradient(135deg,#be185d,#fda4af); }
+  .th-gold      { background: linear-gradient(135deg,#78350f,#fbbf24); }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--e-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:hover  { background: #4338ca; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+  #form-status {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    min-height: 1.4rem;
+  }
+  .status-ok  { color: #059669; }
+  .status-err { color: #dc2626; }
+
+  /* ── Already submitted banner ── */
+  #already-submitted {
+    max-width: 620px;
+    margin: 2rem auto;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: var(--card-radius);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    display: none;
+  }
+  #already-submitted h3 { color: #166534; margin-bottom: 0.5rem; }
+  #already-submitted p  { color: #4ade80; font-size: 0.9rem; }
+
+  /* ── Messages wall ── */
+  .wall-header {
+    text-align: center;
+    margin: 3rem 0 1.5rem;
+  }
+  .wall-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--e-blue);
+  }
+  .wall-header p { color: #6b7280; font-size: 0.9rem; }
+
+  .messages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    max-width: 1100px;
+    margin: 0 auto 4rem;
+    padding: 0 1rem;
+  }
+
+  .msg-card {
+    border-radius: var(--card-radius);
+    padding: 1.5rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .msg-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    font-size: 8rem;
+    opacity: 0.08;
+    font-family: Georgia, serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .msg-card .msg-text {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    flex: 1;
+    margin-bottom: 1.2rem;
+    word-break: break-word;
+  }
+  .msg-card .msg-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .msg-card .msg-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+  .msg-card .msg-roll {
+    font-size: 0.7rem;
+    opacity: 0.65;
+    background: rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .msg-card .msg-date {
+    font-size: 0.7rem;
+    opacity: 0.55;
+  }
+
+  /* card themes */
+  .card-midnight { background: linear-gradient(135deg,#1a1a6e 0%,#4f46e5 100%); }
+  .card-sunset   { background: linear-gradient(135deg,#f97316 0%,#ec4899 100%); }
+  .card-forest   { background: linear-gradient(135deg,#065f46 0%,#34d399 100%); }
+  .card-ocean    { background: linear-gradient(135deg,#0c4a6e 0%,#38bdf8 100%); }
+  .card-sakura   { background: linear-gradient(135deg,#be185d 0%,#fda4af 100%); }
+  .card-gold     { background: linear-gradient(135deg,#78350f 0%,#fbbf24 100%); }
+  .card-default  { background: linear-gradient(135deg,#374151 0%,#6b7280 100%); }
+
+  .loading-wall {
+    text-align: center;
+    color: #9ca3af;
+    padding: 3rem;
+    font-size: 0.95rem;
+  }
+  .empty-wall {
+    text-align: center;
+    color: #9ca3af;
+    padding: 3rem;
+  }
+  .empty-wall .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  @media (max-width: 600px) {
+    #auth-gate, #submit-section { margin: 1rem; padding: 1.5rem; }
+    .messages-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── your existing nav here ── -->
+
+<main style="max-width:1200px; margin:0 auto; padding:0 1rem;">
+
+  <!-- Hero -->
+  <div class="farewell-hero">
+    <span class="tag">// Time Capsule</span>
+    <h1>Farewell Messages 💌</h1>
+    <p>Leave a message for Section E — your thoughts, memories, wishes, and words that will stay here forever. Sign in with your Google account to add yours.</p>
+  </div>
+
+  <!-- Auth gate (shown when not logged in) -->
+  <div id="auth-gate">
+    <div class="lock-icon">🔐</div>
+    <h3>Sign in to leave your message</h3>
+    <p>Use the Google account you use at St. Xavier's. One message per student.</p>
+    <div id="g-signin-btn"></div>
+  </div>
+
+  <!-- Already submitted banner -->
+  <div id="already-submitted">
+    <h3>✅ Your message is in the capsule!</h3>
+    <p>You've already left your farewell. It's saved forever with Section E. 💙</p>
+  </div>
+
+  <!-- Submit form (shown after login) -->
+  <div id="submit-section">
+    <div id="user-pill-wrap"></div>
+    <h3>✍️ Your Farewell Message</h3>
+
+    <div class="form-group">
+      <label>Your Name (as you want it shown)</label>
+      <input type="text" id="inp-name" placeholder="e.g. Aarav Sharma" maxlength="60">
+    </div>
+
+    <div class="form-group">
+      <label>Roll Number (optional)</label>
+      <input type="text" id="inp-roll" placeholder="e.g. 501" maxlength="10">
+    </div>
+
+    <div class="form-group">
+      <label>Your Message <span style="color:#9ca3af;font-weight:400">(max 500 chars)</span></label>
+      <textarea id="inp-message" placeholder="Write anything — a memory, a wish, a joke, advice for your future self, something you'll miss..." maxlength="500"></textarea>
+      <div class="char-count"><span id="char-left">500</span> characters remaining</div>
+    </div>
+
+    <div class="form-group">
+      <label>Card Theme</label>
+      <div class="theme-grid" id="theme-grid">
+        <div class="theme-opt selected" data-theme="midnight">
+          <div class="th-preview th-midnight"></div>Midnight
+        </div>
+        <div class="theme-opt" data-theme="sunset">
+          <div class="th-preview th-sunset"></div>Sunset
+        </div>
+        <div class="theme-opt" data-theme="forest">
+          <div class="th-preview th-forest"></div>Forest
+        </div>
+        <div class="theme-opt" data-theme="ocean">
+          <div class="th-preview th-ocean"></div>Ocean
+        </div>
+        <div class="theme-opt" data-theme="sakura">
+          <div class="th-preview th-sakura"></div>Sakura
+        </div>
+        <div class="theme-opt" data-theme="gold">
+          <div class="th-preview th-gold"></div>Gold
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitFarewell()">
+      💌 Save to Time Capsule
+    </button>
+    <div id="form-status"></div>
+  </div>
+
+  <!-- Messages Wall -->
+  <div class="wall-header">
+    <h2>📬 Messages from Section E</h2>
+    <p>Every farewell, every wish — saved here forever.</p>
+  </div>
+
+  <div class="messages-grid" id="messages-grid">
+    <div class="loading-wall">Loading messages from the capsule…</div>
+  </div>
+
+</main>
+
+<!-- ── your existing footer here ── -->
+
+<script>
+  // 🔴 Replace with your deployed Apps Script Web App URL
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3_v4IBUpJ4fLgXLE83hUNdNmh4NlJfhmPVSeUpXE1W8b0y8w2bbfWMBuwK7Yuessn/exec';
+
+  // 🔴 Replace with your Google OAuth Client ID
+  const GOOGLE_CLIENT_ID = '71588370860-mo70k26l0caddegu8vr9n65o3fv4hfrh.apps.googleusercontent.com';
+
+  let currentUser = null;
+  let selectedTheme = 'midnight';
+
+  // ── Google Sign-In ─────────────────────────────────────────
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+      auto_select: false
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById('g-signin-btn'),
+      { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill' }
+    );
+
+    // Check if already submitted (stored locally to avoid re-fetching)
+    const saved = localStorage.getItem('e_chronicles_farewell_submitted');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // still verify — show banner if within same session email
+      currentUser = parsed;
+      showLoggedIn(parsed);
+    }
+
+    loadMessages();
+    setupThemePicker();
+    setupCharCount();
+  };
+
+  function handleCredentialResponse(response) {
+    const payload = parseJwt(response.credential);
+    currentUser = {
+      idToken:     response.credential,
+      name:        payload.name,
+      email:       payload.email,
+      picture:     payload.picture
+    };
+
+    const submitted = localStorage.getItem('e_chronicles_farewell_' + payload.email);
+    if (submitted) {
+      showAlreadySubmitted();
+    } else {
+      showLoggedIn(currentUser);
+    }
+  }
+
+  function showLoggedIn(user) {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('already-submitted').style.display = 'none';
+
+    const submitted = localStorage.getItem('e_chronicles_farewell_' + user.email);
+    if (submitted) { showAlreadySubmitted(); return; }
+
+    document.getElementById('submit-section').style.display = 'block';
+    document.getElementById('inp-name').value = user.name || '';
+    document.getElementById('user-pill-wrap').innerHTML = `
+      <div class="user-pill">
+        <img src="${user.picture || ''}" alt="" onerror="this.style.display='none'">
+        Signed in as <strong>${user.email}</strong>
+      </div>`;
+  }
+
+  function showAlreadySubmitted() {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('submit-section').style.display = 'none';
+    document.getElementById('already-submitted').style.display = 'block';
+  }
+
+  // ── Submit ─────────────────────────────────────────────────
+  async function submitFarewell() {
+    if (!currentUser) return;
+
+    const name    = document.getElementById('inp-name').value.trim();
+    const roll    = document.getElementById('inp-roll').value.trim();
+    const message = document.getElementById('inp-message').value.trim();
+    const status  = document.getElementById('form-status');
+    const btn     = document.getElementById('submit-btn');
+
+    if (!name)    { setStatus('Please enter your name.', false); return; }
+    if (!message) { setStatus('Please write your message.', false); return; }
+    if (message.length < 10) { setStatus('Message is too short — say something real! 😊', false); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    setStatus('', null);
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action:      'submitFarewell',
+          idToken:     currentUser.idToken,
+          displayName: name,
+          rollNo:      roll,
+          message:     message,
+          theme:       selectedTheme,
+          isPublic:    true
+        })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('e_chronicles_farewell_' + currentUser.email, '1');
+        setStatus('✅ Your message is saved in the capsule forever! 💙', true);
+        btn.textContent = '✅ Saved!';
+        setTimeout(() => { showAlreadySubmitted(); loadMessages(); }, 1800);
+      } else {
+        setStatus(data.error || 'Something went wrong. Try again.', false);
+        btn.disabled = false;
+        btn.textContent = '💌 Save to Time Capsule';
+      }
+    } catch(e) {
+      setStatus('Network error. Check your connection and try again.', false);
+      btn.disabled = false;
+      btn.textContent = '💌 Save to Time Capsule';
+    }
+  }
+
+  function setStatus(msg, ok) {
+    const el = document.getElementById('form-status');
+    el.textContent = msg;
+    el.className = ok === true ? 'status-ok' : ok === false ? 'status-err' : '';
+  }
+
+  // ── Load messages ──────────────────────────────────────────
+  async function loadMessages() {
+    const grid = document.getElementById('messages-grid');
+    try {
+      const res  = await fetch(SCRIPT_URL + '?action=getFarewells');
+      const data = await res.json();
+
+      if (!data.messages || data.messages.length === 0) {
+        grid.innerHTML = `<div class="empty-wall" style="grid-column:1/-1">
+          <div class="empty-icon">💌</div>
+          <p>No messages yet — be the first to leave yours!</p>
+        </div>`;
+        return;
+      }
+
+      // Shuffle so it's not always the same order
+      const shuffled = [...data.messages].sort(() => Math.random() - 0.5);
+
+      grid.innerHTML = shuffled.map(m => `
+        <div class="msg-card card-${m.theme || 'default'}">
+          <p class="msg-text">${escHtml(m.message)}</p>
+          <div class="msg-footer">
+            <span class="msg-author">— ${escHtml(m.name)}</span>
+            ${m.rollNo ? `<span class="msg-roll">#${escHtml(m.rollNo)}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+    } catch(e) {
+      grid.innerHTML = `<div class="loading-wall" style="grid-column:1/-1">
+        Could not load messages. Please refresh.
+      </div>`;
+    }
+  }
+
+  // ── Theme picker ───────────────────────────────────────────
+  function setupThemePicker() {
+    document.querySelectorAll('.theme-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedTheme = opt.dataset.theme;
+      });
+    });
+  }
+
+  // ── Char count ─────────────────────────────────────────────
+  function setupCharCount() {
+    const ta = document.getElementById('inp-message');
+    const cl = document.getElementById('char-left');
+    ta.addEventListener('input', () => { cl.textContent = 500 - ta.value.length; });
+  }
+
+  // ── Helpers ────────────────────────────────────────────────
+  function parseJwt(token) {
+    const base64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    return JSON.parse(atob(base64));
+  }
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
