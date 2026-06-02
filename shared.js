@@ -462,29 +462,33 @@ function initMeshBackground(){
     r: Math.random()*2.5+1.5,
     hue: Math.random()*60+220,
   }));
-  let tick = 0;
+
   function draw(){
-    if(document.documentElement.classList.contains('dark')){
-      requestAnimationFrame(draw); return;
-    }
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    tick++;
+    const dark = document.documentElement.classList.contains('dark');
+
     nodes.forEach(n=>{
       n.x+=n.vx; n.y+=n.vy;
       if(n.x<0||n.x>canvas.width) n.vx*=-1;
       if(n.y<0||n.y>canvas.height) n.vy*=-1;
       n.hue = (n.hue + 0.05) % 360;
     });
+
     for(let i=0;i<N;i++){
       for(let j=i+1;j<N;j++){
         const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
         const dist=Math.sqrt(dx*dx+dy*dy);
         const maxDist=canvas.width*0.28;
         if(dist<maxDist){
-          const alpha=(1-dist/maxDist)*0.18;
+          // Dark: lower alpha so lines don't overpower the dark bg
+          const alpha = dark
+            ? (1-dist/maxDist)*0.12
+            : (1-dist/maxDist)*0.18;
           const grad=ctx.createLinearGradient(nodes[i].x,nodes[i].y,nodes[j].x,nodes[j].y);
-          grad.addColorStop(0,`hsla(${nodes[i].hue},75%,55%,${alpha})`);
-          grad.addColorStop(1,`hsla(${nodes[j].hue},75%,55%,${alpha})`);
+          // Dark: richer saturation, slightly darker lightness
+          const l = dark ? '45%' : '55%';
+          grad.addColorStop(0,`hsla(${nodes[i].hue},85%,${l},${alpha})`);
+          grad.addColorStop(1,`hsla(${nodes[j].hue},85%,${l},${alpha})`);
           ctx.beginPath();
           ctx.moveTo(nodes[i].x,nodes[i].y);
           ctx.lineTo(nodes[j].x,nodes[j].y);
@@ -494,19 +498,25 @@ function initMeshBackground(){
         }
       }
     }
+
     nodes.forEach(n=>{
+      // Dark: stronger glow since dark bg makes it pop more
+      const glowAlpha  = dark ? 0.22 : 0.14;
+      const dotAlpha   = dark ? 0.70 : 0.55;
+      const dotL       = dark ? '65%' : '55%';
       const glow=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*7);
-      glow.addColorStop(0,`hsla(${n.hue},80%,60%,0.14)`);
-      glow.addColorStop(1,`hsla(${n.hue},80%,60%,0)`);
+      glow.addColorStop(0,`hsla(${n.hue},90%,60%,${glowAlpha})`);
+      glow.addColorStop(1,`hsla(${n.hue},90%,60%,0)`);
       ctx.beginPath();
       ctx.arc(n.x,n.y,n.r*7,0,Math.PI*2);
       ctx.fillStyle=glow;
       ctx.fill();
       ctx.beginPath();
       ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle=`hsla(${n.hue},80%,55%,0.55)`;
+      ctx.fillStyle=`hsla(${n.hue},85%,${dotL},${dotAlpha})`;
       ctx.fill();
     });
+
     requestAnimationFrame(draw);
   }
   draw();
