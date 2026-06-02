@@ -159,7 +159,7 @@ html.light #ec-mesh-canvas {
   opacity: 1;
 }
 html.dark #ec-mesh-canvas {
-  opacity: 0 !important;
+  opacity: 1 !important;
 }
 
 
