@@ -19,7 +19,7 @@
     .mw-section{padding:3rem 2.5rem 5rem}
     .mw-inner{max-width:1100px;margin:0 auto}
 
-    /* masonry */
+    /* ── masonry grid ── */
     .memory-grid{columns:3;column-gap:1.1rem}
     .memory-card{
       break-inside:avoid;margin-bottom:1.1rem;
@@ -53,8 +53,8 @@
       font-size:1.05rem;font-style:italic;line-height:1.7;
       color:var(--text);margin-bottom:1rem;
     }
-    .mt-quote::before{content:'"';color:var(--gold);font-size:1.4rem;line-height:0;vertical-align:-.4rem;margin-right:.2rem}
-    .mt-quote::after {content:'"';color:var(--gold);font-size:1.4rem;line-height:0;vertical-align:-.4rem;margin-left:.2rem}
+    .mt-quote::before{content:'\201C';color:var(--gold);font-size:1.4rem;line-height:0;vertical-align:-.4rem;margin-right:.2rem}
+    .mt-quote::after {content:'\201D';color:var(--gold);font-size:1.4rem;line-height:0;vertical-align:-.4rem;margin-left:.2rem}
     .mt-footer{display:flex;align-items:center;justify-content:space-between}
     .mt-author{font-weight:600;font-size:.8rem}
     .mt-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3)}
@@ -96,6 +96,119 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:768px){.memory-grid,.mw-skeleton{columns:2}}
     @media(max-width:480px){.memory-grid,.mw-skeleton{columns:1}.page-hero,.mw-section{padding-left:1.25rem;padding-right:1.25rem}}
+
+    /* ════════════════════════════════════════
+       REACTIONS SYSTEM
+    ════════════════════════════════════════ */
+    .reaction-bar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:5px;
+      padding:.6rem 1rem .75rem;
+      border-top:1px solid var(--border);
+      background:var(--surface);
+      /* stop card click propagating through reaction area */
+      position:relative;
+      z-index:2;
+    }
+
+    .reaction-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
+      background:var(--bg2,#f3f4f6);
+      border:1.5px solid transparent;
+      border-radius:999px;
+      padding:3px 9px;
+      font-size:.78rem;
+      cursor:pointer;
+      transition:transform .15s,background .15s,border-color .15s;
+      user-select:none;
+      color:var(--text);
+      font-family:inherit;
+      line-height:1;
+    }
+    .reaction-btn:hover{
+      background:var(--accent-light);
+      border-color:var(--accent);
+      transform:scale(1.1);
+    }
+    .reaction-btn.reacted{
+      background:var(--accent-light);
+      border-color:var(--accent);
+      color:var(--accent);
+      font-weight:600;
+    }
+    .reaction-btn .r-emoji{font-size:.9rem;line-height:1}
+    .reaction-btn .r-count{font-size:.7rem;font-weight:500;opacity:.8}
+
+    .add-reaction-wrap{position:relative;display:inline-block}
+    .add-reaction-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
+      background:transparent;
+      border:1.5px dashed var(--border);
+      border-radius:999px;
+      padding:3px 10px;
+      font-size:.75rem;
+      cursor:pointer;
+      color:var(--text3);
+      transition:border-color .15s,color .15s,background .15s;
+      font-family:inherit;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .add-reaction-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+    /* Emoji picker popup */
+    .emoji-picker-popup{
+      position:absolute;
+      bottom:calc(100% + 8px);
+      left:0;
+      z-index:9999;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+      box-shadow:0 8px 32px rgba(0,0,0,.18);
+      width:272px;
+      display:none;
+      pointer-events:all;
+    }
+    .emoji-picker-popup.open{display:block}
+
+    /* flip upward if near bottom of viewport — JS handles this */
+    .emoji-picker-popup.flip-up{bottom:calc(100% + 8px);top:auto}
+    .emoji-picker-popup.flip-down{top:calc(100% + 8px);bottom:auto}
+
+    .emoji-picker-title{
+      font-size:.68rem;font-weight:600;color:var(--text3);
+      text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;
+    }
+    .emoji-section-label{
+      font-size:.65rem;color:var(--text3);
+      text-transform:uppercase;letter-spacing:.06em;
+      margin:6px 0 3px;grid-column:1/-1;
+    }
+    .emoji-grid{
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      gap:2px;
+    }
+    .emoji-choice{
+      font-size:1.15rem;
+      cursor:pointer;
+      border-radius:7px;
+      padding:4px 2px;
+      text-align:center;
+      transition:background .12s,transform .12s;
+      line-height:1.3;
+      user-select:none;
+    }
+    .emoji-choice:hover{background:var(--bg2);transform:scale(1.28)}
+
+    .reactions-loading{font-size:.72rem;color:var(--text3);padding:3px 0}
   </style>
 </head>
 <body>
@@ -108,16 +221,17 @@
       <p class="section-desc">Photos, moments and words from the students of Section E. Every memory lives here forever.</p>
     </div>
   </div>
+
   <section class="mw-section">
     <div class="mw-inner">
-    <div class="info-bar reveal" id="infoBar">
-  🌸 Some chapters end, but memories never do. Welcome to our little corner of forever — 
-  where <span style="color:var(--accent);font-weight:600;">Section E</span> lives on, 
-  one memory at a time. This wall holds them all — scroll through, 
-  <span style="color:var(--teal);font-weight:500;">smile</span>, and 
-  <span style="color:var(--gold);font-weight:500;">remember</span>. 
-  <span id="infoStatus"></span>
-</div>
+      <div class="info-bar reveal" id="infoBar">
+        🌸 Some chapters end, but memories never do. Welcome to our little corner of forever —
+        where <span style="color:var(--accent);font-weight:600;">Section E</span> lives on,
+        one memory at a time. This wall holds them all — scroll through,
+        <span style="color:var(--teal);font-weight:500;">smile</span>, and
+        <span style="color:var(--gold);font-weight:500;">remember</span>.
+        <span id="infoStatus"></span>
+      </div>
 
       <div class="mw-skeleton reveal" id="mwSkeleton">
         <div class="mw-sk-item"></div><div class="mw-sk-item"></div>
@@ -125,11 +239,14 @@
         <div class="mw-sk-item"></div><div class="mw-sk-item"></div>
       </div>
       <div class="memory-grid reveal reveal-delay-1" id="memoryGrid" style="display:none"></div>
-      <div id="emptyState" class="empty-state" style="display:none">The memory wall is waiting for its first memory.</div>
+      <div id="emptyState" class="empty-state" style="display:none">
+        The memory wall is waiting for its first memory.
+      </div>
     </div>
   </section>
 </div>
 
+<!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lbClose">✕</button>
   <img id="lbImg" src="" alt=""/>
@@ -139,25 +256,263 @@
 <script>
 injectNav();
 
-// driveThumb uses the public thumbnail URL for Drive files
-function driveThumb(id, size) {
-  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
+/* ════════════════════════════════════════════════════════════
+   REACTIONS — Apps Script backend
+════════════════════════════════════════════════════════════ */
+const REACTIONS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3_v4IBUpJ4fLgXLE83hUNdNmh4NlJfhmPVSeUpXE1W8b0y8w2bbfWMBuwK7Yuessn/exec';
+
+/* 30 emoji reactions, grouped */
+const EMOJI_GROUPS = [
+  {
+    label: 'Love & care',
+    emojis: ['❤️','🧡','💛','💚','💙','💜','🖤','🩷','🫶','🥰','😍','🤩']
+  },
+  {
+    label: 'Feelings',
+    emojis: ['😂','🤣','😭','🥹','😢','😮','😊','🤗','😌','😎']
+  },
+  {
+    label: 'Hype',
+    emojis: ['🔥','✨','💯','🎉','👏','🙌','💪','⭐','🏆','🫡']
+  },
+  {
+    label: 'Section E',
+    emojis: ['🎓','📚','🧪','🔬','🌸','🌈','🫂','🕊️','💫','🏅']
+  }
+];
+
+/* flat list for quick lookup */
+const ALL_EMOJIS = EMOJI_GROUPS.flatMap(g => g.emojis);
+
+/* in-memory reaction store: { memoryId: { emoji: count } } */
+let reactionData       = {};
+/* which emojis this browser has already reacted with: { memoryId: Set<emoji> } */
+let userReactions      = {};
+let reactionsLoaded    = false;
+
+/* ── load user reactions from localStorage ── */
+function loadLocalReactions() {
+  try {
+    const raw = localStorage.getItem('ec_reactions_v2');
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    for (const [mid, arr] of Object.entries(parsed)) {
+      userReactions[mid] = new Set(Array.isArray(arr) ? arr : []);
+    }
+  } catch(e) {}
 }
 
+function saveLocalReactions() {
+  const out = {};
+  for (const [mid, set] of Object.entries(userReactions)) {
+    out[mid] = [...set];
+  }
+  localStorage.setItem('ec_reactions_v2', JSON.stringify(out));
+}
+
+function getUserSet(mid) {
+  if (!userReactions[mid]) userReactions[mid] = new Set();
+  return userReactions[mid];
+}
+
+/* ── fetch all reaction counts from server ── */
+async function loadAllReactions() {
+  try {
+    const res  = await fetch(REACTIONS_SCRIPT_URL + '?action=getReactions');
+    const data = await res.json();
+    reactionData = data.reactions || {};
+    reactionsLoaded = true;
+    /* re-render every mounted reaction bar */
+    document.querySelectorAll('[data-rxbar]').forEach(bar => {
+      renderReactionBar(bar, bar.dataset.mid);
+    });
+  } catch(e) {
+    console.warn('Reactions load failed:', e);
+    reactionsLoaded = true; /* still allow adding */
+    document.querySelectorAll('[data-rxbar]').forEach(bar => {
+      renderReactionBar(bar, bar.dataset.mid);
+    });
+  }
+}
+
+/* ── mount a reaction bar onto a card element ── */
+function mountReactionBar(cardEl, memoryId) {
+  const bar = document.createElement('div');
+  bar.className     = 'reaction-bar';
+  bar.dataset.rxbar = '1';
+  bar.dataset.mid   = memoryId;
+
+  /* stop card click (lightbox) when clicking the reaction bar */
+  bar.addEventListener('click', e => e.stopPropagation());
+
+  if (reactionsLoaded) {
+    renderReactionBar(bar, memoryId);
+  } else {
+    bar.innerHTML = '<span class="reactions-loading">Loading reactions…</span>';
+  }
+
+  cardEl.appendChild(bar);
+}
+
+/* ── render reaction pills + add button into a bar ── */
+function renderReactionBar(bar, mid) {
+  const counts = reactionData[mid] || {};
+  const mySet  = getUserSet(mid);
+
+  /* existing reactions sorted by count desc, only show those with count > 0 */
+  const active = Object.entries(counts)
+    .filter(([,c]) => c > 0)
+    .sort((a,b) => b[1] - a[1]);
+
+  let html = active.map(([emoji, count]) => {
+    const cls = mySet.has(emoji) ? 'reacted' : '';
+    return `<button class="reaction-btn ${cls}"
+      data-emoji="${emoji}" data-mid="${mid}"
+      title="${count} reaction${count !== 1 ? 's' : ''}">
+      <span class="r-emoji">${emoji}</span>
+      <span class="r-count">${count}</span>
+    </button>`;
+  }).join('');
+
+  /* add-reaction button */
+  const pickerId = 'picker-' + mid.replace(/[^a-z0-9]/gi, '_');
+  html += `<div class="add-reaction-wrap">
+    <button class="add-reaction-btn" data-picker="${pickerId}">+ React</button>
+    <div class="emoji-picker-popup" id="${pickerId}">
+      <div class="emoji-picker-title">Pick a reaction</div>
+      ${EMOJI_GROUPS.map(g => `
+        <div class="emoji-section-label">${g.label}</div>
+        <div class="emoji-grid">
+          ${g.emojis.map(e =>
+            `<span class="emoji-choice" data-pick="${e}" data-mid="${mid}">${e}</span>`
+          ).join('')}
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+
+  bar.innerHTML = html;
+
+  /* bind pill clicks */
+  bar.querySelectorAll('.reaction-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      handleReactionToggle(mid, btn.dataset.emoji);
+    });
+  });
+
+  /* bind picker open */
+  bar.querySelectorAll('.add-reaction-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePicker(e, btn.dataset.picker);
+    });
+  });
+
+  /* bind emoji choices */
+  bar.querySelectorAll('.emoji-choice').forEach(span => {
+    span.addEventListener('click', e => {
+      e.stopPropagation();
+      closeAllPickers();
+      handlePickedEmoji(mid, span.dataset.pick);
+    });
+  });
+}
+
+/* ── toggle an existing reaction pill ── */
+function handleReactionToggle(mid, emoji) {
+  const mySet = getUserSet(mid);
+  if (!reactionData[mid]) reactionData[mid] = {};
+  const cur = reactionData[mid][emoji] || 0;
+
+  if (mySet.has(emoji)) {
+    mySet.delete(emoji);
+    reactionData[mid][emoji] = Math.max(0, cur - 1);
+    /* local un-react only — server only ever goes up */
+  } else {
+    mySet.add(emoji);
+    reactionData[mid][emoji] = cur + 1;
+    sendReaction(mid, emoji);
+  }
+
+  saveLocalReactions();
+  refreshBar(mid);
+}
+
+/* ── pick a new emoji from the picker ── */
+function handlePickedEmoji(mid, emoji) {
+  if (!reactionData[mid]) reactionData[mid] = {};
+  const mySet = getUserSet(mid);
+  /* if already reacted with this emoji, don't double-count */
+  if (!mySet.has(emoji)) {
+    mySet.add(emoji);
+    reactionData[mid][emoji] = (reactionData[mid][emoji] || 0) + 1;
+    sendReaction(mid, emoji);
+    saveLocalReactions();
+  }
+  refreshBar(mid);
+}
+
+/* ── re-render the bar for a specific memoryId ── */
+function refreshBar(mid) {
+  const bar = document.querySelector(`[data-rxbar][data-mid="${mid}"]`);
+  if (bar) renderReactionBar(bar, mid);
+}
+
+/* ── send reaction to Apps Script ── */
+function sendReaction(mid, emoji) {
+  fetch(REACTIONS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'addReaction', memoryId: mid, emoji })
+  }).catch(e => console.warn('Reaction not synced:', e));
+}
+
+/* ── emoji picker open/close ── */
+function togglePicker(e, pickerId) {
+  e.stopPropagation();
+  const picker = document.getElementById(pickerId);
+  if (!picker) return;
+  const isOpen = picker.classList.contains('open');
+  closeAllPickers();
+  if (!isOpen) {
+    picker.classList.add('open');
+    /* flip direction if near bottom of viewport */
+    const rect = picker.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight - 20) {
+      picker.classList.add('flip-up');
+      picker.classList.remove('flip-down');
+    } else {
+      picker.classList.add('flip-down');
+      picker.classList.remove('flip-up');
+    }
+  }
+}
+
+function closeAllPickers() {
+  document.querySelectorAll('.emoji-picker-popup.open')
+    .forEach(p => p.classList.remove('open'));
+}
+
+document.addEventListener('click', closeAllPickers);
+
+/* ════════════════════════════════════════════════════════════
+   MEMORY WALL RENDER
+════════════════════════════════════════════════════════════ */
+function driveThumb(id, size) {
+  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size || 'w800');
+}
 function memoryPhotoUrl(driveId) {
   return driveThumb(driveId, 'w800');
 }
 
 const ACCENT_CLASSES = ['mc-blue','mc-gold','mc-green','mc-purple'];
-
-// _siteData holds admin data loaded from GitHub via loadSiteData()
 let _siteData = {};
 
 function renderMemories() {
-  const grid = document.getElementById('memoryGrid');
+  const grid     = document.getElementById('memoryGrid');
   const skeleton = document.getElementById('mwSkeleton');
-  const empty = document.getElementById('emptyState');
-  // Prefer admin data from GitHub; fall back to localStorage
+  const empty    = document.getElementById('emptyState');
+
   const memories = (_siteData.memories && _siteData.memories.length)
     ? _siteData.memories
     : JSON.parse(localStorage.getItem('ec_memories') || '[]');
@@ -165,60 +520,94 @@ function renderMemories() {
   skeleton.style.display = 'none';
 
   if (!memories.length) {
-    grid.style.display = 'none';
+    grid.style.display  = 'none';
     empty.style.display = 'block';
     return;
   }
 
-  document.getElementById('infoBar').querySelector('#infoStatus').textContent =
-    memories.length + ' memor' + (memories.length!==1?'ies':'y') + ' loaded.';
+  document.getElementById('infoStatus').textContent =
+    memories.length + ' memor' + (memories.length !== 1 ? 'ies' : 'y') + ' loaded.';
 
   empty.style.display = 'none';
-  grid.style.display = 'block';
+  grid.style.display  = 'block';
 
-  grid.innerHTML = memories.map(function(m, i) {
-    var delay = (i * 0.06) + 's';
+  /* build card HTML — reaction bar will be appended after */
+  grid.innerHTML = memories.map((m, i) => {
+    const delay = (i * 0.06) + 's';
+    const mid   = m.id || ('mem_' + i);
+
     if (m.type === 'photo') {
-      var imgSrc = m.useScript
+      const imgSrc = m.useScript
         ? DRIVE_SCRIPT_URL + '?roll=' + m.roll + '&type=memory'
         : memoryPhotoUrl(m.driveId);
-      return '<div class="memory-card" style="animation-delay:' + delay + '" onclick="openLb(\'' + (m.driveId||'') + '\',\'' + (m.useScript?DRIVE_SCRIPT_URL+'?roll='+m.roll+'&type=memory':'') + '\')">' +
-        '<div class="memory-photo">' +
-        '<img src="' + imgSrc + '" alt="' + (m.author||'Memory') + '" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=ph-placeholder><span>📷</span><p>Photo unavailable</p></div>\'"/>' +
-        '</div>' +
-        '<div class="memory-caption">' +
-        '<div class="mc-author">' + (m.author||'Section E') + '</div>' +
-        '<div class="mc-date">' + (m.date||'') + '</div>' +
-        '</div></div>';
+      return `<div class="memory-card" id="card-${mid}" style="animation-delay:${delay}"
+          data-drive-id="${m.driveId || ''}" data-script-url="${m.useScript ? DRIVE_SCRIPT_URL+'?roll='+m.roll+'&type=memory' : ''}">
+        <div class="memory-photo">
+          <img src="${imgSrc}" alt="${escHtml(m.author||'Memory')}" loading="lazy"
+            onerror="this.parentElement.innerHTML='<div class=ph-placeholder><span>📷</span><p>Photo unavailable</p></div>'"/>
+        </div>
+        <div class="memory-caption">
+          <div class="mc-author">${escHtml(m.author||'Section E')}</div>
+          <div class="mc-date">${escHtml(m.date||'')}</div>
+        </div>
+      </div>`;
     } else {
-      var ac = ACCENT_CLASSES[i % ACCENT_CLASSES.length];
-      return '<div class="memory-card ' + ac + '" style="animation-delay:' + delay + '">' +
-        '<div class="memory-text">' +
-        '<div class="mt-quote">' + (m.text||'') + '</div>' +
-        '<div class="mt-footer">' +
-        '<div class="mt-author">' + (m.author||'Section E') + '</div>' +
-        '<div class="mt-date">' + (m.date||'') + '</div>' +
-        '</div></div></div>';
+      const ac = ACCENT_CLASSES[i % ACCENT_CLASSES.length];
+      return `<div class="memory-card ${ac}" id="card-${mid}" style="animation-delay:${delay}">
+        <div class="memory-text">
+          <div class="mt-quote">${escHtml(m.text||'')}</div>
+          <div class="mt-footer">
+            <div class="mt-author">${escHtml(m.author||'Section E')}</div>
+            <div class="mt-date">${escHtml(m.date||'')}</div>
+          </div>
+        </div>
+      </div>`;
     }
   }).join('');
+
+  /* attach click listeners for lightbox on photo cards */
+  grid.querySelectorAll('.memory-card').forEach(card => {
+    const driveId   = card.dataset.driveId;
+    const scriptUrl = card.dataset.scriptUrl;
+    if (driveId || scriptUrl) {
+      card.addEventListener('click', () => openLb(driveId, scriptUrl));
+    }
+  });
+
+  /* mount reaction bars — one per card */
+  memories.forEach((m, i) => {
+    const mid  = m.id || ('mem_' + i);
+    const card = document.getElementById('card-' + mid);
+    if (card) mountReactionBar(card, mid);
+  });
 }
 
+/* ── lightbox ── */
 function openLb(driveId, scriptUrl) {
-  var src = scriptUrl || driveThumb(driveId, 'w1200');
+  const src = scriptUrl || driveThumb(driveId, 'w1200');
   document.getElementById('lbImg').src = src;
   document.getElementById('lightbox').classList.add('open');
 }
-document.getElementById('lbClose').addEventListener('click', function() {
+document.getElementById('lbClose').addEventListener('click', () => {
   document.getElementById('lightbox').classList.remove('open');
 });
 document.getElementById('lightbox').addEventListener('click', function(e) {
   if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
 });
 
-// Wait for GitHub admin data before rendering
+/* ── HTML escape ── */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── INIT ── */
 (async function init() {
+  loadLocalReactions();
   _siteData = await loadSiteData();
-  renderMemories();
+  renderMemories();      /* render cards first */
+  loadAllReactions();    /* then fetch live reaction counts */
 })();
 </script>
 </body>
