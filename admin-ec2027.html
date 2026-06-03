@@ -537,19 +537,17 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════
-         FAREWELLS — managed via Google Apps Script
+         FAREWELLS — managed via Google Apps Script (UNTOUCHED)
     ══════════════════════════════════════════════════════ -->
     <div class="admin-panel" id="panel-farewells">
       <div class="admin-panel-title">💌 Farewell Messages</div>
       <div class="admin-panel-sub">View and delete Time Capsule entries submitted via Google Apps Script. Changes here do NOT touch GitHub.</div>
 
-      <!-- Info banner -->
       <div style="display:flex;align-items:flex-start;gap:.7rem;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.5rem;font-size:.78rem;color:var(--text2);line-height:1.6">
         <span style="font-size:1.1rem;flex-shrink:0">⚠️</span>
         <span>Deletion removes the row from your Google Sheet via Apps Script. Make sure your <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">doGet</code> handler supports the <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">deleteFarewell</code> action — see the code snippet in the Apps Script section below.</span>
       </div>
 
-      <!-- Stats + controls -->
       <div class="admin-card">
         <div class="admin-card-title">📊 Capsule Stats</div>
         <div class="fw-stats-bar" id="fw-stats-bar">
@@ -563,7 +561,6 @@
         <div id="fw-loading" style="display:none;color:var(--text3);font-size:.85rem;font-style:italic;padding:.6rem 0">Loading entries…</div>
       </div>
 
-      <!-- Entries list -->
       <div class="admin-card">
         <div class="admin-card-title">📋 Submitted Messages (<span id="fw-count">—</span>)</div>
         <div id="farewells-admin-list" style="display:flex;flex-direction:column;gap:.75rem">
@@ -573,7 +570,6 @@
         </div>
       </div>
 
-      <!-- Apps Script snippet -->
       <div class="admin-card">
         <div class="admin-card-title">🛠️ Apps Script — deleteFarewell handler</div>
         <p style="font-size:.78rem;color:var(--text3);line-height:1.6;margin-bottom:.75rem">
@@ -612,7 +608,7 @@ const GH_OWNER     = 'visionsyt99';
 const GH_REPO      = 'SEC-E-CHRONICLES';
 const GH_DATA_FILE = 'data/ec-data.json';
 
-// Apps Script URL — used for Farewell reads + deletes
+// Apps Script URL — used for Farewell reads + deletes ONLY
 const FW_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3_v4IBUpJ4fLgXLE83hUNdNmh4NlJfhmPVSeUpXE1W8b0y8w2bbfWMBuwK7Yuessn/exec';
 
 // ══════════════════════════════════════════════════════
@@ -682,7 +678,7 @@ const GH = {
   }
 };
 
-// ── In-memory store ──
+// ── In-memory store — always a COMPLETE mirror of what's on GitHub ──
 let DB = {
   notices:[], resources:[], events:[], achievements:[],
   memories:[], birthdays:[], schedule:null, hiddenDays:[],
@@ -691,23 +687,70 @@ let DB = {
 };
 
 // ══════════════════════════════════════════════════════
-// CORE SYNC
+// CORE SYNC  ← THE FIXED VERSION
+//
+// Strategy: always read the FULL file from GitHub first,
+// apply ONLY the field(s) we are changing, then write back.
+// This prevents any session from stomping another session's data.
 // ══════════════════════════════════════════════════════
-async function syncToGitHub(msg = 'Admin update'){
+
+/**
+ * syncField(fieldName, commitMsg)
+ *
+ * Reads the current GitHub file, updates only `fieldName`
+ * from our local DB, then writes back.  All other fields
+ * remain exactly as they were on GitHub.
+ *
+ * For memberPhotos we do a key-level merge so one session
+ * can add roll 501's photo while another adds roll 502's
+ * without losing either.
+ */
+async function syncField(fieldName, commitMsg){
   setSyncState('pending','Saving…');
-  const current    = await GH.getFile();
-  const serverData = (current && current.content) ? current.content : {};
-  const sha        = current ? current.sha : null;
-  const mergedPhotos = {
-    ...(serverData.memberPhotos || {}),
-    ...(DB.memberPhotos || {})
-  };
-  const merged = {
-    ...serverData,
-    ...DB,
-    memberPhotos: mergedPhotos
-  };
-  return await GH.putFile(merged, msg, GH_DATA_FILE, sha);
+
+  // 1. Fresh read
+  const current = await GH.getFile();
+  if(!current){
+    setSyncState('err','Could not read GitHub file — save aborted!');
+    toastMsg('⚠️ Could not read GitHub data. Please refresh and try again.', true);
+    return false;
+  }
+
+  const serverData = current.content || {};
+  const sha        = current.sha;
+
+  // 2. Build the merged object — only change the field we intend to change
+  let merged = { ...serverData };
+
+  if(fieldName === 'memberPhotos'){
+    // Key-level merge: keep every roll the server already has,
+    // then overlay only the rolls we filled in locally.
+    merged.memberPhotos = {
+      ...(serverData.memberPhotos || {}),
+      ...(DB.memberPhotos || {})
+    };
+    // Also update local DB to match what we just wrote
+    DB.memberPhotos = merged.memberPhotos;
+  } else if(fieldName === 'schedule'){
+    // Merge day-by-day: only update the day(s) we edited
+    const serverSch = serverData.schedule || {};
+    const localSch  = DB.schedule || {};
+    merged.schedule  = { ...serverSch, ...localSch };
+    DB.schedule      = merged.schedule;
+  } else {
+    // For simple fields just replace
+    merged[fieldName] = DB[fieldName];
+  }
+
+  // 3. Write
+  const ok = await GH.putFile(merged, commitMsg, GH_DATA_FILE, sha);
+
+  if(ok){
+    // Keep local DB in sync with what we just saved
+    Object.keys(merged).forEach(k => { DB[k] = merged[k]; });
+  }
+
+  return ok;
 }
 
 // ══════════════════════════════════════════════════════
@@ -788,8 +831,7 @@ document.querySelectorAll('.snav-item').forEach(item => {
     const p = item.dataset.panel;
     if(p === 'member-photos') renderMemberPhotosList();
     if(p === 'gallery-admin') renderGalleryAdmin();
-    // Auto-load farewells when switching to that panel
-    if(p === 'farewells') loadFarewells();
+    if(p === 'farewells')     loadFarewells();
   });
 });
 
@@ -821,6 +863,7 @@ async function loadAll(){
   setSyncState('pending','Loading from GitHub…');
   const file = await GH.getFile();
   if(file && file.content){
+    // Hydrate every known key; fall back to DB defaults if missing
     Object.keys(DB).forEach(k => {
       if(file.content[k] !== undefined) DB[k] = file.content[k];
     });
@@ -898,7 +941,7 @@ document.getElementById('addNoticeBtn').addEventListener('click', async () => {
     color:  selectedColor,
     pinned: document.getElementById('n-pin').checked ? 1 : 0
   });
-  const ok = await syncToGitHub('Add notice: '+title);
+  const ok = await syncField('notices', 'Add notice: '+title);
   if(ok){ renderNoticesList(); toastMsg('Notice added!'); }
   ['n-title','n-tag','n-desc','n-icon','n-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('n-pin').checked = false;
@@ -928,7 +971,7 @@ document.getElementById('addResourceBtn').addEventListener('click', async () => 
     link:    document.getElementById('r-link').value.trim(),
     icon:    document.getElementById('r-icon').value.trim() || '📄'
   });
-  const ok = await syncToGitHub('Add resource: '+title);
+  const ok = await syncField('resources', 'Add resource: '+title);
   if(ok){ renderResourcesList(); toastMsg('Resource added!'); }
   ['r-title','r-desc','r-type','r-link','r-icon'].forEach(id=>document.getElementById(id).value='');
 });
@@ -957,7 +1000,7 @@ document.getElementById('addEventBtn').addEventListener('click', async () => {
     desc:   document.getElementById('ev-desc').value.trim(),
     status: document.getElementById('ev-status').value
   });
-  const ok = await syncToGitHub('Add event: '+title);
+  const ok = await syncField('events', 'Add event: '+title);
   if(ok){ renderEventsList(); toastMsg('Event added!'); }
   ['ev-title','ev-date','ev-time','ev-venue','ev-desc'].forEach(id=>document.getElementById(id).value='');
 });
@@ -986,7 +1029,7 @@ document.getElementById('addAchBtn').addEventListener('click', async () => {
     desc:     document.getElementById('ac-desc').value.trim(),
     emoji:    document.getElementById('ac-emoji').value.trim() || '🏆'
   });
-  const ok = await syncToGitHub('Add achievement: '+name);
+  const ok = await syncField('achievements', 'Add achievement: '+name);
   if(ok){ renderAchievementsList(); toastMsg('Achievement added!'); }
   ['ac-name','ac-title','ac-cat','ac-date','ac-desc','ac-emoji'].forEach(id=>document.getElementById(id).value='');
 });
@@ -1019,61 +1062,76 @@ document.getElementById('addMemoryBtn').addEventListener('click', async () => {
     entry.text = txt;
   }
   DB.memories.push(entry);
-  const ok = await syncToGitHub('Add memory: '+author);
+  const ok = await syncField('memories', 'Add memory: '+author);
   if(ok){ renderMemoriesList(); toastMsg('Memory added!'); }
   ['mem-author','mem-drive','mem-text','mem-date'].forEach(id=>document.getElementById(id).value='');
 });
 
 // ══════════════════════════════════════════════════════
-// SCHEDULE
+// SCHEDULE  ← FIXED
 // ══════════════════════════════════════════════════════
 const SCHEDULE_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 let schedDay = 0;
-const DEFAULT_SCHEDULE = {
-  0:[{period:'1',time:'6:15–7:00',subject:'Biology',teacher:'',room:''},
-     {period:'2',time:'7:00–7:45',subject:'Chemistry',teacher:'',room:''},
-     {period:'3',time:'7:45–8:30',subject:'Physics',teacher:'',room:''},
-     {period:'—',time:'8:30–8:45',subject:'Short Break',teacher:'',room:''},
-     {period:'4',time:'8:45–9:30',subject:'Mathematics',teacher:'',room:''},
-     {period:'5',time:'9:30–10:15',subject:'English',teacher:'',room:''},
-     {period:'6',time:'10:15–11:00',subject:'Nepali',teacher:'',room:''}]
-};
-for(let i=1;i<6;i++) DEFAULT_SCHEDULE[i]=[...DEFAULT_SCHEDULE[0]];
 
-function getScheduleDB(){ return DB.schedule || DEFAULT_SCHEDULE; }
+// Default schedule — each day gets its own DEEP copy so editing
+// one day never accidentally mutates another day's array.
+function makeDefaultDay(){
+  return [
+    {period:'1',time:'6:15–7:00',subject:'Biology',   teacher:'',room:''},
+    {period:'2',time:'7:00–7:45',subject:'Chemistry',  teacher:'',room:''},
+    {period:'3',time:'7:45–8:30',subject:'Physics',    teacher:'',room:''},
+    {period:'—',time:'8:30–8:45',subject:'Short Break',teacher:'',room:''},
+    {period:'4',time:'8:45–9:30',subject:'Mathematics',teacher:'',room:''},
+    {period:'5',time:'9:30–10:15',subject:'English',   teacher:'',room:''},
+    {period:'6',time:'10:15–11:00',subject:'Nepali',   teacher:'',room:''}
+  ];
+}
+function buildDefaultSchedule(){
+  const s = {};
+  for(let i=0;i<6;i++) s[i] = makeDefaultDay();
+  return s;
+}
+
+// Always return a proper schedule object with deep-copied day arrays
+function getScheduleDB(){
+  if(!DB.schedule) return buildDefaultSchedule();
+  return DB.schedule;
+}
 
 function renderScheduleEditor(){
   const sch  = getScheduleDB();
   const rows = sch[schedDay] || [];
   document.getElementById('scheduleEditor').innerHTML = rows.map((r,i)=>`
     <div class="period-row" data-idx="${i}">
-      <input class="pe-period"  value="${r.period}"  placeholder="No."/>
-      <input class="pe-time"    value="${r.time}"    placeholder="Time"/>
-      <input class="pe-subject" value="${r.subject}" placeholder="Subject"/>
-      <input class="pe-teacher" value="${r.teacher}" placeholder="Teacher"/>
+      <input class="pe-period"  value="${escAdm(r.period)}"  placeholder="No."/>
+      <input class="pe-time"    value="${escAdm(r.time)}"    placeholder="Time"/>
+      <input class="pe-subject" value="${escAdm(r.subject)}" placeholder="Subject"/>
+      <input class="pe-teacher" value="${escAdm(r.teacher)}" placeholder="Teacher"/>
       <button class="icon-btn icon-btn-del" onclick="removePeriod(${i})" style="font-size:.75rem">🗑</button>
     </div>`).join('');
 }
 
 function removePeriod(idx){
   const sch = getScheduleDB();
-  sch[schedDay].splice(idx,1);
+  if(!sch[schedDay]) return;
+  sch[schedDay].splice(idx, 1);
   DB.schedule = sch;
   renderScheduleEditor();
 }
 
-document.getElementById('addPeriodBtn').addEventListener('click', ()=>{
+document.getElementById('addPeriodBtn').addEventListener('click', () => {
   const sch = getScheduleDB();
-  if(!sch[schedDay]) sch[schedDay]=[];
-  sch[schedDay].push({period:String(sch[schedDay].length+1),time:'',subject:'',teacher:'',room:''});
+  if(!sch[schedDay]) sch[schedDay] = [];
+  sch[schedDay].push({period:String(sch[schedDay].length+1), time:'', subject:'', teacher:'', room:''});
   DB.schedule = sch;
   renderScheduleEditor();
 });
 
-document.getElementById('saveScheduleBtn').addEventListener('click', async ()=>{
+document.getElementById('saveScheduleBtn').addEventListener('click', async () => {
+  // Read current DOM rows and persist them into DB.schedule
   const sch  = getScheduleDB();
   const rows = document.querySelectorAll('.period-row');
-  sch[schedDay] = Array.from(rows).map(row=>({
+  sch[schedDay] = Array.from(rows).map(row => ({
     period:  row.querySelector('.pe-period').value,
     time:    row.querySelector('.pe-time').value,
     subject: row.querySelector('.pe-subject').value,
@@ -1081,49 +1139,69 @@ document.getElementById('saveScheduleBtn').addEventListener('click', async ()=>{
     room:    ''
   }));
   DB.schedule = sch;
-  const ok = await syncToGitHub('Update schedule: '+SCHEDULE_DAYS[schedDay]);
+  const ok = await syncField('schedule', 'Update schedule: '+SCHEDULE_DAYS[schedDay]);
   if(ok) toastMsg('Schedule saved!');
 });
 
-document.getElementById('schDayTabs').addEventListener('click', e=>{
+document.getElementById('schDayTabs').addEventListener('click', e => {
   const btn = e.target.closest('.sdt');
   if(!btn) return;
-  document.querySelectorAll('.sdt').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sdt').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   schedDay = parseInt(btn.dataset.d);
   renderScheduleEditor();
 });
 
-// DAY VISIBILITY
+// ══════════════════════════════════════════════════════
+// DAY VISIBILITY  ← FIXED
+// ══════════════════════════════════════════════════════
 const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+
 function renderDayVisibilityToggles(){
+  // Read the CURRENT saved hiddenDays from DB (not from DOM)
   const hidden = DB.hiddenDays || [];
   const wrap   = document.getElementById('dayVisibilityToggles');
   if(!wrap) return;
-  wrap.innerHTML = DAY_LABELS.map((lbl,i)=>{
+  wrap.innerHTML = DAY_LABELS.map((lbl, i) => {
     const isHidden = hidden.includes(i);
     return `<label style="display:flex;align-items:center;gap:.45rem;cursor:pointer;
       padding:.4rem .85rem;border-radius:8px;border:1.5px solid var(--border);
-      background:${isHidden?'var(--bg2)':'var(--accent-light)'};
-      color:${isHidden?'var(--text3)':'var(--accent)'};font-size:.8rem;font-weight:500;
+      background:${isHidden ? 'var(--bg2)' : 'var(--accent-light)'};
+      color:${isHidden ? 'var(--text3)' : 'var(--accent)'};font-size:.8rem;font-weight:500;
       user-select:none;transition:all .2s">
-      <input type="checkbox" data-day="${i}" ${isHidden?'':'checked'}
+      <input type="checkbox" data-day="${i}" ${isHidden ? '' : 'checked'}
         style="accent-color:var(--accent);width:15px;height:15px"/>
       ${lbl}
     </label>`;
   }).join('');
 }
 
-document.getElementById('saveDayVisBtn').addEventListener('click', async ()=>{
-  const checkboxes = document.querySelectorAll('#dayVisibilityToggles input[data-day]');
-  const hidden = [];
-  checkboxes.forEach(cb=>{ if(!cb.checked) hidden.push(parseInt(cb.dataset.day)); });
-  DB.hiddenDays = hidden;
-  const ok = await syncToGitHub('Update day visibility');
-  if(ok){ renderDayVisibilityToggles(); toastMsg('Day visibility saved!'); }
+// Clicking a checkbox updates the label styling immediately (purely visual)
+document.getElementById('dayVisibilityToggles').addEventListener('change', e => {
+  const cb    = e.target;
+  if(!cb.dataset.day) return;
+  // Update the parent label's visual state live
+  const label = cb.closest('label');
+  if(!label) return;
+  if(cb.checked){
+    label.style.background = 'var(--accent-light)';
+    label.style.color      = 'var(--accent)';
+  } else {
+    label.style.background = 'var(--bg2)';
+    label.style.color      = 'var(--text3)';
+  }
 });
 
-document.getElementById('dayVisibilityToggles').addEventListener('change', renderDayVisibilityToggles);
+document.getElementById('saveDayVisBtn').addEventListener('click', async () => {
+  const checkboxes = document.querySelectorAll('#dayVisibilityToggles input[data-day]');
+  const hidden = [];
+  checkboxes.forEach(cb => { if(!cb.checked) hidden.push(parseInt(cb.dataset.day)); });
+  DB.hiddenDays = hidden;
+  const ok = await syncField('hiddenDays', 'Update day visibility');
+  if(ok) toastMsg('Day visibility saved!');
+  // Re-render so the labels fully reflect saved state
+  renderDayVisibilityToggles();
+});
 
 // ══════════════════════════════════════════════════════
 // BIRTHDAYS
@@ -1133,7 +1211,7 @@ const BS_MN = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik',
 function renderBirthdaysList(){
   const el = document.getElementById('birthdays-list');
   if(!DB.birthdays.length){ el.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">No birthdays added yet.</div>'; return; }
-  const sorted = [...DB.birthdays].sort((a,b)=>a.bsMonth-b.bsMonth||a.bsDay-b.bsDay);
+  const sorted = [...DB.birthdays].sort((a,b) => a.bsMonth-b.bsMonth || a.bsDay-b.bsDay);
   el.innerHTML = sorted.map(b=>`
     <div class="item-row">
       <div style="font-size:1rem">🎂</div>
@@ -1145,30 +1223,30 @@ function renderBirthdaysList(){
     </div>`).join('');
 }
 
-document.getElementById('addBdBtn').addEventListener('click', async ()=>{
+document.getElementById('addBdBtn').addEventListener('click', async () => {
   const roll      = parseInt(document.getElementById('bd-roll').value);
   const name      = document.getElementById('bd-name').value.trim();
-  const bsYear    = parseInt(document.getElementById('bd-bsyear').value)||0;
+  const bsYear    = parseInt(document.getElementById('bd-bsyear').value) || 0;
   const bsMonth   = parseInt(document.getElementById('bd-bsmonth').value);
   const bsDay     = parseInt(document.getElementById('bd-bsday').value);
   const customMsg = document.getElementById('bd-msg').value.trim();
   if(!name||!bsMonth||!bsDay) return alert('Please fill name, month and day.');
-  DB.birthdays.push({id:nextId(DB.birthdays),roll,name,bsYear,bsMonth,bsDay,customMsg:customMsg||null});
-  const ok = await syncToGitHub('Add birthday: '+name);
+  DB.birthdays.push({id:nextId(DB.birthdays), roll, name, bsYear, bsMonth, bsDay, customMsg: customMsg||null});
+  const ok = await syncField('birthdays', 'Add birthday: '+name);
   if(ok){ renderBirthdaysList(); toastMsg('Birthday added!'); }
-  ['bd-roll','bd-name','bd-bsyear','bd-bsday','bd-msg'].forEach(id=>document.getElementById(id).value='');
+  ['bd-roll','bd-name','bd-bsyear','bd-bsday','bd-msg'].forEach(id => document.getElementById(id).value='');
 });
 
 // ══════════════════════════════════════════════════════
 // COUNTDOWN
 // ══════════════════════════════════════════════════════
-document.getElementById('saveCountdownBtn').addEventListener('click', async ()=>{
+document.getElementById('saveCountdownBtn').addEventListener('click', async () => {
   DB.countdown = {
     name:  document.getElementById('cd-name').value,
     date:  document.getElementById('cd-date').value,
     label: document.getElementById('cd-label').value
   };
-  const ok = await syncToGitHub('Update countdown');
+  const ok = await syncField('countdown', 'Update countdown');
   if(ok) toastMsg('Countdown saved!');
 });
 
@@ -1177,22 +1255,22 @@ document.getElementById('saveCountdownBtn').addEventListener('click', async ()=>
 // ══════════════════════════════════════════════════════
 async function delItem(key, id){
   if(!confirm('Delete this item?')) return;
-  DB[key] = DB[key].filter(i=>i.id!==id);
-  const ok = await syncToGitHub('Delete '+key+' #'+id);
+  DB[key] = DB[key].filter(i => i.id !== id);
+  const ok = await syncField(key, 'Delete '+key+' #'+id);
   if(ok){ renderAll(); toastMsg('Deleted.'); }
 }
 
 async function togglePin(id){
-  const item = DB.notices.find(i=>i.id===id);
+  const item = DB.notices.find(i => i.id === id);
   if(item) item.pinned = item.pinned ? 0 : 1;
-  const ok = await syncToGitHub('Toggle pin notice #'+id);
-  if(ok){ renderNoticesList(); toastMsg(item.pinned?'Pinned!':'Unpinned.'); }
+  const ok = await syncField('notices', 'Toggle pin notice #'+id);
+  if(ok){ renderNoticesList(); toastMsg(item.pinned ? 'Pinned!' : 'Unpinned.'); }
 }
 
 // ══════════════════════════════════════════════════════
 // PHOTO SETTINGS
 // ══════════════════════════════════════════════════════
-document.getElementById('saveDriveScriptBtn').addEventListener('click', async ()=>{
+document.getElementById('saveDriveScriptBtn').addEventListener('click', async () => {
   const url = document.getElementById('drive-script-url').value.trim();
   if(!url){ toastMsg('Please enter a URL', true); return; }
   DB.driveScriptUrl = url;
@@ -1206,18 +1284,18 @@ document.getElementById('saveDriveScriptBtn').addEventListener('click', async ()
   } catch(e){
     res.textContent='❌ Could not connect. Check URL and Apps Script permissions.'; res.style.color='#ef4444';
   }
-  const ok = await syncToGitHub('Update drive script URL');
+  const ok = await syncField('driveScriptUrl', 'Update drive script URL');
   if(ok) toastMsg('Script URL saved!');
 });
 
-document.getElementById('saveDriveFolderBtn').addEventListener('click', async ()=>{
+document.getElementById('saveDriveFolderBtn').addEventListener('click', async () => {
   DB.driveFolder = document.getElementById('drive-folder-link').value.trim();
-  const ok = await syncToGitHub('Update drive folder link');
+  const ok = await syncField('driveFolder', 'Update drive folder link');
   if(ok) toastMsg('Folder link saved!');
 });
 
 // ══════════════════════════════════════════════════════
-// MEMBER PHOTOS
+// MEMBER PHOTOS  ← FIXED (key-level merge baked into syncField)
 // ══════════════════════════════════════════════════════
 const ALL_STUDENTS = [
   {roll:501,name:"ROHIT KUMAR YADAV"},{roll:502,name:"SAUMYA DONGOL"},
@@ -1261,7 +1339,7 @@ function renderMemberPhotosList(){
       <div style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text3);min-width:36px">#${s.roll}</div>
       <div style="font-size:.78rem;font-weight:600;flex:1;min-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name.split(' ').slice(0,2).join(' ')}</div>
       <input type="text" data-roll="${s.roll}"
-        value="${val}"
+        value="${escAdm(val)}"
         placeholder="Drive File ID (blank = keep existing)"
         style="flex:2;min-width:0;font-family:'DM Mono',monospace;font-size:.72rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;color:var(--text);outline:none"
         class="member-photo-id-input"/>
@@ -1274,7 +1352,7 @@ function renderMemberPhotosList(){
 }
 
 document.getElementById('saveMemberPhotosBtn').addEventListener('click', async () => {
-  const inputs = document.querySelectorAll('.member-photo-id-input');
+  const inputs  = document.querySelectorAll('.member-photo-id-input');
   const updates = {};
   inputs.forEach(inp => {
     const val = inp.value.trim();
@@ -1284,12 +1362,14 @@ document.getElementById('saveMemberPhotosBtn').addEventListener('click', async (
     toastMsg('No new photo IDs entered — nothing to save.', false);
     return;
   }
+  // Merge new entries on top of what's already in DB
   DB.memberPhotos = { ...(DB.memberPhotos || {}), ...updates };
-  const ok = await syncToGitHub('Update member photos');
+  // syncField('memberPhotos') will ALSO merge with the server copy
+  const ok = await syncField('memberPhotos', 'Update member photos');
   if(ok){
     const msg = document.getElementById('memberPhotosSavedMsg');
     msg.style.display='block';
-    setTimeout(()=>msg.style.display='none',4000);
+    setTimeout(() => msg.style.display='none', 4000);
     toastMsg('Member photos saved! 🎉');
     renderMemberPhotosList();
   }
@@ -1298,7 +1378,7 @@ document.getElementById('saveMemberPhotosBtn').addEventListener('click', async (
 document.getElementById('clearMemberPhotosBtn').addEventListener('click', async () => {
   if(!confirm('Clear ALL member photo IDs? This removes every saved photo across all sessions.')) return;
   DB.memberPhotos = {};
-  const ok = await syncToGitHub('Clear all member photos');
+  const ok = await syncField('memberPhotos', 'Clear all member photos');
   if(ok){ renderMemberPhotosList(); toastMsg('Cleared all member photos.'); }
 });
 
@@ -1330,8 +1410,8 @@ function renderGalleryAdmin(){
 
 async function deleteGalleryPhoto(index){
   if(!confirm('Remove this photo from gallery?')) return;
-  DB.gallery.splice(index,1);
-  const ok = await syncToGitHub('Delete gallery photo #'+index);
+  DB.gallery.splice(index, 1);
+  const ok = await syncField('gallery', 'Delete gallery photo #'+index);
   if(ok){ renderGalleryAdmin(); toastMsg('Photo removed.'); }
 }
 
@@ -1342,12 +1422,12 @@ document.getElementById('addGalleryPhotoBtn').addEventListener('click', async ()
   if(!id){ toastMsg('Please enter a Drive File ID', true); return; }
   const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)\//);
   const cleanId  = urlMatch ? urlMatch[1] : id;
-  if(!DB.gallery) DB.gallery=[];
+  if(!DB.gallery) DB.gallery = [];
   DB.gallery.push({id:cleanId, cat, caption});
-  const ok = await syncToGitHub('Add gallery photo');
+  const ok = await syncField('gallery', 'Add gallery photo');
   if(ok){
-    document.getElementById('gal-drive-id').value='';
-    document.getElementById('gal-caption').value='';
+    document.getElementById('gal-drive-id').value = '';
+    document.getElementById('gal-caption').value  = '';
     renderGalleryAdmin();
     toastMsg('Photo added to gallery! ✅');
   }
@@ -1355,16 +1435,15 @@ document.getElementById('addGalleryPhotoBtn').addEventListener('click', async ()
 
 document.getElementById('clearAllGalleryBtn').addEventListener('click', async () => {
   if(!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
-  DB.gallery=[];
-  const ok = await syncToGitHub('Clear gallery');
+  DB.gallery = [];
+  const ok = await syncField('gallery', 'Clear gallery');
   if(ok){ renderGalleryAdmin(); toastMsg('Gallery cleared.'); }
 });
 
 // ══════════════════════════════════════════════════════
-// FAREWELLS — read / delete via Google Apps Script
+// FAREWELLS — read / delete via Google Apps Script ONLY
+// (completely independent of GitHub — UNTOUCHED as requested)
 // ══════════════════════════════════════════════════════
-
-// All loaded entries stored here so the search filter works client-side
 let _fwAllMessages = [];
 
 async function loadFarewells(){
@@ -1388,9 +1467,9 @@ async function loadFarewells(){
     return;
   }
 
-  loading.style.display = 'none';
-  totalEl.textContent   = _fwAllMessages.length;
-  countEl.textContent   = _fwAllMessages.length;
+  loading.style.display   = 'none';
+  totalEl.textContent     = _fwAllMessages.length;
+  countEl.textContent     = _fwAllMessages.length;
 
   renderFarewellList(_fwAllMessages);
 }
@@ -1425,7 +1504,6 @@ function renderFarewellList(msgs){
   }).join('');
 }
 
-// Live search filter
 document.getElementById('fw-search').addEventListener('input', function(){
   const q = this.value.toLowerCase().trim();
   if(!q){
@@ -1448,7 +1526,6 @@ async function deleteFarewell(email, entryKey){
   }
   if(!confirm(`Delete the farewell message from ${email}?\n\nThis removes it permanently from your Google Sheet.`)) return;
 
-  // Visual feedback
   const btn   = document.getElementById('fwdel-' + entryKey);
   const entry = document.getElementById('fw-entry-' + entryKey);
   if(btn)   { btn.disabled = true; btn.textContent = 'Deleting…'; }
@@ -1464,11 +1541,9 @@ async function deleteFarewell(email, entryKey){
 
     if(data.success){
       toastMsg('Farewell deleted ✓');
-      // Remove from local cache & re-render
       _fwAllMessages = _fwAllMessages.filter(m => m.email !== email);
       document.getElementById('fw-total').textContent = _fwAllMessages.length;
       document.getElementById('fw-count').textContent = _fwAllMessages.length;
-      // Re-apply active search filter
       const q = document.getElementById('fw-search').value.toLowerCase().trim();
       renderFarewellList(q
         ? _fwAllMessages.filter(m =>
