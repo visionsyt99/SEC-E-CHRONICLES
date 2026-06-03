@@ -530,18 +530,17 @@ async function submitFarewell() {
   setStatus('', null);
 
   try {
-    const res  = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action:      'submitFarewell',
-        idToken:     currentUser.idToken,
-        displayName: name,
-        rollNo:      roll,
-        message:     message,
-        theme:       selectedTheme,
-        isPublic:    true
-      })
-    });
+    /* Apps Script CORS blocks POST from the browser — send as GET with ?data= param */
+    const payload = encodeURIComponent(JSON.stringify({
+      action:      'submitFarewell',
+      idToken:     currentUser.idToken,
+      displayName: name,
+      rollNo:      roll,
+      message:     message,
+      theme:       selectedTheme,
+      isPublic:    true
+    }));
+    const res  = await fetch(SCRIPT_URL + '?data=' + payload);
     const data = await res.json();
 
     if (data.success) {
