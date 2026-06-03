@@ -3,7 +3,15 @@
   "resources": [],
   "events": [],
   "achievements": [],
-  "memories": [],
+  "memories": [
+    {
+      "id": 1,
+      "type": "text",
+      "author": "SAURAV",
+      "date": "",
+      "text": "TESTING"
+    }
+  ],
   "birthdays": [],
   "schedule": null,
   "hiddenDays": [],
