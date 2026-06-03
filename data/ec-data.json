@@ -6,9 +6,7 @@
   "memories": [],
   "birthdays": [],
   "schedule": null,
-  "hiddenDays": [
-    0
-  ],
+  "hiddenDays": [],
   "countdown": {},
   "driveScriptUrl": "",
   "driveFolder": "",
