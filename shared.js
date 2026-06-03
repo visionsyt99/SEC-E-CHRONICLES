@@ -349,6 +349,14 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "025neb533@sxc.edu.np",
   dob: { bsYear: 2065, bsMonth: 11, bsDay: 1, monthName: "Fagun" }
+},
+   547: {
+  photo: "https://drive.google.com/uc?export=view&id=1VVWhUAt5_m5suQ1TfUp5CxR4q-KY9YxK",
+  quote: "भविष्य अगाडि, मेरो भूत पछाडि छ ।",
+  experience: "glad to be in such a wholesome section",
+  wantsManagement: false,
+  email: "025neb547@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 11, bsDay: 20, monthName: "Fagun" }
 }
 };
 
