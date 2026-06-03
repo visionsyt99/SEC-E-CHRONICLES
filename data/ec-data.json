@@ -3,15 +3,7 @@
   "resources": [],
   "events": [],
   "achievements": [],
-  "memories": [
-    {
-      "id": 1,
-      "type": "text",
-      "author": "XYZ",
-      "date": "",
-      "text": "TEST 2"
-    }
-  ],
+  "memories": [],
   "birthdays": [],
   "schedule": null,
   "hiddenDays": [],
