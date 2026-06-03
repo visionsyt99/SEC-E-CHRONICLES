@@ -21,9 +21,12 @@
 
     /* ── masonry grid ── */
     .memory-grid{columns:3;column-gap:1.1rem}
+
+    /* FIX 2: removed overflow:hidden from .memory-card
+       Image corners are still rounded via .memory-photo overflow:hidden */
     .memory-card{
       break-inside:avoid;margin-bottom:1.1rem;
-      border-radius:var(--radius);overflow:hidden;
+      border-radius:var(--radius);
       border:1px solid var(--border);
       background:var(--surface);
       transition:transform .25s,box-shadow .25s,border-color .25s;
@@ -33,7 +36,7 @@
     .memory-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--gold)}
 
     /* photo memory */
-    .memory-photo{overflow:hidden}
+    .memory-photo{overflow:hidden;border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0}
     .memory-photo img{width:100%;display:block;transition:transform .35s}
     .memory-card:hover .memory-photo img{transform:scale(1.04)}
     .memory-photo .ph-placeholder{
@@ -107,7 +110,7 @@
       padding:.6rem 1rem .75rem;
       border-top:1px solid var(--border);
       background:var(--surface);
-      /* stop card click propagating through reaction area */
+      border-radius:0 0 calc(var(--radius) - 1px) calc(var(--radius) - 1px);
       position:relative;
       z-index:2;
     }
@@ -161,12 +164,10 @@
     }
     .add-reaction-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 
-    /* Emoji picker popup */
+    /* FIX 3: position:fixed so it escapes all card stacking contexts / overflow */
     .emoji-picker-popup{
-      position:absolute;
-      bottom:calc(100% + 8px);
-      left:0;
-      z-index:9999;
+      position:fixed;
+      z-index:99999;
       background:var(--surface);
       border:1px solid var(--border);
       border-radius:14px;
@@ -177,10 +178,6 @@
       pointer-events:all;
     }
     .emoji-picker-popup.open{display:block}
-
-    /* flip upward if near bottom of viewport — JS handles this */
-    .emoji-picker-popup.flip-up{bottom:calc(100% + 8px);top:auto}
-    .emoji-picker-popup.flip-down{top:calc(100% + 8px);bottom:auto}
 
     .emoji-picker-title{
       font-size:.68rem;font-weight:600;color:var(--text3);
@@ -281,14 +278,11 @@ const EMOJI_GROUPS = [
   }
 ];
 
-/* flat list for quick lookup */
-const ALL_EMOJIS = EMOJI_GROUPS.flatMap(g => g.emojis);
-
 /* in-memory reaction store: { memoryId: { emoji: count } } */
-let reactionData       = {};
+let reactionData    = {};
 /* which emojis this browser has already reacted with: { memoryId: Set<emoji> } */
-let userReactions      = {};
-let reactionsLoaded    = false;
+let userReactions   = {};
+let reactionsLoaded = false;
 
 /* ── load user reactions from localStorage ── */
 function loadLocalReactions() {
@@ -320,15 +314,14 @@ async function loadAllReactions() {
   try {
     const res  = await fetch(REACTIONS_SCRIPT_URL + '?action=getReactions');
     const data = await res.json();
-    reactionData = data.reactions || {};
+    reactionData    = data.reactions || {};
     reactionsLoaded = true;
-    /* re-render every mounted reaction bar */
     document.querySelectorAll('[data-rxbar]').forEach(bar => {
       renderReactionBar(bar, bar.dataset.mid);
     });
   } catch(e) {
     console.warn('Reactions load failed:', e);
-    reactionsLoaded = true; /* still allow adding */
+    reactionsLoaded = true;
     document.querySelectorAll('[data-rxbar]').forEach(bar => {
       renderReactionBar(bar, bar.dataset.mid);
     });
@@ -359,7 +352,6 @@ function renderReactionBar(bar, mid) {
   const counts = reactionData[mid] || {};
   const mySet  = getUserSet(mid);
 
-  /* existing reactions sorted by count desc, only show those with count > 0 */
   const active = Object.entries(counts)
     .filter(([,c]) => c > 0)
     .sort((a,b) => b[1] - a[1]);
@@ -374,11 +366,21 @@ function renderReactionBar(bar, mid) {
     </button>`;
   }).join('');
 
-  /* add-reaction button */
+  /* add-reaction button — picker is rendered to body on open (FIX 4) */
   const pickerId = 'picker-' + mid.replace(/[^a-z0-9]/gi, '_');
   html += `<div class="add-reaction-wrap">
     <button class="add-reaction-btn" data-picker="${pickerId}">+ React</button>
-    <div class="emoji-picker-popup" id="${pickerId}">
+  </div>`;
+
+  bar.innerHTML = html;
+
+  /* ensure picker exists in DOM (body-level) */
+  let picker = document.getElementById(pickerId);
+  if (!picker) {
+    picker = document.createElement('div');
+    picker.className = 'emoji-picker-popup';
+    picker.id        = pickerId;
+    picker.innerHTML = `
       <div class="emoji-picker-title">Pick a reaction</div>
       ${EMOJI_GROUPS.map(g => `
         <div class="emoji-section-label">${g.label}</div>
@@ -387,11 +389,18 @@ function renderReactionBar(bar, mid) {
             `<span class="emoji-choice" data-pick="${e}" data-mid="${mid}">${e}</span>`
           ).join('')}
         </div>
-      `).join('')}
-    </div>
-  </div>`;
+      `).join('')}`;
+    document.body.appendChild(picker);
+  }
 
-  bar.innerHTML = html;
+  /* bind emoji choices */
+  picker.querySelectorAll('.emoji-choice').forEach(span => {
+    span.addEventListener('click', e => {
+      e.stopPropagation();
+      closeAllPickers();
+      handlePickedEmoji(mid, span.dataset.pick);
+    });
+  });
 
   /* bind pill clicks */
   bar.querySelectorAll('.reaction-btn').forEach(btn => {
@@ -401,20 +410,11 @@ function renderReactionBar(bar, mid) {
     });
   });
 
-  /* bind picker open */
+  /* bind picker open button */
   bar.querySelectorAll('.add-reaction-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      togglePicker(e, btn.dataset.picker);
-    });
-  });
-
-  /* bind emoji choices */
-  bar.querySelectorAll('.emoji-choice').forEach(span => {
-    span.addEventListener('click', e => {
-      e.stopPropagation();
-      closeAllPickers();
-      handlePickedEmoji(mid, span.dataset.pick);
+      togglePicker(e, pickerId);
     });
   });
 }
@@ -428,7 +428,6 @@ function handleReactionToggle(mid, emoji) {
   if (mySet.has(emoji)) {
     mySet.delete(emoji);
     reactionData[mid][emoji] = Math.max(0, cur - 1);
-    /* local un-react only — server only ever goes up */
   } else {
     mySet.add(emoji);
     reactionData[mid][emoji] = cur + 1;
@@ -443,7 +442,6 @@ function handleReactionToggle(mid, emoji) {
 function handlePickedEmoji(mid, emoji) {
   if (!reactionData[mid]) reactionData[mid] = {};
   const mySet = getUserSet(mid);
-  /* if already reacted with this emoji, don't double-count */
   if (!mySet.has(emoji)) {
     mySet.add(emoji);
     reactionData[mid][emoji] = (reactionData[mid][emoji] || 0) + 1;
@@ -467,23 +465,40 @@ function sendReaction(mid, emoji) {
   }).catch(e => console.warn('Reaction not synced:', e));
 }
 
-/* ── emoji picker open/close ── */
+/* ════════════════════════════════════════════════════════════
+   FIX 4: togglePicker — teleports picker to body,
+   uses getBoundingClientRect() for viewport-aware placement
+════════════════════════════════════════════════════════════ */
 function togglePicker(e, pickerId) {
   e.stopPropagation();
   const picker = document.getElementById(pickerId);
   if (!picker) return;
   const isOpen = picker.classList.contains('open');
   closeAllPickers();
+
   if (!isOpen) {
+    /* ensure it's on body so nothing clips it */
+    if (picker.parentElement !== document.body) {
+      document.body.appendChild(picker);
+    }
     picker.classList.add('open');
-    /* flip direction if near bottom of viewport */
-    const rect = picker.getBoundingClientRect();
-    if (rect.bottom > window.innerHeight - 20) {
-      picker.classList.add('flip-up');
-      picker.classList.remove('flip-down');
+
+    const btn     = e.currentTarget;
+    const rect    = btn.getBoundingClientRect();
+    const pickerH = 340; /* approximate height */
+    const pickerW = 272;
+
+    /* horizontal: clamp so it never bleeds off screen */
+    const left = Math.min(rect.left, window.innerWidth - pickerW - 8);
+    picker.style.left = Math.max(8, left) + 'px';
+
+    /* vertical: open upward if not enough room below */
+    if (window.innerHeight - rect.bottom < pickerH + 16) {
+      picker.style.top    = '';
+      picker.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
     } else {
-      picker.classList.add('flip-down');
-      picker.classList.remove('flip-up');
+      picker.style.bottom = '';
+      picker.style.top    = (rect.bottom + 8) + 'px';
     }
   }
 }
@@ -513,9 +528,10 @@ function renderMemories() {
   const skeleton = document.getElementById('mwSkeleton');
   const empty    = document.getElementById('emptyState');
 
-  const memories = (_siteData.memories && _siteData.memories.length)
+  /* FIX 1: always use server data — no localStorage fallback for display */
+  const memories = (_siteData && Array.isArray(_siteData.memories))
     ? _siteData.memories
-    : JSON.parse(localStorage.getItem('ec_memories') || '[]');
+    : [];
 
   skeleton.style.display = 'none';
 
@@ -526,12 +542,11 @@ function renderMemories() {
   }
 
   document.getElementById('infoStatus').textContent =
-    memories.length + ' memor' + (memories.length !== 1 ? 'ies' : 'y') + ' loaded.';
+    ' · ' + memories.length + ' memor' + (memories.length !== 1 ? 'ies' : 'y') + ' loaded.';
 
   empty.style.display = 'none';
   grid.style.display  = 'block';
 
-  /* build card HTML — reaction bar will be appended after */
   grid.innerHTML = memories.map((m, i) => {
     const delay = (i * 0.06) + 's';
     const mid   = m.id || ('mem_' + i);
@@ -565,7 +580,7 @@ function renderMemories() {
     }
   }).join('');
 
-  /* attach click listeners for lightbox on photo cards */
+  /* attach lightbox listeners on photo cards */
   grid.querySelectorAll('.memory-card').forEach(card => {
     const driveId   = card.dataset.driveId;
     const scriptUrl = card.dataset.scriptUrl;
@@ -574,7 +589,7 @@ function renderMemories() {
     }
   });
 
-  /* mount reaction bars — one per card */
+  /* mount reaction bars */
   memories.forEach((m, i) => {
     const mid  = m.id || ('mem_' + i);
     const card = document.getElementById('card-' + mid);
@@ -606,8 +621,8 @@ function escHtml(str) {
 (async function init() {
   loadLocalReactions();
   _siteData = await loadSiteData();
-  renderMemories();      /* render cards first */
-  loadAllReactions();    /* then fetch live reaction counts */
+  renderMemories();
+  loadAllReactions();
 })();
 </script>
 </body>
