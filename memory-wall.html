@@ -457,12 +457,15 @@ function refreshBar(mid) {
   if (bar) renderReactionBar(bar, mid);
 }
 
-/* ── send reaction to Apps Script ── */
+/* ── send reaction to Apps Script ──
+   Apps Script CORS blocks POST from the browser,
+   so we send writes as GET with a ?data= param instead. */
 function sendReaction(mid, emoji) {
-  fetch(REACTIONS_SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action: 'addReaction', memoryId: mid, emoji })
-  }).catch(e => console.warn('Reaction not synced:', e));
+  const payload = encodeURIComponent(JSON.stringify({
+    action: 'addReaction', memoryId: mid, emoji: emoji
+  }));
+  fetch(REACTIONS_SCRIPT_URL + '?data=' + payload)
+    .catch(e => console.warn('Reaction not synced:', e));
 }
 
 /* ════════════════════════════════════════════════════════════
