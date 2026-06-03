@@ -3,17 +3,316 @@
   "resources": [],
   "events": [],
   "achievements": [],
-  "memories": [
-    {
-      "id": 1,
-      "type": "text",
-      "author": "SAURAV",
-      "date": "",
-      "text": "TESTING"
-    }
-  ],
+  "memories": [],
   "birthdays": [],
-  "schedule": null,
+  "schedule": {
+    "0": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ],
+    "1": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ],
+    "2": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ],
+    "3": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ],
+    "4": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ],
+    "5": [
+      {
+        "period": "1",
+        "time": "6:15–7:00",
+        "subject": "Biology",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "2",
+        "time": "7:00–7:45",
+        "subject": "Chemistry",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "3",
+        "time": "7:45–8:30",
+        "subject": "Physics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "—",
+        "time": "8:30–8:45",
+        "subject": "Short Break",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "4",
+        "time": "8:45–9:30",
+        "subject": "Mathematics",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "5",
+        "time": "9:30–10:15",
+        "subject": "English",
+        "teacher": "",
+        "room": ""
+      },
+      {
+        "period": "6",
+        "time": "10:15–11:00",
+        "subject": "Nepali",
+        "teacher": "",
+        "room": ""
+      }
+    ]
+  },
   "hiddenDays": [],
   "countdown": {},
   "driveScriptUrl": "",
