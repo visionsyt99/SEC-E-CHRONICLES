@@ -3,7 +3,15 @@
   "resources": [],
   "events": [],
   "achievements": [],
-  "memories": [],
+  "memories": [
+    {
+      "id": 1,
+      "type": "text",
+      "author": "NAN",
+      "date": "",
+      "text": "DZL CZK zk"
+    }
+  ],
   "birthdays": [],
   "schedule": null,
   "hiddenDays": [],
