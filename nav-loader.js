@@ -50,6 +50,7 @@
     <a href="${root}achievements.html">🏆 Achievements</a>
     <a href="${root}birthdays.html">🎂 Birthdays</a>
     <a href="${root}memory-wall.html">💬 Memories</a>
+    <a href="${root}farewell.html">💌 Farewell </a>
   </div>`;
   document.getElementById('nav-placeholder').innerHTML = nav;
 })();
