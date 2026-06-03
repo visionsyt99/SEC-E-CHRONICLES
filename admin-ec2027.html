@@ -116,12 +116,10 @@
     .admin-btn{
       display:inline-flex;align-items:center;gap:.4rem;
       padding:.6rem 1.4rem;font-size:.82rem;font-weight:600;
-      border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;
-      background:transparent;color:var(--text2);
+      border-radius:8px;border:none;cursor:pointer;transition:all .2s;
     }
-    .admin-btn:hover{border-color:var(--accent);color:var(--accent)}
-    .admin-btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .admin-btn-primary:hover{background:var(--accent2);border-color:var(--accent2);transform:translateY(-1px)}
+    .admin-btn-primary{background:var(--accent);color:#fff}
+    .admin-btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
     .admin-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
     .items-list{display:flex;flex-direction:column;gap:.6rem;margin-top:1.2rem}
@@ -177,66 +175,6 @@
     }
     .gh-banner-icon{font-size:1.2rem;flex-shrink:0}
 
-    /* ── FAREWELL SPECIFIC ── */
-    .fw-entry{
-      background:var(--bg2);border:1px solid var(--border);border-radius:10px;
-      padding:.9rem 1rem;display:flex;flex-direction:column;gap:.6rem;
-      transition:border-color .15s;
-    }
-    .fw-entry:hover{border-color:var(--border-hover)}
-    .fw-entry-header{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
-    .fw-entry-name{font-weight:700;font-size:.9rem;color:var(--text)}
-    .fw-entry-roll{
-      font-size:.68rem;font-family:'DM Mono',monospace;
-      background:rgba(26,79,160,.1);color:var(--accent);
-      border-radius:999px;padding:2px 9px;
-    }
-    .fw-entry-theme{
-      font-size:.65rem;font-family:'DM Mono',monospace;
-      border-radius:999px;padding:2px 9px;
-    }
-    .fw-theme-midnight{background:rgba(79,70,229,.15);color:#4f46e5}
-    .fw-theme-sunset  {background:rgba(249,115,22,.15);color:#ea580c}
-    .fw-theme-forest  {background:rgba(6,95,70,.15);color:#065f46}
-    .fw-theme-ocean   {background:rgba(12,74,110,.15);color:#0369a1}
-    .fw-theme-sakura  {background:rgba(190,24,93,.15);color:#be185d}
-    .fw-theme-gold    {background:rgba(120,53,15,.15);color:#92400e}
-    .fw-theme-default {background:rgba(107,114,128,.15);color:#6b7280}
-    .fw-entry-email{font-size:.73rem;color:var(--text3);font-family:'DM Mono',monospace}
-    .fw-entry-message{
-      font-size:.84rem;line-height:1.7;color:var(--text2);
-      background:var(--surface);border-radius:8px;padding:.65rem .9rem;
-      border:1px solid var(--border);word-break:break-word;
-    }
-    .fw-entry-actions{display:flex;align-items:center;justify-content:flex-end}
-    .fw-delete-btn{
-      display:inline-flex;align-items:center;gap:.35rem;
-      padding:.38rem .85rem;font-size:.78rem;font-weight:600;
-      border-radius:7px;border:1.5px solid rgba(239,68,68,.35);
-      background:rgba(239,68,68,.06);color:#ef4444;cursor:pointer;
-      transition:all .2s;
-    }
-    .fw-delete-btn:hover{background:rgba(239,68,68,.15);border-color:#ef4444}
-    .fw-delete-btn:disabled{opacity:.4;cursor:not-allowed}
-    .fw-stats-bar{
-      display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem;
-    }
-    .fw-stat{
-      background:var(--accent-light);border:1px solid rgba(26,79,160,.2);
-      border-radius:8px;padding:.5rem .9rem;
-      font-size:.78rem;font-weight:600;color:var(--accent);
-      font-family:'DM Mono',monospace;
-    }
-    .fw-filter-bar{
-      display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;
-    }
-    .fw-filter-bar input{
-      background:var(--bg2);border:1.5px solid var(--border);border-radius:8px;
-      padding:.45rem .8rem;font-family:'DM Sans',sans-serif;font-size:.83rem;
-      color:var(--text);outline:none;transition:border-color .2s;flex:1;min-width:180px;
-    }
-    .fw-filter-bar input:focus{border-color:var(--accent)}
-
     @media(max-width:768px){.admin-sidebar{width:200px}.form-row{grid-template-columns:1fr}.form-row.cols-3{grid-template-columns:1fr 1fr}}
     @media(max-width:600px){
       .admin-wrap{flex-direction:column}
@@ -287,7 +225,6 @@
       <li class="snav-item" data-panel="gallery-admin"><span class="snav-icon">🖼️</span>Gallery</li>
       <li class="snav-item" data-panel="countdown"><span class="snav-icon">⏱️</span>Countdown</li>
       <li class="snav-item" data-panel="birthdays"><span class="snav-icon">🎂</span>Birthdays</li>
-      <li class="snav-item" data-panel="farewells"><span class="snav-icon">💌</span>Farewells</li>
     </ul>
     <div class="sidebar-logout"><button class="logout-btn" id="logoutBtn">🔓 Logout</button></div>
   </aside>
@@ -536,67 +473,6 @@
       <div class="admin-card"><div class="admin-card-title">📋 Birthday List</div><div class="items-list" id="birthdays-list"></div></div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         FAREWELLS — managed via Google Apps Script
-    ══════════════════════════════════════════════════════ -->
-    <div class="admin-panel" id="panel-farewells">
-      <div class="admin-panel-title">💌 Farewell Messages</div>
-      <div class="admin-panel-sub">View and delete Time Capsule entries submitted via Google Apps Script. Changes here do NOT touch GitHub.</div>
-
-      <!-- Info banner -->
-      <div style="display:flex;align-items:flex-start;gap:.7rem;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.5rem;font-size:.78rem;color:var(--text2);line-height:1.6">
-        <span style="font-size:1.1rem;flex-shrink:0">⚠️</span>
-        <span>Deletion removes the row from your Google Sheet via Apps Script. Make sure your <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">doGet</code> handler supports the <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">deleteFarewell</code> action — see the code snippet in the Apps Script section below.</span>
-      </div>
-
-      <!-- Stats + controls -->
-      <div class="admin-card">
-        <div class="admin-card-title">📊 Capsule Stats</div>
-        <div class="fw-stats-bar" id="fw-stats-bar">
-          <div class="fw-stat">Total: <span id="fw-total">—</span></div>
-          <div class="fw-stat">Shown: <span id="fw-shown">—</span></div>
-        </div>
-        <div class="fw-filter-bar">
-          <input type="text" id="fw-search" placeholder="🔍  Search by name, roll, email or message…"/>
-          <button class="admin-btn admin-btn-primary" id="loadFarewellsBtn" style="flex-shrink:0">🔄 Load / Refresh</button>
-        </div>
-        <div id="fw-loading" style="display:none;color:var(--text3);font-size:.85rem;font-style:italic;padding:.6rem 0">Loading entries…</div>
-      </div>
-
-      <!-- Entries list -->
-      <div class="admin-card">
-        <div class="admin-card-title">📋 Submitted Messages (<span id="fw-count">—</span>)</div>
-        <div id="farewells-admin-list" style="display:flex;flex-direction:column;gap:.75rem">
-          <div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">
-            Click "Load / Refresh" to fetch entries from the capsule.
-          </div>
-        </div>
-      </div>
-
-      <!-- Apps Script snippet -->
-      <div class="admin-card">
-        <div class="admin-card-title">🛠️ Apps Script — deleteFarewell handler</div>
-        <p style="font-size:.78rem;color:var(--text3);line-height:1.6;margin-bottom:.75rem">
-          Add this case inside your <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">doGet(e)</code> function, alongside the existing <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">submitFarewell</code> / <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">getFarewells</code> cases.
-          Adjust <strong>column index 0</strong> to whichever column in your sheet holds the email address (0 = column A).
-        </p>
-        <pre style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text2);overflow-x:auto;line-height:1.7;white-space:pre-wrap">if (action === 'deleteFarewell') {
-  var email  = parsed.email;
-  var sheet  = SpreadsheetApp.getActiveSpreadsheet()
-                 .getSheetByName('Farewells'); // ← your sheet name
-  var data   = sheet.getDataRange().getValues();
-  // Column A (index 0) = email — change if yours differs
-  for (var i = data.length - 1; i >= 1; i--) {
-    if (data[i][0] === email) {
-      sheet.deleteRow(i + 1);
-      return jsonResponse({ success: true });
-    }
-  }
-  return jsonResponse({ success: false, error: 'Entry not found.' });
-}</pre>
-      </div>
-    </div>
-
   </main>
 </div>
 
@@ -611,9 +487,6 @@ const PASSWORD     = 'Echronicles2527';
 const GH_OWNER     = 'visionsyt99';
 const GH_REPO      = 'SEC-E-CHRONICLES';
 const GH_DATA_FILE = 'data/ec-data.json';
-
-// Apps Script URL — used for Farewell reads + deletes
-const FW_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3_v4IBUpJ4fLgXLE83hUNdNmh4NlJfhmPVSeUpXE1W8b0y8w2bbfWMBuwK7Yuessn/exec';
 
 // ══════════════════════════════════════════════════════
 // GITHUB API LAYER
@@ -630,6 +503,7 @@ const GH = {
     };
   },
 
+  // Fetch current file — returns { content, sha } or null
   async getFile(path = GH_DATA_FILE){
     try {
       const r = await fetch(
@@ -647,6 +521,7 @@ const GH = {
     }
   },
 
+  // Write file — sha must be provided to avoid double round-trips
   async putFile(data, message = 'Admin update', path = GH_DATA_FILE, sha = null){
     const body = {
       message,
@@ -691,22 +566,43 @@ let DB = {
 };
 
 // ══════════════════════════════════════════════════════
-// CORE SYNC
+// CORE SYNC  ─  READ → MERGE → WRITE
+//
+// Every save operation:
+//   1. Fetches the current file from GitHub (gets latest data + SHA)
+//   2. Deep-merges our in-memory DB on top of it:
+//        • memberPhotos: key-level merge  →  only the rolls you touched
+//          are updated; all other rolls keep their GitHub value
+//        • arrays (notices, events, etc.): in-memory wins — we loaded
+//          the full list at login and have been mutating it consistently
+//   3. Writes the merged result back (using the fresh SHA)
+//
+// This means: photos added in a previous session (or another device)
+// are NEVER overwritten by a save that didn't touch them.
 // ══════════════════════════════════════════════════════
 async function syncToGitHub(msg = 'Admin update'){
   setSyncState('pending','Saving…');
+
+  // Step 1 — read latest from GitHub (single round-trip, also gets SHA)
   const current    = await GH.getFile();
   const serverData = (current && current.content) ? current.content : {};
   const sha        = current ? current.sha : null;
+
+  // Step 2 — build merged payload
+  //   For memberPhotos: spread server first, then our session's entries.
+  //   Rolls we never touched stay as the server had them.
   const mergedPhotos = {
     ...(serverData.memberPhotos || {}),
     ...(DB.memberPhotos || {})
   };
+
   const merged = {
-    ...serverData,
-    ...DB,
-    memberPhotos: mergedPhotos
+    ...serverData,          // preserve everything on the server
+    ...DB,                  // overlay our in-memory state
+    memberPhotos: mergedPhotos  // but always use the deep-merged photos
   };
+
+  // Step 3 — write back
   return await GH.putFile(merged, msg, GH_DATA_FILE, sha);
 }
 
@@ -788,8 +684,6 @@ document.querySelectorAll('.snav-item').forEach(item => {
     const p = item.dataset.panel;
     if(p === 'member-photos') renderMemberPhotosList();
     if(p === 'gallery-admin') renderGalleryAdmin();
-    // Auto-load farewells when switching to that panel
-    if(p === 'farewells') loadFarewells();
   });
 });
 
@@ -808,11 +702,6 @@ function toastMsg(msg='Saved!', isErr=false){
 // ══════════════════════════════════════════════════════
 function nextId(arr){ return arr.length ? Math.max(...arr.map(i=>i.id||0))+1 : 1; }
 function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''; }
-function escAdm(str){
-  return String(str||'')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 
 // ══════════════════════════════════════════════════════
 // LOAD ALL FROM GITHUB
@@ -826,6 +715,7 @@ async function loadAll(){
     });
     setSyncState('ok','Loaded ✓');
   } else {
+    // Do not proceed silently — empty DB would wipe remote data on next save
     setSyncState('err','Could not load data — refresh before saving!');
     toastMsg('⚠️ Failed to load data from GitHub. Please refresh the page before making any changes.', true);
     return;
@@ -1275,16 +1165,24 @@ function renderMemberPhotosList(){
 
 document.getElementById('saveMemberPhotosBtn').addEventListener('click', async () => {
   const inputs = document.querySelectorAll('.member-photo-id-input');
+
+  // Only collect fields that have been filled in.
+  // Blank inputs are intentionally ignored — the syncToGitHub merge
+  // ensures whatever is already on GitHub for those rolls is preserved.
   const updates = {};
   inputs.forEach(inp => {
     const val = inp.value.trim();
     if(val) updates[inp.dataset.roll] = val;
   });
+
   if(!Object.keys(updates).length){
     toastMsg('No new photo IDs entered — nothing to save.', false);
     return;
   }
+
+  // Merge into local DB so the UI refreshes correctly
   DB.memberPhotos = { ...(DB.memberPhotos || {}), ...updates };
+
   const ok = await syncToGitHub('Update member photos');
   if(ok){
     const msg = document.getElementById('memberPhotosSavedMsg');
@@ -1361,146 +1259,12 @@ document.getElementById('clearAllGalleryBtn').addEventListener('click', async ()
 });
 
 // ══════════════════════════════════════════════════════
-// FAREWELLS — read / delete via Google Apps Script
-// ══════════════════════════════════════════════════════
-
-// All loaded entries stored here so the search filter works client-side
-let _fwAllMessages = [];
-
-async function loadFarewells(){
-  const list    = document.getElementById('farewells-admin-list');
-  const loading = document.getElementById('fw-loading');
-  const countEl = document.getElementById('fw-count');
-  const totalEl = document.getElementById('fw-total');
-  const shownEl = document.getElementById('fw-shown');
-
-  list.innerHTML = '';
-  loading.style.display = 'block';
-
-  try {
-    const res  = await fetch(FW_SCRIPT_URL + '?action=getFarewells');
-    const data = await res.json();
-    _fwAllMessages = data.messages || [];
-  } catch(e) {
-    loading.style.display = 'none';
-    list.innerHTML = '<div style="color:#dc2626;font-size:.85rem;padding:1rem 0">❌ Failed to load — check Apps Script URL and permissions.</div>';
-    console.error('loadFarewells error:', e);
-    return;
-  }
-
-  loading.style.display = 'none';
-  totalEl.textContent   = _fwAllMessages.length;
-  countEl.textContent   = _fwAllMessages.length;
-
-  renderFarewellList(_fwAllMessages);
-}
-
-function renderFarewellList(msgs){
-  const list    = document.getElementById('farewells-admin-list');
-  const shownEl = document.getElementById('fw-shown');
-  shownEl.textContent = msgs.length;
-
-  if(!msgs.length){
-    list.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No matching messages found.</div>';
-    return;
-  }
-
-  list.innerHTML = msgs.map((m, i) => {
-    const theme = (m.theme || 'default').toLowerCase();
-    return `
-    <div class="fw-entry" id="fw-entry-${escAdm(m.email||i)}">
-      <div class="fw-entry-header">
-        <div style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;flex:1;min-width:0">
-          <span class="fw-entry-name">${escAdm(m.name || '—')}</span>
-          ${m.rollNo ? `<span class="fw-entry-roll">#${escAdm(m.rollNo)}</span>` : ''}
-          <span class="fw-entry-theme fw-theme-${escAdm(theme)}">${escAdm(theme)}</span>
-        </div>
-        <button class="fw-delete-btn" onclick="deleteFarewell('${escAdm(m.email||'')}', '${escAdm(m.email||i)}')" id="fwdel-${escAdm(m.email||i)}">
-          🗑️ Delete
-        </button>
-      </div>
-      ${m.email ? `<div class="fw-entry-email">${escAdm(m.email)}</div>` : ''}
-      <div class="fw-entry-message">${escAdm(m.message || '')}</div>
-    </div>`;
-  }).join('');
-}
-
-// Live search filter
-document.getElementById('fw-search').addEventListener('input', function(){
-  const q = this.value.toLowerCase().trim();
-  if(!q){
-    renderFarewellList(_fwAllMessages);
-    return;
-  }
-  const filtered = _fwAllMessages.filter(m =>
-    (m.name    || '').toLowerCase().includes(q) ||
-    (m.rollNo  || '').toLowerCase().includes(q) ||
-    (m.email   || '').toLowerCase().includes(q) ||
-    (m.message || '').toLowerCase().includes(q)
-  );
-  renderFarewellList(filtered);
-});
-
-async function deleteFarewell(email, entryKey){
-  if(!email){
-    toastMsg('No email linked to this entry — cannot delete.', true);
-    return;
-  }
-  if(!confirm(`Delete the farewell message from ${email}?\n\nThis removes it permanently from your Google Sheet.`)) return;
-
-  // Visual feedback
-  const btn   = document.getElementById('fwdel-' + entryKey);
-  const entry = document.getElementById('fw-entry-' + entryKey);
-  if(btn)   { btn.disabled = true; btn.textContent = 'Deleting…'; }
-  if(entry) { entry.style.opacity = '.45'; entry.style.pointerEvents = 'none'; }
-
-  try {
-    const payload = encodeURIComponent(JSON.stringify({
-      action: 'deleteFarewell',
-      email:  email
-    }));
-    const res  = await fetch(FW_SCRIPT_URL + '?data=' + payload);
-    const data = await res.json();
-
-    if(data.success){
-      toastMsg('Farewell deleted ✓');
-      // Remove from local cache & re-render
-      _fwAllMessages = _fwAllMessages.filter(m => m.email !== email);
-      document.getElementById('fw-total').textContent = _fwAllMessages.length;
-      document.getElementById('fw-count').textContent = _fwAllMessages.length;
-      // Re-apply active search filter
-      const q = document.getElementById('fw-search').value.toLowerCase().trim();
-      renderFarewellList(q
-        ? _fwAllMessages.filter(m =>
-            (m.name||'').toLowerCase().includes(q) ||
-            (m.rollNo||'').toLowerCase().includes(q) ||
-            (m.email||'').toLowerCase().includes(q) ||
-            (m.message||'').toLowerCase().includes(q))
-        : _fwAllMessages
-      );
-    } else {
-      if(btn)   { btn.disabled = false; btn.textContent = '🗑️ Delete'; }
-      if(entry) { entry.style.opacity = '1'; entry.style.pointerEvents = ''; }
-      toastMsg(data.error || 'Delete failed — check Apps Script logs.', true);
-    }
-  } catch(e){
-    if(btn)   { btn.disabled = false; btn.textContent = '🗑️ Delete'; }
-    if(entry) { entry.style.opacity = '1'; entry.style.pointerEvents = ''; }
-    toastMsg('Network error — could not delete.', true);
-    console.error('deleteFarewell error:', e);
-  }
-}
-
-document.getElementById('loadFarewellsBtn').addEventListener('click', loadFarewells);
-
-// ══════════════════════════════════════════════════════
 // GLOBALS  (called from inline onclick attributes)
 // ══════════════════════════════════════════════════════
 window.delItem            = delItem;
 window.togglePin          = togglePin;
 window.removePeriod       = removePeriod;
 window.deleteGalleryPhoto = deleteGalleryPhoto;
-window.deleteFarewell     = deleteFarewell;
 </script>
 </body>
 </html>
