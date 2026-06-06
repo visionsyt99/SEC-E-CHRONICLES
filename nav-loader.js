@@ -32,6 +32,7 @@
       <li><a href="${root}achievements.html">Achievements</a></li>
       <li><a href="${root}birthdays.html">Birthdays</a></li>
       <li><a href="${root}memory-wall.html">Memories</a></li>
+       <li><a href="${root}farewell.html">Farewell</a></li>
     </ul>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
     <button class="nav-hamburger" id="hamburger" aria-label="Menu">
