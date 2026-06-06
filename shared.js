@@ -39,6 +39,7 @@ const NAV_HTML = `
     <li><a href="achievements.html">Achievements</a></li>
     <li><a href="birthdays.html">Birthdays</a></li>
     <li><a href="memory-wall.html">Memory Wall</a></li>
+    <li><a href="farewell.html">Farewell</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:.5rem">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark mode">🌙</button>
