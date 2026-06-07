@@ -358,6 +358,22 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "025neb547@sxc.edu.np",
   dob: { bsYear: 2066, bsMonth: 11, bsDay: 20, monthName: "Fagun" }
+},
+   505: {
+  photo: "https://drive.google.com/uc?export=view&id=1KLiotk5_A681nFz97eJP90GRDxMfmbNJ",
+  quote: "You should never dance in an music which feels comfortable because it is playing with you not you are playing with the music",
+  experience: "I feel curious to know more in my class",
+  wantsManagement: false,
+  email: "025neb505@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 9, bsDay: 24, monthName: "Poush" }
+},
+551: {
+  photo: "https://drive.google.com/uc?export=view&id=1k3de6nyFKBqMAKwuwSuu9gp_kIQ-fC4S",
+  quote: "Don't let what you cannot do interfere with what you can do - John Wooden",
+  experience: "My favorite memories are not just one moment but every moment I spend with my friends. My classroom has become my comfort zone where I can be myself and happy. I just wanna tell everyone to enjoy your +2 journey because once it's gone, it never comes back😉",
+  wantsManagement: false,
+  email: "shreyatamang2067@gmail.com",
+  dob: { bsYear: 2067, bsMonth: 5, bsDay: 22, monthName: "Bhadra" }
 }
 };
 
