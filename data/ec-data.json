@@ -1,11 +1,11 @@
 {
   "notices": [
     {
-      "id": 2,
-      "title": "JUST TEST",
-      "tag": "NOTHING",
-      "desc": "",
-      "icon": "📢",
+      "id": 1,
+      "title": "TEST",
+      "tag": "BJDCC",
+      "desc": "DC",
+      "icon": "💌",
       "date": "",
       "color": 0,
       "pinned": 0
