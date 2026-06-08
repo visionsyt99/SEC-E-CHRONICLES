@@ -8,7 +8,7 @@ const DRIVE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLLQUPlL8I9eT
 const MEMBERS_FOLDER_ID = '1OnuO3Pg1nM-3TDwvs9AMif_4IfqUjPompzrivTFXUJuA0W-lfsyQxs2yYyoXdnkSS_k0Hc7B';
 const MEMORY_FOLDER_ID  = '1C4QnE1sg3U7brdpO_OONjkVDK0mwF4QZ';
 
-// ── NAV HTML ──
+// ── NAV HTML (injected into every page) ──
 const NAV_HTML = `
 <nav class="nav">
   <a href="index.html" class="nav-brand">
@@ -50,7 +50,6 @@ const NAV_HTML = `
     </button>
   </div>
 </nav>`;
-
 
 const FOOTER_HTML = `
 <footer>
