@@ -471,29 +471,69 @@
       </div>
     </div>
 
-    <!-- GALLERY -->
-    <div class="admin-panel" id="panel-gallery-admin">
-      <div class="admin-panel-title">🖼️ Gallery Photos</div>
-      <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Synced across all devices.</div>
-      <div class="admin-card">
-        <div class="admin-card-title">➕ Add New Gallery Photo</div>
-        <div class="form-row">
-          <div class="field"><label>Google Drive File ID</label><input type="text" id="gal-drive-id" placeholder="1AbCdEfGhIjKlMnOpQr..."/></div>
-          <div class="field"><label>Category</label><select id="gal-cat"><option value="class">Classroom</option><option value="events">Events</option><option value="trips">Trips</option><option value="fun">Fun Times</option></select></div>
-        </div>
-        <div class="form-row cols-1"><div class="field"><label>Caption (optional)</label><input type="text" id="gal-caption" placeholder="e.g. Sports Day 2025"/></div></div>
-        <button class="admin-btn admin-btn-primary" id="addGalleryPhotoBtn">➕ Add Photo</button>
-      </div>
-      <div class="admin-card">
-        <div class="admin-card-title">📷 Gallery Photos (<span id="galCountLabel">0</span>)</div>
-        <div id="galleryAdminList" style="display:flex;flex-direction:column;gap:.6rem;max-height:500px;overflow-y:auto;padding-right:.4rem">
-          <div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>
-        </div>
-        <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap">
-          <button class="admin-btn" id="clearAllGalleryBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All Gallery Photos</button>
-        </div>
+   <!-- GALLERY -->
+<div class="admin-panel" id="panel-gallery-admin">
+  <div class="admin-panel-title">🖼️ Gallery Photos</div>
+  <div class="admin-panel-sub">Add Google Drive File IDs for gallery photos. Synced across all devices.</div>
+
+  <!-- BULK ADD CARD -->
+  <div class="admin-card">
+    <div class="admin-card-title">➕ Bulk Add Photos</div>
+    <p style="font-size:.78rem;color:var(--text3);line-height:1.6;margin-bottom:.85rem">
+      Paste multiple Drive File IDs — <strong>one per line</strong>.<br/>
+      Optional: append a caption with a pipe character &rarr; <code style="font-family:'DM Mono',monospace;background:var(--bg2);padding:.05rem .3rem;border-radius:3px">FILE_ID | My Caption</code>
+    </p>
+    <div class="form-row cols-1">
+      <div class="field">
+        <label>Drive File IDs (one per line)</label>
+        <textarea id="gal-bulk-ids" placeholder="1AbCdEfGhIjKlMnOpQr...&#10;1ZyXwVuTsRqPoNmLkJ... | Sports Day 2025&#10;1AnotherFileIdHere... | Trip to Pokhara"
+          style="min-height:120px;font-family:'DM Mono',monospace;font-size:.75rem;line-height:1.7"></textarea>
       </div>
     </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Category (applies to all)</label>
+        <select id="gal-bulk-cat">
+          <option value="class">Classroom</option>
+          <option value="events">Events</option>
+          <option value="trips">Trips</option>
+          <option value="fun">Fun Times</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Default Caption (if no inline caption)</label>
+        <input type="text" id="gal-bulk-caption" placeholder="e.g. Section E 2025"/>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <button class="admin-btn admin-btn-primary" id="addBulkPhotosBtn">➕ Add All Photos</button>
+      <span id="gal-bulk-preview" style="font-size:.78rem;color:var(--text3)"></span>
+    </div>
+    <div id="gal-bulk-progress" style="display:none;margin-top:.7rem;font-size:.78rem;color:var(--accent)"></div>
+  </div>
+
+  <!-- SINGLE ADD CARD -->
+  <div class="admin-card">
+    <div class="admin-card-title">➕ Add Single Photo</div>
+    <div class="form-row">
+      <div class="field"><label>Google Drive File ID</label><input type="text" id="gal-drive-id" placeholder="1AbCdEfGhIjKlMnOpQr..."/></div>
+      <div class="field"><label>Category</label><select id="gal-cat"><option value="class">Classroom</option><option value="events">Events</option><option value="trips">Trips</option><option value="fun">Fun Times</option></select></div>
+    </div>
+    <div class="form-row cols-1"><div class="field"><label>Caption (optional)</label><input type="text" id="gal-caption" placeholder="e.g. Sports Day 2025"/></div></div>
+    <button class="admin-btn admin-btn-primary" id="addGalleryPhotoBtn">➕ Add Photo</button>
+  </div>
+
+  <!-- LIST CARD -->
+  <div class="admin-card">
+    <div class="admin-card-title">📷 Gallery Photos (<span id="galCountLabel">0</span>)</div>
+    <div id="galleryAdminList" style="display:flex;flex-direction:column;gap:.6rem;max-height:500px;overflow-y:auto;padding-right:.4rem">
+      <div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:1rem 0">No photos added yet.</div>
+    </div>
+    <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap">
+      <button class="admin-btn" id="clearAllGalleryBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All Gallery Photos</button>
+    </div>
+  </div>
+</div>
 
     <!-- COUNTDOWN -->
     <div class="admin-panel" id="panel-countdown">
@@ -1415,13 +1455,75 @@ async function deleteGalleryPhoto(index){
   if(ok){ renderGalleryAdmin(); toastMsg('Photo removed.'); }
 }
 
+// ── helper: extract clean Drive ID from URL or raw ID ──
+function cleanDriveId(raw){
+  raw = raw.trim();
+  const m = raw.match(/[?&]id=([^&]+)/) || raw.match(/\/d\/([^/?]+)/);
+  return m ? m[1] : raw;
+}
+
+// ── live preview count while typing ──
+document.getElementById('gal-bulk-ids').addEventListener('input', function(){
+  const lines = this.value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const preview = document.getElementById('gal-bulk-preview');
+  preview.textContent = lines.length ? `${lines.length} photo${lines.length>1?'s':''} ready to add` : '';
+});
+
+// ── BULK ADD ──
+document.getElementById('addBulkPhotosBtn').addEventListener('click', async () => {
+  const raw         = document.getElementById('gal-bulk-ids').value.trim();
+  const bulkCat     = document.getElementById('gal-bulk-cat').value;
+  const bulkCaption = document.getElementById('gal-bulk-caption').value.trim();
+  const progress    = document.getElementById('gal-bulk-progress');
+  const btn         = document.getElementById('addBulkPhotosBtn');
+
+  if(!raw){ toastMsg('Please paste at least one Drive File ID.', true); return; }
+
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){ toastMsg('No valid lines found.', true); return; }
+
+  // Parse lines — support "FILE_ID | Caption" or "FILE_ID , Caption" or bare ID
+  const entries = lines.map(line => {
+    const sepIdx = line.indexOf('|') !== -1 ? line.indexOf('|') : line.indexOf(',');
+    if(sepIdx !== -1){
+      return {
+        id:      cleanDriveId(line.slice(0, sepIdx)),
+        caption: line.slice(sepIdx+1).trim() || bulkCaption || ''
+      };
+    }
+    return { id: cleanDriveId(line), caption: bulkCaption || '' };
+  }).filter(e => e.id.length > 5); // basic sanity check
+
+  if(!entries.length){ toastMsg('No valid IDs found — check your input.', true); return; }
+
+  btn.disabled = true;
+  progress.style.display = 'block';
+  progress.textContent   = `Adding ${entries.length} photo${entries.length>1?'s':''}…`;
+
+  if(!DB.gallery) DB.gallery = [];
+  entries.forEach(e => DB.gallery.push({ id: e.id, cat: bulkCat, caption: e.caption }));
+
+  const ok = await syncField('gallery', `Bulk add ${entries.length} gallery photos`);
+
+  btn.disabled = false;
+  progress.style.display = 'none';
+
+  if(ok){
+    document.getElementById('gal-bulk-ids').value   = '';
+    document.getElementById('gal-bulk-caption').value = '';
+    document.getElementById('gal-bulk-preview').textContent = '';
+    renderGalleryAdmin();
+    toastMsg(`${entries.length} photo${entries.length>1?'s':''} added! 🎉`);
+  }
+});
+
+// ── SINGLE ADD ──
 document.getElementById('addGalleryPhotoBtn').addEventListener('click', async () => {
   const id      = document.getElementById('gal-drive-id').value.trim();
   const cat     = document.getElementById('gal-cat').value;
   const caption = document.getElementById('gal-caption').value.trim();
   if(!id){ toastMsg('Please enter a Drive File ID', true); return; }
-  const urlMatch = id.match(/[?&]id=([^&]+)/) || id.match(/\/d\/([^/]+)\//);
-  const cleanId  = urlMatch ? urlMatch[1] : id;
+  const cleanId = cleanDriveId(id);
   if(!DB.gallery) DB.gallery = [];
   DB.gallery.push({id:cleanId, cat, caption});
   const ok = await syncField('gallery', 'Add gallery photo');
@@ -1433,13 +1535,13 @@ document.getElementById('addGalleryPhotoBtn').addEventListener('click', async ()
   }
 });
 
+// ── CLEAR ALL ──
 document.getElementById('clearAllGalleryBtn').addEventListener('click', async () => {
   if(!confirm('Remove ALL gallery photos? This cannot be undone.')) return;
   DB.gallery = [];
   const ok = await syncField('gallery', 'Clear gallery');
   if(ok){ renderGalleryAdmin(); toastMsg('Gallery cleared.'); }
 });
-
 // ══════════════════════════════════════════════════════
 // FAREWELLS — read / delete via Google Apps Script ONLY
 // (completely independent of GitHub — UNTOUCHED as requested)
