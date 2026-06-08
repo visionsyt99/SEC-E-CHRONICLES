@@ -9,10 +9,8 @@ const MEMBERS_FOLDER_ID = '1OnuO3Pg1nM-3TDwvs9AMif_4IfqUjPompzrivTFXUJuA0W-lfsyQ
 const MEMORY_FOLDER_ID  = '1C4QnE1sg3U7brdpO_OONjkVDK0mwF4QZ';
 
 // ── NAV HTML ──
-function buildNavHTML(isRoot = false) {
-  const root = isRoot ? '' : '';
-  return `
-<nav class="nav" id="mainNav">
+const NAV_HTML = `
+<nav class="nav">
   <a href="index.html" class="nav-brand">
     <div class="brand-badge">
       <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-logo-svg">
@@ -29,114 +27,31 @@ function buildNavHTML(isRoot = false) {
     </div>
     <span>The E Chronicles</span>
   </a>
-  <div class="nav-scroll">
-    <ul class="nav-links" id="navLinks">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="members.html">Members</a></li>
-      <li><a href="gallery.html">Gallery</a></li>
-      <li><a href="schedule.html">Schedule</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="notices.html">Notices</a></li>
-      <li><a href="resources.html">Resources</a></li>
-      <li><a href="achievements.html">Achievements</a></li>
-      <li><a href="birthdays.html">Birthdays</a></li>
-      <li><a href="memory-wall.html">Memory Wall</a></li>
-      <li><a href="farewell.html">Farewell</a></li>
-    </ul>
-  </div>
-  <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;margin-left:auto">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="members.html">Members</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="schedule.html">Schedule</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="notices.html">Notices</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="achievements.html">Achievements</a></li>
+    <li><a href="birthdays.html">Birthdays</a></li>
+    <li><a href="memory-wall.html">Memory Wall</a></li>
+    <li><a href="farewell.html">Farewell</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:.5rem">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark mode">🌙</button>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
-      <span></span><span></span><span></span>
+    <button class="nav-menu-btn" id="menuBtn" aria-label="Toggle menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
     </button>
   </div>
-</nav>
-<div class="nav-drawer" id="navDrawer">
-  <ul class="drawer-links">
-    <li><a href="index.html">🏠 Home</a></li>
-    <li><a href="about.html">ℹ️ About</a></li>
-    <li><a href="members.html">👥 Members</a></li>
-    <li><a href="gallery.html">🖼️ Gallery</a></li>
-    <li><a href="schedule.html">📅 Schedule</a></li>
-    <li><a href="events.html">🎉 Events</a></li>
-    <li><a href="notices.html">📢 Notices</a></li>
-    <li><a href="resources.html">📚 Resources</a></li>
-    <li><a href="achievements.html">🏆 Achievements</a></li>
-    <li><a href="birthdays.html">🎂 Birthdays</a></li>
-    <li><a href="memory-wall.html">💬 Memory Wall</a></li>
-    <li><a href="farewell.html">💌 Farewell</a></li>
-  </ul>
-</div>`;
-}
+</nav>`;
 
-function injectNav(isRoot = false) {
-  document.body.insertAdjacentHTML('afterbegin', buildNavHTML(isRoot));
-  document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
 
-  // Active link highlight
-  const path = window.location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-links a, .drawer-links a').forEach(a => {
-    if (a.getAttribute('href').split('/').pop() === path) a.classList.add('active');
-  });
-
-  // ── HAMBURGER / DRAWER ──
-  const hamburger = document.getElementById('hamburger');
-  const navDrawer = document.getElementById('navDrawer');
-  let drawerOpen = false;
-
-  hamburger.addEventListener('click', () => {
-    drawerOpen = !drawerOpen;
-    hamburger.classList.toggle('open', drawerOpen);
-    navDrawer.classList.toggle('open', drawerOpen);
-    hamburger.setAttribute('aria-expanded', drawerOpen);
-  });
-
-  // Close when a drawer link is tapped
-  navDrawer.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      drawerOpen = false;
-      hamburger.classList.remove('open');
-      navDrawer.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // Close on outside tap
-  document.addEventListener('click', e => {
-    if (drawerOpen && !navDrawer.contains(e.target) && !hamburger.contains(e.target)) {
-      drawerOpen = false;
-      hamburger.classList.remove('open');
-      navDrawer.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  // ── THEME TOGGLE ──
-  const html = document.documentElement;
-  const toggleBtn = document.getElementById('themeToggle');
-
-  function isDark() {
-    if (html.classList.contains('dark')) return true;
-    if (html.classList.contains('light')) return false;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-  function applyTheme(dark) {
-    html.classList.remove('dark', 'light');
-    html.classList.add(dark ? 'dark' : 'light');
-    toggleBtn.textContent = dark ? '☀️' : '🌙';
-    toggleBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
-    localStorage.setItem('ec_theme', dark ? 'dark' : 'light');
-  }
-
-  const saved = localStorage.getItem('ec_theme');
-  if (saved) { applyTheme(saved === 'dark'); }
-  else { toggleBtn.textContent = isDark() ? '☀️' : '🌙'; }
-  toggleBtn.addEventListener('click', () => applyTheme(!isDark()));
-}
-
-// Keep NAV_HTML_ROOT as alias — same nav now, just marks home active via URL matching
-const NAV_HTML_ROOT = null; // no longer needed, injectNav(true) works for all pages
 const FOOTER_HTML = `
 <footer>
   <div class="footer-brand">The E Chronicles</div>
