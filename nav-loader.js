@@ -2,7 +2,7 @@
 // Each page sets window.NAV_ROOT before including this
 (function() {
   const root = window.NAV_ROOT || '';
-  const nav = 
+  const nav = `
   <nav class="nav">
     <div class="nav-brand">
       <div class="nav-logo-mark">
@@ -20,7 +20,7 @@
       </div>
       <span class="nav-title">The E <span>Chronicles</span></span>
     </div>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="${root}index.html">Home</a></li>
       <li><a href="${root}about.html">About</a></li>
       <li><a href="${root}members.html">Members</a></li>
@@ -32,12 +32,14 @@
       <li><a href="${root}achievements.html">Achievements</a></li>
       <li><a href="${root}birthdays.html">Birthdays</a></li>
       <li><a href="${root}memory-wall.html">Memories</a></li>
-       <li><a href="${root}farewell.html">Farewell</a></li>
+      <li><a href="${root}farewell.html">Farewell</a></li>
     </ul>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
   <div class="mobile-menu" id="mobileMenu">
     <a href="${root}index.html">🏠 Home</a>
@@ -51,8 +53,51 @@
     <a href="${root}achievements.html">🏆 Achievements</a>
     <a href="${root}birthdays.html">🎂 Birthdays</a>
     <a href="${root}memory-wall.html">💬 Memories</a>
-    <a href="${root}farewell.html">💌 Farewell </a>
-  </div>;
-  document.getElementById('nav-placeholder').innerHTML = nav;
-})();
+    <a href="${root}farewell.html">💌 Farewell</a>
+  </div>`;
 
+  const placeholder = document.getElementById('nav-placeholder');
+  if (placeholder) {
+    placeholder.innerHTML = nav;
+  }
+
+  // Active link highlight
+  const path = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    if (a.getAttribute('href').endsWith(path)) a.classList.add('active');
+  });
+
+  // Mobile hamburger toggle
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (hamburger && mobileMenu) {
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+  }
+
+  // Theme toggle
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('themeToggle');
+  if (toggleBtn) {
+    function isDark() {
+      if (html.classList.contains('dark')) return true;
+      if (html.classList.contains('light')) return false;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function applyTheme(dark) {
+      html.classList.remove('dark', 'light');
+      html.classList.add(dark ? 'dark' : 'light');
+      toggleBtn.textContent = dark ? '☀️' : '🌙';
+      toggleBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      localStorage.setItem('ec_theme', dark ? 'dark' : 'light');
+    }
+    const saved = localStorage.getItem('ec_theme');
+    if (saved) {
+      applyTheme(saved === 'dark');
+    } else {
+      toggleBtn.textContent = isDark() ? '☀️' : '🌙';
+    }
+    toggleBtn.addEventListener('click', () => applyTheme(!isDark()));
+  }
+})();
