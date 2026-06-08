@@ -1,5 +1,16 @@
 {
-  "notices": [],
+  "notices": [
+    {
+      "id": 1,
+      "title": "JUST TEST",
+      "tag": "General",
+      "desc": "RANDOM NOTICE",
+      "icon": "📢",
+      "date": "",
+      "color": 2,
+      "pinned": 1
+    }
+  ],
   "resources": [],
   "events": [],
   "achievements": [],
