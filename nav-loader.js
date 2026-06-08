@@ -1,7 +1,8 @@
 // Loads shared nav HTML into #nav-placeholder
 // Each page sets window.NAV_ROOT before including this
-(function() {
+(function () {
   const root = window.NAV_ROOT || '';
+
   const nav = `
   <nav class="nav">
     <div class="nav-brand">
@@ -56,48 +57,22 @@
     <a href="${root}farewell.html">💌 Farewell</a>
   </div>`;
 
+  // ── Inject nav HTML ──
   const placeholder = document.getElementById('nav-placeholder');
-  if (placeholder) {
-    placeholder.innerHTML = nav;
-  }
+  if (placeholder) placeholder.innerHTML = nav;
 
-  // Active link highlight
+  // ── Active link highlight ──
   const path = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-links a').forEach(a => {
     if (a.getAttribute('href').endsWith(path)) a.classList.add('active');
   });
 
-  // Mobile hamburger toggle
+  // ── Mobile hamburger ──
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
   if (hamburger && mobileMenu) {
-    hamburger.addEventListener('click', () => {
-      mobileMenu.classList.toggle('open');
-    });
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
   }
 
-  // Theme toggle
-  const html = document.documentElement;
-  const toggleBtn = document.getElementById('themeToggle');
-  if (toggleBtn) {
-    function isDark() {
-      if (html.classList.contains('dark')) return true;
-      if (html.classList.contains('light')) return false;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    function applyTheme(dark) {
-      html.classList.remove('dark', 'light');
-      html.classList.add(dark ? 'dark' : 'light');
-      toggleBtn.textContent = dark ? '☀️' : '🌙';
-      toggleBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
-      localStorage.setItem('ec_theme', dark ? 'dark' : 'light');
-    }
-    const saved = localStorage.getItem('ec_theme');
-    if (saved) {
-      applyTheme(saved === 'dark');
-    } else {
-      toggleBtn.textContent = isDark() ? '☀️' : '🌙';
-    }
-    toggleBtn.addEventListener('click', () => applyTheme(!isDark()));
-  }
 })();
+ 
