@@ -551,25 +551,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   initMeshBackground();
 
-  // Init theme toggle (works for pages using nav-loader.js too)
-  const html = document.documentElement;
-  const toggleBtn = document.getElementById('themeToggle');
-  if (toggleBtn) {
-    function isDark() {
-      if (html.classList.contains('dark'))  return true;
-      if (html.classList.contains('light')) return false;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    function applyTheme(dark) {
-      html.classList.remove('dark', 'light');
-      html.classList.add(dark ? 'dark' : 'light');
-      toggleBtn.textContent = dark ? '☀️' : '🌙';
-      toggleBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
-      localStorage.setItem('ec_theme', dark ? 'dark' : 'light');
-    }
-    const saved = localStorage.getItem('ec_theme');
-    if (saved) applyTheme(saved === 'dark');
-    else toggleBtn.textContent = isDark() ? '☀️' : '🌙';
-    toggleBtn.addEventListener('click', () => applyTheme(!isDark()));
-  }
 });
