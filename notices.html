@@ -110,7 +110,7 @@ function renderNotices() {
     return `
     <div class="notice-card ${colorClass}" style="animation-delay:${i*0.07}s">
       ${n.pinned ? '<div class="pinned-badge">📌 Pinned</div>' : ''}
-      <div class="nc-icon">${n.icon || '📢'}</div>
+    <div class="nc-icon">${(()=>{const t=document.createElement('textarea');t.innerHTML=n.icon||'📢';return t.value;})()}</div>
       <div class="nc-title">${n.title}</div>
       <div class="nc-desc">${n.desc}</div>
       <div class="nc-footer">
