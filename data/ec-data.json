@@ -1,16 +1,5 @@
 {
-  "notices": [
-    {
-      "id": 1,
-      "title": "TEST",
-      "tag": "BJDCC",
-      "desc": "DC",
-      "icon": "ÃÂ°ÃÂÃÂÃÂ",
-      "date": "",
-      "color": 0,
-      "pinned": 0
-    }
-  ],
+  "notices": [],
   "resources": [],
   "events": [],
   "achievements": [],
