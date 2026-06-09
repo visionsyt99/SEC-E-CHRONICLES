@@ -5,456 +5,730 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Birthdays — The E Chronicles</title>
   <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="main.css"/>
   <style>
-    .page-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem}
-    .page-hero-inner{max-width:1100px;margin:0 auto}
-    .bday-section{padding:3rem 2.5rem 5rem}
-    .bday-inner{max-width:1100px;margin:0 auto}
+    /* ══════════════════════════════════════════
+       BIRTHDAYS PAGE — Section E Chronicles
+    ══════════════════════════════════════════ */
 
-    /* ── INFO POPUP (click any chip) ── */
-    .bday-popup-overlay{
-      position:fixed;inset:0;z-index:99999;
-      background:rgba(0,0,0,0.65);
-      backdrop-filter:blur(8px);
-      display:flex;align-items:center;justify-content:center;
-      padding:1rem;
-      opacity:0;pointer-events:none;
-      transition:opacity .35s ease;
+    /* ── PAGE HERO ── */
+    .bday-hero {
+      padding: 4.5rem 2.5rem 3.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
     }
-    .bday-popup-overlay.open{opacity:1;pointer-events:all}
-    .bday-popup{
-      background:var(--surface);
-      border-radius:22px;
-      max-width:400px;width:100%;
-      overflow:hidden;
-      position:relative;
-      transform:scale(.9) translateY(16px);
-      transition:transform .4s cubic-bezier(.34,1.56,.64,1);
-      box-shadow:0 20px 70px rgba(0,0,0,.35);
+    .bday-hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 80% at 90% 40%, rgba(201,162,39,0.10), transparent 65%),
+        radial-gradient(ellipse 35% 60% at 5%  70%, rgba(26,79,160,0.07), transparent 60%);
     }
-    .bday-popup-overlay.open .bday-popup{transform:scale(1) translateY(0)}
+    .bday-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .bday-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 700; line-height: 1.05;
+      margin-bottom: .6rem;
+    }
+    .bday-hero h1 em { color: var(--gold); font-style: italic; }
 
-    .bday-popup-top{
-      height:5px;
-      background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b);
-      background-size:200% 100%;
-      animation:confetti-slide 2s linear infinite;
+    /* Floating emojis in hero */
+    .hero-floaters {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
     }
-    @keyframes confetti-slide{from{background-position:0 0}to{background-position:200% 0}}
-
-    .bday-popup-body{padding:1.8rem 1.8rem 1.4rem;text-align:center}
-
-    .bday-popup-photo-wrap{position:relative;display:inline-block;margin-bottom:1rem}
-    .bday-popup-photo{
-      width:100px;height:120px;border-radius:14px;overflow:hidden;
-      margin:0 auto;
-      border:3px solid var(--gold);
-      box-shadow:0 0 0 4px var(--gold-light),0 8px 28px var(--gold-glow);
+    .floater {
+      position: absolute; font-size: 1.4rem; opacity: 0.18;
+      animation: floatUp linear infinite;
     }
-    .bday-popup-photo img{width:100%;height:100%;object-fit:cover;object-position:top center}
-    .bday-popup-photo-placeholder{
-      width:100%;height:100%;
-      display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(135deg,var(--gold-light),var(--accent-light));
-      font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold);
-    }
-    .bday-star-ring{
-      position:absolute;inset:-7px;border-radius:18px;
-      border:2px dashed var(--gold);opacity:.4;
-      animation:spin-ring 8s linear infinite;
-    }
-    @keyframes spin-ring{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-
-    /* TODAY badge on popup when it IS their birthday */
-    .bday-today-badge{
-      display:inline-block;
-      background:linear-gradient(90deg,var(--gold),#ffd93d);
-      color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-      padding:.2rem .7rem;border-radius:100px;margin-bottom:.5rem;
+    @keyframes floatUp {
+      0%   { transform: translateY(0)   rotate(0deg);   opacity: .18; }
+      100% { transform: translateY(-80px) rotate(20deg); opacity: 0;   }
     }
 
-    .bday-popup-emoji{font-size:1.8rem;margin-bottom:.4rem;animation:bounce-emoji 1s ease infinite alternate}
-    @keyframes bounce-emoji{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+    /* ── TODAY BANNER ── */
+    .today-banner {
+      background: linear-gradient(90deg, var(--gold-light), rgba(255,220,50,0.08), var(--gold-light));
+      border: 1px solid rgba(201,162,39,.35);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem; animation: pulse-border 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%,100% { border-color: rgba(201,162,39,.35); }
+      50%      { border-color: rgba(201,162,39,.75); }
+    }
+    .today-banner-icon { font-size: 1.8rem; animation: wiggle 1.2s ease infinite; }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(-8deg); }
+      50%      { transform: rotate( 8deg); }
+    }
+    .today-banner-text strong { color: var(--gold); }
+    .today-banner-text { font-size: .92rem; color: var(--text2); line-height: 1.5; }
 
-    .bday-popup-name{
-      font-family:'Cormorant Garamond',serif;
-      font-size:1.55rem;font-weight:700;margin-bottom:.15rem;
-      background:linear-gradient(135deg,var(--gold),var(--accent));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
-    .bday-popup-roll{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3);margin-bottom:.9rem}
-    .bday-popup-msg{
-      font-family:'Cormorant Garamond',serif;font-style:italic;
-      font-size:.95rem;color:var(--text2);line-height:1.65;margin-bottom:1.2rem;
-      padding:.9rem 1rem;background:var(--bg2);border-radius:10px;
-      border-left:3px solid var(--gold);text-align:left;
-    }
-    .bday-popup-date{
-      font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);
-      margin-bottom:1.1rem;letter-spacing:.1em;
-    }
-    .bday-popup-close{
-      width:100%;padding:.7rem;background:var(--accent);color:#fff;
-      border:none;border-radius:9px;font-size:.82rem;font-weight:700;
-      cursor:pointer;letter-spacing:.07em;transition:background .2s,transform .1s;
-    }
-    .bday-popup-close:hover{background:var(--accent2);transform:translateY(-1px)}
+    /* ── LAYOUT ── */
+    .bday-body { padding: 3rem 2.5rem 5rem; }
+    .bday-body-inner { max-width: 1100px; margin: 0 auto; }
 
-    /* multiple birthdays nav */
-    .bday-nav{display:flex;align-items:center;justify-content:center;gap:.8rem;margin-bottom:.9rem}
-    .bday-nav-btn{background:var(--bg2);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
-    .bday-nav-btn:hover{background:var(--accent-light);border-color:var(--accent)}
-    .bday-nav-count{font-size:.75rem;color:var(--text3);font-family:'DM Mono',monospace}
-
-    /* ── UPCOMING ── */
-    .upcoming-section{margin-bottom:3rem}
-    .sub-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-    .upcoming-list{display:flex;flex-direction:column;gap:.6rem}
-    .upcoming-item{
-      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-      padding:.8rem 1.2rem;display:flex;align-items:center;gap:1rem;
-      transition:border-color .2s,transform .2s;cursor:pointer;
+    .bday-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2.5rem;
+      align-items: start;
     }
-    .upcoming-item:hover{border-color:var(--gold);transform:translateX(4px)}
-    .days-bubble{
-      min-width:55px;text-align:center;
-      background:var(--gold-light);border:1px solid rgba(201,162,39,.25);border-radius:9px;
-      padding:.45rem .35rem;
-    }
-    .days-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--gold);line-height:1}
-    .days-label{font-size:.56rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
-    .ui-name{font-weight:600;font-size:.86rem}
-    .ui-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text3);margin-top:.12rem}
 
-    /* ── ALL BIRTHDAYS ── */
-    .month-group{margin-bottom:2.2rem}
-    .month-label{
-      font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;
-      color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.4rem;margin-bottom:.8rem;
+    /* ── SIDEBAR: UPCOMING ── */
+    .bday-sidebar {
+      position: sticky; top: 80px;
     }
-    .month-cards{display:flex;flex-wrap:wrap;gap:.6rem}
-    .bday-chip{
-      background:var(--surface);border:1px solid var(--border);border-radius:8px;
-      padding:.5rem .9rem;display:flex;align-items:center;gap:.6rem;
-      font-size:.82rem;transition:border-color .2s,transform .15s;cursor:pointer;
+    .sidebar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
     }
-    .bday-chip:hover{border-color:var(--gold);transform:translateY(-2px)}
-    .bday-chip.today-chip{border-color:var(--gold);background:var(--gold-light)}
-    .chip-day{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);min-width:28px;font-weight:600}
-    .chip-name{font-weight:500}
+    .sidebar-header {
+      padding: 1rem 1.25rem .8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .sidebar-header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 600;
+    }
+    .sidebar-header-badge {
+      margin-left: auto;
+      font-family: 'DM Mono', monospace; font-size: .58rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: var(--accent-light); color: var(--accent);
+      padding: .2rem .55rem; border-radius: 100px;
+    }
+    .upcoming-items { padding: .5rem 0; }
+    .upcoming-item {
+      padding: .65rem 1.25rem;
+      display: flex; align-items: center; gap: .85rem;
+      cursor: pointer; transition: background .15s;
+      border-left: 2px solid transparent;
+    }
+    .upcoming-item:hover {
+      background: var(--bg2);
+      border-left-color: var(--gold);
+    }
+    .upcoming-item.is-soon { border-left-color: rgba(201,162,39,.4); }
+    .days-pill {
+      min-width: 48px; text-align: center;
+      background: var(--gold-light);
+      border: 1px solid rgba(201,162,39,.25);
+      border-radius: 8px; padding: .4rem .3rem;
+      flex-shrink: 0;
+    }
+    .days-num  { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:700; color:var(--gold); line-height:1; }
+    .days-lbl  { font-size:.5rem; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; }
+    .ui-name   { font-weight:600; font-size:.83rem; }
+    .ui-date   { font-family:'DM Mono',monospace; font-size:.6rem; color:var(--text3); margin-top:.1rem; }
+    .upcoming-empty { padding: 1.5rem 1.25rem; font-size:.82rem; color:var(--text3); font-style:italic; }
 
-    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
-    .admin-note{background:var(--accent-light);border:1px solid rgba(26,79,160,.2);border-radius:var(--radius-sm);padding:1rem 1.2rem;font-size:.8rem;color:var(--accent);margin-top:2rem;line-height:1.6}
-    .admin-note code{font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px}
+    /* ── MAIN: ALL BY MONTH ── */
+    .bday-main {}
+    .month-section { margin-bottom: 2.2rem; }
+    .month-header {
+      display: flex; align-items: center; gap: .75rem;
+      margin-bottom: .9rem;
+    }
+    .month-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 600; color: var(--text);
+    }
+    .month-line { flex: 1; height: 1px; background: var(--border); }
+    .month-count {
+      font-family: 'DM Mono', monospace; font-size: .6rem;
+      color: var(--text3); letter-spacing: .1em;
+    }
 
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    @media(max-width:600px){.page-hero,.bday-section{padding-left:1.25rem;padding-right:1.25rem}.bday-popup{border-radius:16px}}
+    /* Birthday chips */
+    .month-chips { display: flex; flex-wrap: wrap; gap: .55rem; }
+    .bday-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .55rem 1rem .55rem .75rem;
+      display: flex; align-items: center; gap: .55rem;
+      cursor: pointer; transition: border-color .2s, transform .18s, box-shadow .18s;
+      font-size: .83rem;
+    }
+    .bday-chip:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(201,162,39,.15);
+    }
+    .bday-chip.today-chip {
+      border-color: var(--gold);
+      background: var(--gold-light);
+      box-shadow: 0 0 0 3px rgba(201,162,39,.15);
+    }
+    .chip-day  { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--gold); font-weight:700; min-width:22px; }
+    .chip-name { font-weight:500; }
+    .chip-today-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+      animation: dot-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes dot-pulse {
+      0%,100% { transform:scale(1); opacity:1; }
+      50%      { transform:scale(1.5); opacity:.6; }
+    }
+
+    /* ══════════════════════════════════════════
+       BIRTHDAY CARD POPUP — redesigned
+    ══════════════════════════════════════════ */
+    .bday-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .bday-overlay.open { opacity: 1; pointer-events: all; }
+
+    .bday-card {
+      width: 100%; max-width: 380px;
+      background: var(--surface);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      transform: scale(.88) translateY(24px);
+      transition: transform .45s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 32px 80px rgba(0,0,0,.4), 0 0 0 1px var(--border);
+    }
+    .bday-overlay.open .bday-card { transform: scale(1) translateY(0); }
+
+    /* Rainbow top bar */
+    .card-rainbow {
+      height: 4px;
+      background: linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#c77dff,#ff6b6b);
+      background-size: 300% 100%;
+      animation: rainbow-slide 3s linear infinite;
+    }
+    @keyframes rainbow-slide { from{background-position:0 0} to{background-position:300% 0} }
+
+    /* Card banner — blurred photo bg */
+    .card-banner {
+      height: 140px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--gold-light), var(--accent-light));
+    }
+    .card-banner-bg {
+      position: absolute; inset: -20px;
+      background-size: cover; background-position: top center;
+      filter: blur(18px) brightness(.65) saturate(1.2);
+      transition: background-image .3s;
+    }
+    .card-banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 30%, var(--surface) 100%);
+    }
+
+    /* Avatar lifted above banner */
+    .card-avatar-wrap {
+      position: absolute; bottom: -44px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+    .card-avatar {
+      width: 88px; height: 108px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid var(--surface);
+      box-shadow: 0 8px 28px rgba(0,0,0,.3), 0 0 0 2px var(--gold);
+    }
+    .card-avatar img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+    .card-avatar-placeholder {
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, var(--gold-light), var(--accent-light));
+      font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:var(--gold);
+    }
+
+    /* Spinning ring around avatar */
+    .card-avatar-ring {
+      position: absolute; inset: -8px;
+      border-radius: 22px;
+      border: 2px dashed rgba(201,162,39,.5);
+      animation: spin-ring 7s linear infinite;
+    }
+    @keyframes spin-ring { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+    /* Card body */
+    .card-body { padding: 3.2rem 1.8rem 1.6rem; text-align: center; }
+
+    .card-today-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--gold), #ffd93d);
+      color: #fff; font-size: .6rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: .22rem .8rem; border-radius: 100px;
+      margin-bottom: .6rem;
+      box-shadow: 0 2px 12px rgba(201,162,39,.4);
+    }
+
+    .card-emoji { font-size: 1.6rem; margin-bottom: .35rem; display: block; }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.65rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .2rem; line-height: 1.1;
+    }
+    .card-roll {
+      font-family: 'DM Mono', monospace; font-size: .62rem;
+      color: var(--text3); letter-spacing: .1em;
+      margin-bottom: 1rem;
+    }
+
+    .card-msg {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: .95rem; color: var(--text2); line-height: 1.65;
+      background: var(--bg2); border-radius: 10px;
+      padding: .85rem 1rem; border-left: 3px solid var(--gold);
+      text-align: left; margin-bottom: 1rem;
+    }
+
+    .card-date-row {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      font-family: 'DM Mono', monospace; font-size: .65rem;
+      color: var(--text3); margin-bottom: 1.2rem; letter-spacing: .08em;
+    }
+    .card-date-dot { width:3px; height:3px; border-radius:50%; background:var(--border); }
+
+    /* Navigation (multiple birthdays same day) */
+    .card-nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: .75rem; margin-bottom: .8rem;
+    }
+    .card-nav-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg2); border: 1px solid var(--border);
+      cursor: pointer; font-size: .85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .card-nav-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+    .card-nav-count { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--text3); }
+
+    .card-close {
+      width: 100%; padding: .72rem;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: .82rem; font-weight: 700; letter-spacing: .07em;
+      cursor: pointer; transition: background .2s, transform .1s;
+    }
+    .card-close:hover { background: var(--accent2); transform: translateY(-1px); }
+
+    /* ── CONFETTI CANVAS ── */
+    #confettiCanvas { position:fixed;inset:0;z-index:100000;pointer-events:none;display:none; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .bday-layout { grid-template-columns: 1fr; }
+      .bday-sidebar { position: static; }
+    }
+    @media(max-width:600px) {
+      .bday-hero, .bday-body { padding-left:1.25rem; padding-right:1.25rem; }
+      .bday-card { border-radius: 18px; }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+    .reveal-delay-1 { transition-delay:.12s; }
   </style>
 </head>
 <body>
-<div id="nav-placeholder"></div>
 <div class="page">
-  <div class="page-hero">
-    <div class="page-hero-inner reveal">
+
+  <!-- HERO -->
+  <div class="bday-hero">
+    <div class="bday-hero-bg"></div>
+    <div class="hero-floaters" id="heroFloaters"></div>
+    <div class="bday-hero-inner reveal">
       <div class="section-label">// Celebrate together</div>
-      <h1 class="section-title">🎂 Birthdays</h1>
-      <p class="section-desc">Never miss a classmate's birthday. All dates in Nepali calendar (BS). Click any name to see their birthday card.</p>
+      <h1>Section E <em>Birthdays</em></h1>
+      <p class="section-desc" style="max-width:520px;margin-top:.8rem">
+        Never miss a classmate's special day. All dates in Nepali calendar (BS). Click any name to open their birthday card.
+      </p>
     </div>
   </div>
-  <section class="bday-section">
-    <div class="bday-inner">
-      <div class="upcoming-section reveal">
-        <div class="sub-title">🗓 Upcoming Birthdays <span style="font-size:.75rem;font-weight:400;color:var(--text3);font-family:'DM Mono',monospace">(next 30 days)</span></div>
-        <div class="upcoming-list" id="upcomingList"></div>
+
+  <!-- BODY -->
+  <section class="bday-body">
+    <div class="bday-body-inner">
+
+      <!-- TODAY BANNER (shown only when someone has a birthday today) -->
+      <div class="today-banner" id="todayBanner" style="display:none">
+        <div class="today-banner-icon">🎂</div>
+        <div class="today-banner-text" id="todayBannerText"></div>
       </div>
-      <div class="months-section reveal reveal-delay-1">
-        <div class="sub-title">📅 All Birthdays by Month</div>
-        <div id="allBirthdays"></div>
+
+      <div class="bday-layout">
+
+        <!-- SIDEBAR: UPCOMING -->
+        <aside class="bday-sidebar reveal">
+          <div class="sidebar-card">
+            <div class="sidebar-header">
+              <span>🗓</span>
+              <span class="sidebar-header-title">Upcoming</span>
+              <span class="sidebar-header-badge" id="upcomingBadge">next 30 days</span>
+            </div>
+            <div class="upcoming-items" id="upcomingList"></div>
+          </div>
+        </aside>
+
+        <!-- MAIN: ALL BY MONTH -->
+        <main class="bday-main reveal reveal-delay-1">
+          <div class="section-label" style="margin-bottom:1rem">// All birthdays by month</div>
+          <div id="allBirthdays"></div>
+        </main>
+
       </div>
-      <div class="info-bar reveal" id="infoBar">
-  🎂 Every year, another reason to celebrate <span style="color:var(--accent);font-weight:600;">you</span> — 
-  because in Section E, birthdays are never just another day. 
-  Wishing every <span style="color:var(--teal);font-weight:500;">soul</span> here 
-  a year full of <span style="color:var(--gold);font-weight:500;">joy, growth & unforgettable moments</span>. 
-  <span id="infoStatus"></span>
-</div>
     </div>
   </section>
-</div>
 
-<!-- INFO POPUP (shown when clicking any birthday chip) -->
-<canvas id="confettiCanvas" style="position:fixed;inset:0;z-index:100000;pointer-events:none;display:none"></canvas>
+</div><!-- .page -->
 
-<div class="bday-popup-overlay" id="bdayPopup">
-  <div class="bday-popup">
-    <div class="bday-popup-top"></div>
-    <div class="bday-popup-body">
-      <div class="bday-nav" id="bdayNav" style="display:none">
-        <button class="bday-nav-btn" id="prevBday">‹</button>
-        <div class="bday-nav-count" id="bdayNavCount"></div>
-        <button class="bday-nav-btn" id="nextBday">›</button>
+<!-- CONFETTI -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- BIRTHDAY CARD POPUP -->
+<div class="bday-overlay" id="bdayOverlay">
+  <div class="bday-card" id="bdayCard">
+    <div class="card-rainbow"></div>
+    <div class="card-banner">
+      <div class="card-banner-bg" id="cardBannerBg"></div>
+      <div class="card-banner-overlay"></div>
+      <div class="card-avatar-wrap">
+        <div class="card-avatar-ring"></div>
+        <div class="card-avatar" id="cardAvatar"></div>
       </div>
-      <div class="bday-popup-photo-wrap">
-        <div class="bday-star-ring"></div>
-        <div class="bday-popup-photo" id="popupPhoto"></div>
+    </div>
+    <div class="card-body">
+      <div class="card-nav" id="cardNav" style="display:none">
+        <button class="card-nav-btn" id="prevBtn">‹</button>
+        <span class="card-nav-count" id="navCount"></span>
+        <button class="card-nav-btn" id="nextBtn">›</button>
       </div>
-      <div id="popupTodayBadge"></div>
-      <div class="bday-popup-emoji" id="popupEmoji">🎂</div>
-      <div class="bday-popup-name" id="popupName"></div>
-      <div class="bday-popup-roll" id="popupRoll"></div>
-      <div class="bday-popup-msg" id="popupMsg"></div>
-      <div class="bday-popup-date" id="popupDate"></div>
-      <button class="bday-popup-close" id="popupClose">Close</button>
+      <div id="cardTodayBadge"></div>
+      <span class="card-emoji" id="cardEmoji">🎂</span>
+      <div class="card-name" id="cardName"></div>
+      <div class="card-roll" id="cardRoll"></div>
+      <div class="card-msg"  id="cardMsg"></div>
+      <div class="card-date-row" id="cardDate"></div>
+      <button class="card-close" id="cardClose">✕ Close</button>
     </div>
   </div>
 </div>
 
-<script>window.NAV_ROOT = '';</script>
-<script src="nav-loader.js"></script>
 <script src="shared.js"></script>
-<script src="main.js"></script>
 <script src="nepali-date.js"></script>
 <script>
-// ── AUTO-POPULATE from STUDENT_PROFILES ──
-(function seedBirthdays(){
-  const existing = JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
-  const profileRolls = Object.keys(STUDENT_PROFILES).map(Number);
-  const existingRolls = new Set(existing.map(b=>b.roll));
-  let added = false;
-  profileRolls.forEach(roll=>{
-    const p = STUDENT_PROFILES[roll];
-    if(!p||!p.dob||!p.dob.bsDay) return;
-    if(existingRolls.has(roll)) return;
-    const s = STUDENTS.find(s=>s.roll===roll);
-    if(!s) return;
-    existing.push({ roll, name: s.name, bsYear: p.dob.bsYear, bsMonth: p.dob.bsMonth, bsDay: p.dob.bsDay });
-    added = true;
-  });
-  if(added) localStorage.setItem('ec_birthdays', JSON.stringify(existing));
-})();
-
-function toTitle(s){return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
-
-// _memberPhotos holds admin-uploaded photo IDs from GitHub via loadSiteData()
-let _memberPhotos = {};
-
-function photoUrl(roll){
-  // Pass _memberPhotos so admin-uploaded photo IDs are used when available
-  return getDriveFolderPhotoUrl(roll, _memberPhotos);
-}
+/* ═══════════════════════════════════════════
+   BIRTHDAYS PAGE — The E Chronicles
+   Always re-seeds from STUDENT_PROFILES so
+   corrected data is never blocked by stale cache
+═══════════════════════════════════════════ */
 
 const BS_MONTHS = NepaliDate.BS_MONTHS_EN;
 
-// ── BIRTHDAY MESSAGES ──
-const MESSAGES = [
-  "May this year bring you incredible <span style='color:var(--teal);font-weight:500;'>discoveries</span>, lifelong <span style='color:var(--accent);font-weight:500;'>friendships</span>, and all the <span style='color:var(--gold);font-weight:500;'>happiness</span> you deserve. Section E is lucky to have you! 🌟",
+// ── Helpers ──
+function toTitle(s){ return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()); }
 
-"Another year <span style='color:var(--teal);font-weight:500;'>wiser</span>, another year <span style='color:var(--gold);font-weight:500;'>brighter</span>! Wishing you a day as wonderful as the <span style='color:var(--accent);font-weight:500;'>energy</span> you bring to our classroom every single day. 🎓",
+// ── Re-seed ALWAYS from STUDENT_PROFILES (fixes stale localStorage bug) ──
+function buildBirthdayData(){
+  const out = [];
+  Object.keys(STUDENT_PROFILES).forEach(rollStr => {
+    const roll = Number(rollStr);
+    const p = STUDENT_PROFILES[roll];
+    if(!p || !p.dob || !p.dob.bsDay) return;
+    const s = STUDENTS.find(x => x.roll === roll);
+    if(!s) return;
+    out.push({
+      roll,
+      name:     s.name,
+      bsYear:   p.dob.bsYear,
+      bsMonth:  p.dob.bsMonth,
+      bsDay:    p.dob.bsDay,
+    });
+  });
+  // Also keep any birthdays from localStorage that are NOT in STUDENT_PROFILES
+  const cached = JSON.parse(localStorage.getItem('ec_birthdays') || '[]');
+  const profileRolls = new Set(out.map(x=>x.roll));
+  cached.forEach(b => { if(!profileRolls.has(b.roll)) out.push(b); });
+  // Overwrite cache with corrected data
+  localStorage.setItem('ec_birthdays', JSON.stringify(out));
+  return out;
+}
 
-"Here's to <span style='color:var(--accent);font-weight:600;'>you</span> — the person who makes Section E a little more <span style='color:var(--teal);font-weight:500;'>special</span>. May your birthday mark the start of your most <span style='color:var(--gold);font-weight:500;'>amazing chapter</span> yet! 📖",
+let _memberPhotos = {};
 
-"From all of <span style='color:var(--accent);font-weight:600;'>Section E</span> — we hope today is filled with everything that makes you <span style='color:var(--teal);font-weight:500;'>smile</span>. Happy Birthday, you absolute <span style='color:var(--gold);font-weight:500;'>legend</span>! 🏆",
-
-"Science tells us you're made of <span style='color:var(--teal);font-weight:500;'>stardust</span>. Today, we celebrate the <span style='color:var(--gold);font-weight:500;'>star</span> that you are. Wishing you a truly <span style='color:var(--accent);font-weight:500;'>out-of-this-world</span> birthday! ⭐",
-
-"Two years of <span style='color:var(--teal);font-weight:500;'>memories</span>, one <span style='color:var(--gold);font-weight:500;'>incredible</span> person. Happy Birthday from your <span style='color:var(--accent);font-weight:600;'>Section E family</span> — may today be as epic as you are! 🎊",
-
-"The classroom is <span style='color:var(--gold);font-weight:500;'>brighter</span> because you're in it. Today we celebrate <span style='color:var(--accent);font-weight:600;'>you</span> — have a birthday as extraordinary as your <span style='color:var(--teal);font-weight:500;'>potential</span>! 🔬",
-
-"May this year be full of good <span style='color:var(--teal);font-weight:500;'>health</span>, great <span style='color:var(--gold);font-weight:500;'>scores</span>, and even greater <span style='color:var(--accent);font-weight:500;'>adventures</span>. Happy Birthday from Section E with love! 💙",
-];
-function randomMsg(){return MESSAGES[Math.floor(Math.random()*MESSAGES.length)]}
-
-function loadBirthdays(){
-  // Prefer admin data from GitHub (_siteData); fall back to localStorage
-  if(typeof _siteData !== 'undefined' && _siteData.birthdays && _siteData.birthdays.length)
-    return _siteData.birthdays;
-  return JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+function photoUrl(roll){
+  return getDriveFolderPhotoUrl(roll, _memberPhotos);
 }
 
 function daysUntil(bsMonth, bsDay){
   const today = NepaliDate.todayBS();
-  const thisYear = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
   const todayAd = new Date(); todayAd.setHours(0,0,0,0);
-  thisYear.setHours(0,0,0,0);
-  let diff = Math.round((thisYear - todayAd)/86400000);
+  let d = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
+  d.setHours(0,0,0,0);
+  let diff = Math.round((d - todayAd) / 86400000);
   if(diff <= 0){
-    const nextYear = NepaliDate.bsToAd(today.y+1, bsMonth, bsDay);
-    nextYear.setHours(0,0,0,0);
-    diff = Math.round((nextYear - todayAd)/86400000);
+    d = NepaliDate.bsToAd(today.y + 1, bsMonth, bsDay);
+    d.setHours(0,0,0,0);
+    diff = Math.round((d - todayAd) / 86400000);
   }
   return diff;
 }
 
+// ── Floating emojis in hero ──
+(function initFloaters(){
+  const wrap = document.getElementById('heroFloaters');
+  const emojis = ['🎂','🎁','🎈','🥳','✨','🎉','🌟','🎊'];
+  for(let i=0;i<12;i++){
+    const el = document.createElement('span');
+    el.className = 'floater';
+    el.textContent = emojis[i % emojis.length];
+    el.style.cssText = `
+      left:${Math.random()*100}%;
+      bottom:${Math.random()*30}px;
+      font-size:${1+Math.random()*1.2}rem;
+      animation-duration:${4+Math.random()*6}s;
+      animation-delay:${Math.random()*6}s;
+    `;
+    wrap.appendChild(el);
+  }
+})();
+
+// ── Render upcoming sidebar ──
 function renderUpcoming(data){
   const el = document.getElementById('upcomingList');
-  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">Add birthday data to see upcoming celebrations!</div>';return;}
-  const upcoming = data
-    .map(b=>({...b, days: daysUntil(b.bsMonth, b.bsDay)}))
-    .filter(b=> b.days > 0 && b.days <= 30)
-    .sort((a,b)=>a.days-b.days)
-    .slice(0,8);
-  if(!upcoming.length){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem 0;font-style:italic">No birthdays in the next 30 days.</div>';return;}
-  el.innerHTML = upcoming.map(b=>`
-    <div class="upcoming-item" onclick="openSinglePopup(${b.roll})">
-      <div class="days-bubble"><div class="days-num">${b.days}</div><div class="days-label">day${b.days!==1?'s':''}</div></div>
-      <div><div class="ui-name">${toTitle(b.name)}</div><div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div></div>
+  const today = NepaliDate.todayBS();
+
+  const list = data
+    .map(b => ({...b, days: daysUntil(b.bsMonth, b.bsDay)}))
+    .filter(b => b.days > 0 && b.days <= 30)
+    .sort((a,b) => a.days - b.days)
+    .slice(0, 10);
+
+  if(!list.length){
+    el.innerHTML = '<div class="upcoming-empty">No birthdays in the next 30 days 🎈</div>';
+    return;
+  }
+  document.getElementById('upcomingBadge').textContent = `${list.length} coming up`;
+  el.innerHTML = list.map(b => `
+    <div class="upcoming-item${b.days<=7?' is-soon':''}" onclick="openPopup(${b.roll})">
+      <div class="days-pill">
+        <div class="days-num">${b.days}</div>
+        <div class="days-lbl">day${b.days!==1?'s':''}</div>
+      </div>
+      <div>
+        <div class="ui-name">${toTitle(b.name)}</div>
+        <div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div>
+      </div>
     </div>`).join('');
 }
 
-function renderAllByMonth(data){
+// ── Render all by month ──
+function renderAll(data){
   const el = document.getElementById('allBirthdays');
-  if(!data.length){el.innerHTML='<div class="empty-state">No birthdays added yet.</div>';return;}
+  if(!data.length){ el.innerHTML='<p style="color:var(--text3);font-style:italic">No birthday data yet.</p>'; return; }
+
   const today = NepaliDate.todayBS();
   const byMonth = {};
-  data.forEach(b=>{
-    if(!byMonth[b.bsMonth]) byMonth[b.bsMonth]=[];
+  data.forEach(b => {
+    if(!byMonth[b.bsMonth]) byMonth[b.bsMonth] = [];
     byMonth[b.bsMonth].push(b);
   });
-  el.innerHTML = Object.keys(byMonth).sort((a,b)=>a-b).map(m=>{
+
+  el.innerHTML = Object.keys(byMonth).sort((a,b)=>Number(a)-Number(b)).map(m => {
     const group = byMonth[m].sort((a,b)=>a.bsDay-b.bsDay);
-    return `<div class="month-group">
-      <div class="month-label">${BS_MONTHS[m-1]}</div>
-      <div class="month-cards">${group.map(b=>{
-        const isToday = today.m==b.bsMonth && today.d==b.bsDay;
-        return `<div class="bday-chip ${isToday?'today-chip':''}" onclick="openSinglePopup(${b.roll})">
-          <div class="chip-day">${b.bsDay}</div>
-          <div class="chip-name">${toTitle(b.name)}</div>
-          ${isToday?'<span>🎂</span>':''}
-        </div>`;
-      }).join('')}</div>
-    </div>`;
+    return `
+      <div class="month-section">
+        <div class="month-header">
+          <span class="month-name">${BS_MONTHS[m-1]}</span>
+          <div class="month-line"></div>
+          <span class="month-count">${group.length} birthday${group.length!==1?'s':''}</span>
+        </div>
+        <div class="month-chips">
+          ${group.map(b => {
+            const isToday = today.m == b.bsMonth && today.d == b.bsDay;
+            return `<div class="bday-chip${isToday?' today-chip':''}" onclick="openPopup(${b.roll})">
+              <span class="chip-day">${b.bsDay}</span>
+              <span class="chip-name">${toTitle(b.name)}</span>
+              ${isToday ? '<span class="chip-today-dot"></span>' : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
   }).join('');
 }
 
-// ── CONFETTI (used in info popup for today's birthdays) ──
+// ── Today banner ──
+function renderTodayBanner(data){
+  const today = NepaliDate.todayBS();
+  const celebs = data.filter(b => today.m == b.bsMonth && today.d == b.bsDay);
+  if(!celebs.length) return;
+  const banner = document.getElementById('todayBanner');
+  banner.style.display = 'flex';
+  const names = celebs.map(b=>toTitle(b.name)).join(' & ');
+  document.getElementById('todayBannerText').innerHTML =
+    `<strong>🎉 Happy Birthday!</strong> Today we celebrate <strong>${names}</strong> from Section E. Open their card below to send your wishes!`;
+}
+
+// ── Popup ──
+const MESSAGES = [
+  "May this year bring incredible <strong style='color:var(--teal)'>discoveries</strong>, lifelong <strong style='color:var(--accent)'>friendships</strong>, and all the <strong style='color:var(--gold)'>happiness</strong> you deserve. Section E is lucky to have you! 🌟",
+  "Another year <strong style='color:var(--teal)'>wiser</strong>, another year <strong style='color:var(--gold)'>brighter</strong>! Wishing you a day as wonderful as the <strong style='color:var(--accent)'>energy</strong> you bring every day. 🎓",
+  "Here's to <strong style='color:var(--accent)'>you</strong> — the person who makes Section E a little more <strong style='color:var(--teal)'>special</strong>. May your birthday start your most <strong style='color:var(--gold)'>amazing chapter</strong> yet! 📖",
+  "From all of <strong style='color:var(--accent)'>Section E</strong> — we hope today is filled with everything that makes you <strong style='color:var(--teal)'>smile</strong>. Happy Birthday, you absolute <strong style='color:var(--gold)'>legend</strong>! 🏆",
+  "Science says you're made of <strong style='color:var(--teal)'>stardust</strong>. Today, we celebrate the <strong style='color:var(--gold)'>star</strong> that you are. Have an <strong style='color:var(--accent)'>out-of-this-world</strong> birthday! ⭐",
+];
+
+let _popupList = [], _popupIdx = 0;
+
+function buildCard(b){
+  const title   = toTitle(b.name);
+  const initials = getInitials(b.name);
+  const today   = NepaliDate.todayBS();
+  const isToday = today.m === b.bsMonth && today.d === b.bsDay;
+  const url     = photoUrl(b.roll);
+
+  // Avatar
+  document.getElementById('cardAvatar').innerHTML =
+    `<img src="${url}" alt="${title}"
+       onerror="this.parentElement.innerHTML='<div class=card-avatar-placeholder>${initials}</div>'"
+       style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/>`;
+
+  // Blurred banner bg
+  document.getElementById('cardBannerBg').style.backgroundImage = `url('${url}')`;
+
+  // Today badge
+  document.getElementById('cardTodayBadge').innerHTML = isToday
+    ? '<div class="card-today-badge">🎂 Today\'s Birthday!</div>' : '';
+
+  document.getElementById('cardEmoji').textContent = isToday ? '🎉' : '🎂';
+  document.getElementById('cardName').textContent  = title;
+  document.getElementById('cardRoll').textContent  = `Roll No. ${b.roll} · Section E`;
+
+  // Message
+  const p = STUDENT_PROFILES[b.roll];
+  let msg = '';
+  if(isToday){
+    msg = MESSAGES[Math.floor(Math.random()*MESSAGES.length)];
+  } else {
+    msg = (p && p.quote) ? p.quote
+      : `${title} celebrates on ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS. Looking forward to celebrating! 🎊`;
+  }
+  document.getElementById('cardMsg').innerHTML = msg;
+  document.getElementById('cardDate').innerHTML =
+    `<span>🎂</span><span>${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}</span><span class="card-date-dot"></span><span>${b.bsYear||2064} BS</span>`;
+
+  document.getElementById('cardClose').textContent = isToday ? '🎉 Wish them Happy Birthday!' : '✕ Close';
+}
+
+function openPopup(roll){
+  const data = JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+  const b = data.find(x => x.roll === roll);
+  if(!b) return;
+
+  // Check for same-day birthdays
+  const sameDay = data.filter(x => x.bsMonth === b.bsMonth && x.bsDay === b.bsDay);
+  _popupList = sameDay.length > 1 ? sameDay : [b];
+  _popupIdx  = _popupList.findIndex(x => x.roll === roll);
+  if(_popupIdx < 0) _popupIdx = 0;
+
+  const nav = document.getElementById('cardNav');
+  if(_popupList.length > 1){
+    nav.style.display = 'flex';
+    document.getElementById('navCount').textContent = `${_popupIdx+1} / ${_popupList.length}`;
+  } else {
+    nav.style.display = 'none';
+  }
+
+  buildCard(_popupList[_popupIdx]);
+  document.getElementById('bdayOverlay').classList.add('open');
+
+  const today = NepaliDate.todayBS();
+  if(today.m === b.bsMonth && today.d === b.bsDay) setTimeout(launchConfetti, 350);
+}
+
+document.getElementById('prevBtn').onclick = () => {
+  _popupIdx = (_popupIdx - 1 + _popupList.length) % _popupList.length;
+  buildCard(_popupList[_popupIdx]);
+  document.getElementById('navCount').textContent = `${_popupIdx+1} / ${_popupList.length}`;
+};
+document.getElementById('nextBtn').onclick = () => {
+  _popupIdx = (_popupIdx + 1) % _popupList.length;
+  buildCard(_popupList[_popupIdx]);
+  document.getElementById('navCount').textContent = `${_popupIdx+1} / ${_popupList.length}`;
+};
+document.getElementById('cardClose').onclick = () => {
+  document.getElementById('bdayOverlay').classList.remove('open');
+};
+document.getElementById('bdayOverlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── Confetti ──
 function launchConfetti(){
   const canvas = document.getElementById('confettiCanvas');
-  if(!canvas) return;
-  canvas.width = window.innerWidth;
+  canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
-  canvas.style.display='block';
+  canvas.style.display = 'block';
   const ctx = canvas.getContext('2d');
-  const pieces = [];
-  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#ff6348','#1e90ff','#2ed573'];
-  for(let i=0;i<140;i++){
-    pieces.push({
-      x: Math.random()*canvas.width, y: Math.random()*canvas.height-canvas.height,
-      w: Math.random()*12+6, h: Math.random()*7+4,
-      color: colors[Math.floor(Math.random()*colors.length)],
-      rot: Math.random()*Math.PI*2, rotSpeed: (Math.random()-.5)*.15,
-      vx: (Math.random()-.5)*3, vy: Math.random()*4+2,
-      alpha: 1
-    });
-  }
-  let frame=0;
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#2ed573'];
+  const pieces = Array.from({length:150}, () => ({
+    x: Math.random()*canvas.width, y: -20,
+    w: Math.random()*12+5, h: Math.random()*7+4,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*Math.PI*2, rs: (Math.random()-.5)*.15,
+    vx: (Math.random()-.5)*3, vy: Math.random()*4+1.5, alpha:1,
+  }));
+  let frame = 0;
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p=>{
+    pieces.forEach(p => {
       ctx.save();
-      ctx.globalAlpha=p.alpha;
-      ctx.translate(p.x,p.y);
+      ctx.globalAlpha = p.alpha;
+      ctx.translate(p.x, p.y);
       ctx.rotate(p.rot);
-      ctx.fillStyle=p.color;
+      ctx.fillStyle = p.color;
       ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
       ctx.restore();
-      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
-      if(frame>90) p.alpha-=0.012;
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rs;
+      if(frame > 100) p.alpha -= 0.013;
     });
     frame++;
-    if(frame<180) requestAnimationFrame(draw);
+    if(frame < 200) requestAnimationFrame(draw);
     else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
   }
   draw();
 }
 
-// ── POPUP ──
-let currentPopupList = [];
-let popupIdx = 0;
-
-function buildPopupContent(b){
-  const title = toTitle(b.name);
-  const initials = getInitials(b.name);
-  const today = NepaliDate.todayBS();
-  const isToday = today.m === b.bsMonth && today.d === b.bsDay;
-
-  document.getElementById('popupName').textContent = title;
-  document.getElementById('popupRoll').textContent = `Roll No. ${b.roll} · Section E`;
-  document.getElementById('popupEmoji').textContent = isToday ? '🎉' : '🎂';
-
-  // Show "TODAY!" badge only on actual birthday
-  const badgeEl = document.getElementById('popupTodayBadge');
-  if(isToday){
-    badgeEl.innerHTML = '<div class="bday-today-badge">🎂 TODAY\'s Birthday!</div>';
-  } else {
-    badgeEl.innerHTML = '';
-  }
-
-  // Message: custom wish on birthday, generic info otherwise
-  const p = typeof STUDENT_PROFILES !== 'undefined' ? STUDENT_PROFILES[b.roll] : null;
-  let msg = '';
-  if(isToday){
-    msg = randomMsg();
-  } else {
-    if(p && p.quote) msg = p.quote;
-    else msg = `${title} celebrates their birthday on ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS. Looking forward to celebrating together! 🎊`;
-  }
-  document.getElementById('popupMsg').textContent = msg;
-  document.getElementById('popupDate').textContent = `🎂 ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS`;
-
-  const photoEl = document.getElementById('popupPhoto');
-  photoEl.innerHTML = `<img src="${photoUrl(b.roll)}" alt="${title}"
-    onerror="this.parentElement.innerHTML='<div class=bday-popup-photo-placeholder>${initials}</div>'"
-    style="width:100%;height:100%;object-fit:cover;object-position:top center"/>`;
-
-  // Close button text based on birthday status
-  document.getElementById('popupClose').textContent = isToday ? '🎉 Wish them a Happy Birthday!' : '✕ Close';
-}
-
-function openSinglePopup(roll){
-  const data = loadBirthdays();
-  const b = data.find(x=>x.roll===roll);
-  if(!b) return;
-  currentPopupList = [b]; popupIdx = 0;
-  document.getElementById('bdayNav').style.display='none';
-  buildPopupContent(b);
-
-  // If it IS their birthday today, also launch confetti in the popup
-  const today = NepaliDate.todayBS();
-  const isToday = today.m === b.bsMonth && today.d === b.bsDay;
-
-  document.getElementById('bdayPopup').classList.add('open');
-  if(isToday) setTimeout(launchConfetti, 300);
-}
-
-document.getElementById('prevBday').onclick = ()=>{
-  popupIdx = (popupIdx-1+currentPopupList.length)%currentPopupList.length;
-  buildPopupContent(currentPopupList[popupIdx]);
-  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
-};
-document.getElementById('nextBday').onclick = ()=>{
-  popupIdx = (popupIdx+1)%currentPopupList.length;
-  buildPopupContent(currentPopupList[popupIdx]);
-  document.getElementById('bdayNavCount').textContent=`${popupIdx+1} / ${currentPopupList.length}`;
-};
-document.getElementById('popupClose').onclick = ()=>{
-  document.getElementById('bdayPopup').classList.remove('open');
-};
-document.getElementById('bdayPopup').addEventListener('click',e=>{
-  if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
-});
-
-// ── INIT — wait for GitHub admin data before rendering ──
+// ── INIT ──
 let _siteData = {};
 (async function init(){
   _siteData = await loadSiteData();
   _memberPhotos = _siteData.memberPhotos || {};
-  const data = loadBirthdays();
+
+  const data = buildBirthdayData();  // always re-seeds from STUDENT_PROFILES
+  renderTodayBanner(data);
   renderUpcoming(data);
-  renderAllByMonth(data);
+  renderAll(data);
 })();
 </script>
+<script>injectNav();</script>
 </body>
 </html>
-
