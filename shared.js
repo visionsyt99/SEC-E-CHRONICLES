@@ -368,7 +368,7 @@ const STUDENT_PROFILES = {
   dob: { bsYear: 2066, bsMonth: 9, bsDay: 24, monthName: "Poush" }
 },
 551: {
-  photo: "https://drive.google.com/uc?export=view&id=1k3de6nyFKBqMAKwuwSuu9gp_kIQ-fC4S",
+  photo: "https://drive.google.com/uc?export=download&id=1gOBCVHaFt8-sc6BVLVyMxEmtbQXHDCR1",
   quote: "Don't let what you cannot do interfere with what you can do - John Wooden",
   experience: "My favorite memories are not just one moment but every moment I spend with my friends. My classroom has become my comfort zone where I can be myself and happy. I just wanna tell everyone to enjoy your +2 journey because once it's gone, it never comes back😉",
   wantsManagement: false,
