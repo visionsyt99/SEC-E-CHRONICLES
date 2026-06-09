@@ -1,5 +1,4 @@
-// Loads shared nav HTML into #nav-placeholder
-// Each page sets window.NAV_ROOT before including this
+// nav-loader.js — unified nav for ALL pages including homepage
 (function () {
   const root = window.NAV_ROOT || '';
 
@@ -57,9 +56,13 @@
     <a href="${root}farewell.html">💌 Farewell</a>
   </div>`;
 
-  // ── Inject nav HTML ──
+  // ── Inject into #nav-placeholder if it exists, otherwise prepend to body ──
   const placeholder = document.getElementById('nav-placeholder');
-  if (placeholder) placeholder.innerHTML = nav;
+  if (placeholder) {
+    placeholder.innerHTML = nav;
+  } else {
+    document.body.insertAdjacentHTML('afterbegin', nav);
+  }
 
   // ── Active link highlight ──
   const path = window.location.pathname.split('/').pop() || 'index.html';
@@ -71,7 +74,55 @@
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
   if (hamburger && mobileMenu) {
-    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      // animate the three lines into an X
+      hamburger.classList.toggle('active');
+    });
+    // close menu when a link is tapped
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('active');
+      });
+    });
+    // close menu when tapping outside
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('active');
+      }
+    });
+  }
+
+  // ── Theme toggle ──
+  const html = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+
+  function isDark() {
+    if (html.classList.contains('dark')) return true;
+    if (html.classList.contains('light')) return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function applyTheme(dark) {
+    html.classList.remove('dark', 'light');
+    html.classList.add(dark ? 'dark' : 'light');
+    if (themeBtn) {
+      themeBtn.textContent = dark ? '☀️' : '🌙';
+      themeBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    }
+    localStorage.setItem('ec_theme', dark ? 'dark' : 'light');
+  }
+
+  const saved = localStorage.getItem('ec_theme');
+  if (saved) {
+    applyTheme(saved === 'dark');
+  } else if (themeBtn) {
+    themeBtn.textContent = isDark() ? '☀️' : '🌙';
+  }
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => applyTheme(!isDark()));
   }
 
 })();
