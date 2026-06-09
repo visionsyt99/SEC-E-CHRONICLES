@@ -1,7 +1,7 @@
 // nav-loader.js — unified nav for ALL pages including homepage
 (function () {
   const root = window.NAV_ROOT || '';
-
+ 
   const nav = `
   <nav class="nav">
     <div class="nav-brand">
