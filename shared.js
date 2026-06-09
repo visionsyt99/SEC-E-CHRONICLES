@@ -261,7 +261,7 @@ const STUDENT_PROFILES = {
     experience: "I love you Section E. ❤️",
     wantsManagement: true,
     email: "025neb522@sxc.edu.np",
-    dob: { bsYear: 2066, bsMonth: 2, bsDay: 30, monthName: "Baishakh" }
+    dob: { bsYear: 2066, bsMonth: 1, bsDay: 30, monthName: "Baishakh" }
   },
   523: {
     photo: "https://drive.google.com/uc?export=view&id=13AOuaV4T1kWsmrc8DOPjT5SoHpxaEz6e",
@@ -325,7 +325,7 @@ const STUDENT_PROFILES = {
     experience: "We've succeeded the 'family within a family' narrative so far.",
     wantsManagement: true,
     email: "shreynaashrestha@gmail.com",
-    dob: { bsYear: 2066, bsMonth: 2, bsDay: 5, monthName: "Baishakh" }
+    dob: { bsYear: 2066, bsMonth: 1, bsDay: 5, monthName: "Baishakh" }
   },
   540: {
     photo: "https://drive.google.com/uc?export=view&id=1m_Inr2guEhS6V3zZDcWCwD8YtepfF1Ls",
