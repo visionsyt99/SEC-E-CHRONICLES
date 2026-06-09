@@ -5,7 +5,7 @@
       "title": "JUST TEST",
       "tag": "General",
       "desc": "RANDOM NOTICE",
-      "icon": "ÃÂ°ÃÂÃÂÃÂ¢",
+      "icon": "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¢",
       "date": "",
       "color": 2,
       "pinned": 1
@@ -732,6 +732,71 @@
       "id": "1VWce8X62nr5IxwByYuR9fhnkTEV5qGH9",
       "cat": "fun",
       "caption": "MEMORIES OF LIFETIME"
+    },
+    {
+      "id": "1wAvtQcROlB5OlTRNY57noLnXr8_dnZAi",
+      "cat": "class",
+      "caption": "Golden hour rays hitting the mountain peaks."
+    },
+    {
+      "id": "1-hKPJyCNzswWryHImakSyEmmdOxUMG1u",
+      "cat": "class",
+      "caption": "A quiet afternoon coffee by the window."
+    },
+    {
+      "id": "1x9syBekYBzE2VYubcAStb6LMTZRuLpLT",
+      "cat": "class",
+      "caption": "Neon city lights reflecting in rain puddles."
+    },
+    {
+      "id": "124z0qBo-jvY_hXe3AtMYP6eU5RN6xtUb",
+      "cat": "class",
+      "caption": "Fog rolling over a deep pine forest canopy."
+    },
+    {
+      "id": "1YQ7T9adbHC15k9d5_JZlqbJzoPSfsxJD",
+      "cat": "class",
+      "caption": "Vintage film camera sitting on a rustic wooden desk."
+    },
+    {
+      "id": "1LIcXT-uwYBY9qLacevObsYbFEodl9Oim",
+      "cat": "class",
+      "caption": "Waves crashing softly against a secluded sandy beach."
+    },
+    {
+      "id": "1gEFL9Wp9ZZuklsYaw5_Q-iD8FGtjceHg",
+      "cat": "class",
+      "caption": "Macrophotography of a fresh morning dewdrop on a leaf."
+    },
+    {
+      "id": "1TTPtYalp7_lNEmsL0l4XBcZxaTKjaUzw",
+      "cat": "class",
+      "caption": "Cozy fireplace keeping the winter chill away."
+    },
+    {
+      "id": "1Hi1XEOCyC-cxEUeRwhrKosfCcim3-ecv",
+      "cat": "class",
+      "caption": "Stargazing under a completely clear desert sky."
+    },
+    {
+      "id": "1s-JHoCCkikNeJO-mtn3RUhLPz9E4e0W3",
+      "cat": "class",
+      "caption": "Chasing endless horizons on an open road trip."
+    },
+    {
+      "id": "1opdzbZivdrbKve9gDIQR3V5-g9VkTnij",
+      "cat": "class",
+      "caption": "Autumn leaves creating a colorful path through the park."
+    },
+    {
+      "id": "1eRfqBbO0FmPxSrXNktTfi49f48loXjgX",
+      "cat": "class",
+      "caption": "Architectural shadows playing on a minimalist concrete wall."
+    },
+    {
+      "id": "13a5zq_jQcJuf29thWl8pW4lFTrg54gap",
+      "cat": "class",
+      "caption": "An old bookstore alleyway hidden in the heart of the city."
     }
   ]
 }
