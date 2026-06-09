@@ -1,0 +1,1365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Birthdays — The E Chronicles</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ══════════════════════════════════════════
+       BIRTHDAYS PAGE — Section E Chronicles
+    ══════════════════════════════════════════ */
+
+    /* ── PAGE HERO ── */
+    .bday-hero {
+      padding: 4.5rem 2.5rem 3.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .bday-hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 80% at 90% 40%, rgba(201,162,39,0.10), transparent 65%),
+        radial-gradient(ellipse 35% 60% at 5%  70%, rgba(26,79,160,0.07), transparent 60%);
+    }
+    .bday-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .bday-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 700; line-height: 1.05;
+      margin-bottom: .6rem;
+    }
+    .bday-hero h1 em { color: var(--gold); font-style: italic; }
+
+    .hero-floaters {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .floater {
+      position: absolute; font-size: 1.4rem; opacity: 0.18;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0)   rotate(0deg);   opacity: .18; }
+      100% { transform: translateY(-80px) rotate(20deg); opacity: 0;   }
+    }
+
+    /* ── TODAY BANNER ── */
+    .today-banner {
+      background: linear-gradient(90deg, var(--gold-light), rgba(255,220,50,0.08), var(--gold-light));
+      border: 1px solid rgba(201,162,39,.35);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem; animation: pulse-border 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%,100% { border-color: rgba(201,162,39,.35); }
+      50%      { border-color: rgba(201,162,39,.75); }
+    }
+    .today-banner-icon { font-size: 1.8rem; animation: wiggle 1.2s ease infinite; }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(-8deg); }
+      50%      { transform: rotate( 8deg); }
+    }
+    .today-banner-text strong { color: var(--gold); }
+    .today-banner-text { font-size: .92rem; color: var(--text2); line-height: 1.5; }
+
+    /* ── LAYOUT ── */
+    .bday-body { padding: 3rem 2.5rem 5rem; }
+    .bday-body-inner { max-width: 1100px; margin: 0 auto; }
+
+    .bday-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR: UPCOMING ── */
+    .bday-sidebar { position: sticky; top: 80px; }
+    .sidebar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .sidebar-header {
+      padding: 1rem 1.25rem .8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .sidebar-header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 600;
+    }
+    .sidebar-header-badge {
+      margin-left: auto;
+      font-family: 'DM Mono', monospace; font-size: .58rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: var(--accent-light); color: var(--accent);
+      padding: .2rem .55rem; border-radius: 100px;
+    }
+    .upcoming-items { padding: .5rem 0; }
+    .upcoming-item {
+      padding: .65rem 1.25rem;
+      display: flex; align-items: center; gap: .85rem;
+      cursor: pointer; transition: background .15s;
+      border-left: 2px solid transparent;
+    }
+    .upcoming-item:hover { background: var(--bg2); border-left-color: var(--gold); }
+    .upcoming-item.is-soon { border-left-color: rgba(201,162,39,.4); }
+    .days-pill {
+      min-width: 48px; text-align: center;
+      background: var(--gold-light);
+      border: 1px solid rgba(201,162,39,.25);
+      border-radius: 8px; padding: .4rem .3rem;
+      flex-shrink: 0;
+    }
+    .days-num  { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:700; color:var(--gold); line-height:1; }
+    .days-lbl  { font-size:.5rem; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; }
+    .ui-name   { font-weight:600; font-size:.83rem; }
+    .ui-date   { font-family:'DM Mono',monospace; font-size:.6rem; color:var(--text3); margin-top:.1rem; }
+    .upcoming-empty { padding: 1.5rem 1.25rem; font-size:.82rem; color:var(--text3); font-style:italic; }
+
+    /* ── MAIN: ALL BY MONTH ── */
+    .month-section { margin-bottom: 2.2rem; }
+    .month-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .9rem; }
+    .month-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--text); }
+    .month-line { flex: 1; height: 1px; background: var(--border); }
+    .month-count { font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--text3); letter-spacing: .1em; }
+
+    .month-chips { display: flex; flex-wrap: wrap; gap: .55rem; }
+    .bday-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .55rem 1rem .55rem .75rem;
+      display: flex; align-items: center; gap: .55rem;
+      cursor: pointer; transition: border-color .2s, transform .18s, box-shadow .18s;
+      font-size: .83rem;
+    }
+    .bday-chip:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(201,162,39,.15);
+    }
+    .bday-chip.today-chip {
+      border-color: var(--gold);
+      background: var(--gold-light);
+      box-shadow: 0 0 0 3px rgba(201,162,39,.15);
+    }
+    .chip-day  { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--gold); font-weight:700; min-width:22px; }
+    .chip-name { font-weight:500; }
+    .chip-today-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+      animation: dot-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes dot-pulse {
+      0%,100% { transform:scale(1); opacity:1; }
+      50%      { transform:scale(1.5); opacity:.6; }
+    }
+
+    /* ══════════════════════════════════════════
+       EPIC BIRTHDAY CARD POPUP — 3 CARD TYPES
+    ══════════════════════════════════════════ */
+
+    .bday-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s ease;
+    }
+    .bday-overlay.open { opacity: 1; pointer-events: all; }
+
+    .bday-overlay::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: background .4s;
+    }
+    .bday-overlay.type-today::before {
+      background: radial-gradient(ellipse at center, rgba(20,5,60,.96) 0%, rgba(0,0,0,.98) 100%);
+    }
+    .bday-overlay.type-upcoming::before {
+      background: rgba(25,16,8,.9);
+    }
+    .bday-overlay.type-other::before {
+      background: rgba(10,10,20,.88);
+    }
+
+    /* ── 1. TODAY CARD ── */
+    .card-today-wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 420px;
+      transform: scale(.82) translateY(40px);
+      transition: transform .55s cubic-bezier(.34,1.56,.64,1);
+    }
+    .bday-overlay.open .card-today-wrapper { transform: scale(1) translateY(0); }
+
+    .ct-ring {
+      position: absolute; inset: -3px;
+      border-radius: 31px;
+      background: linear-gradient(135deg, #7b2ff7, #ffd93d, #f107a3, #7b2ff7);
+      background-size: 300%;
+      animation: ring-rotate 4s linear infinite;
+      z-index: 0;
+    }
+    @keyframes ring-rotate { from{background-position:0%} to{background-position:300%} }
+
+    .card-today {
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 40px 100px rgba(0,0,0,.6), 0 0 80px rgba(180,100,255,.25);
+    }
+
+    .ct-photo-frame {
+      position: relative;
+      width: 100%;
+      padding-top: 110%; /* taller for portrait feel */
+      overflow: hidden;
+      background: #0a0a1a;
+    }
+    .ct-photo-frame img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      filter: brightness(.88) saturate(1.1);
+    }
+    .ct-photo-placeholder {
+      position: absolute; inset: 0;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,#1a0533,#0a1a3a);
+      font-size:6rem;
+    }
+
+    .ct-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(5,0,20,1) 0%, rgba(5,0,20,.65) 28%, rgba(0,0,0,.1) 55%, transparent 75%);
+      pointer-events: none;
+    }
+
+    .ct-aurora {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden; mix-blend-mode: screen;
+    }
+    .ct-aurora::before {
+      content: '';
+      position: absolute;
+      width: 70%; height: 70%;
+      background: rgba(100,30,255,.45);
+      top: -15%; left: -10%;
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: aurora-pulse 4s ease-in-out infinite alternate;
+    }
+    .ct-aurora::after {
+      content: '';
+      position: absolute;
+      width: 55%; height: 55%;
+      background: rgba(255,120,20,.35);
+      bottom: 15%; right: -5%;
+      border-radius: 50%;
+      filter: blur(50px);
+      animation: aurora-pulse 4s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes aurora-pulse {
+      from { opacity:.5; transform:scale(1); }
+      to   { opacity:1; transform:scale(1.25) rotate(10deg); }
+    }
+
+    .ct-star {
+      position: absolute;
+      animation: star-float linear infinite;
+      opacity: 0;
+      pointer-events: none;
+    }
+    @keyframes star-float {
+      0%   { opacity:0; transform:translateY(0) scale(0) rotate(0deg); }
+      8%   { opacity:1; transform:scale(1) rotate(20deg); }
+      90%  { opacity:.7; }
+      100% { opacity:0; transform:translateY(-280px) scale(.3) rotate(360deg); }
+    }
+
+    .ct-text {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2.2rem 2rem 2rem;
+      z-index: 2;
+    }
+
+    .ct-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: linear-gradient(90deg, #ff6b6b, #ffd93d, #c77dff, #ff6b6b);
+      background-size: 300%;
+      animation: badge-shimmer 2s linear infinite;
+      border-radius: 100px;
+      padding: .3rem 1.1rem;
+      font-size: .58rem; font-weight: 800;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 24px rgba(255,100,100,.55);
+    }
+    @keyframes badge-shimmer { from{background-position:0%} to{background-position:300%} }
+
+    .ct-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 9vw, 3rem);
+      font-weight: 700; color: #fff;
+      line-height: 1.0; margin-bottom: .3rem;
+      text-shadow: 0 2px 40px rgba(0,0,0,.9);
+    }
+    .ct-name-glow {
+      background: linear-gradient(135deg, #fff 0%, #ffd93d 55%, #ffaa44 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: name-glow 3s ease-in-out infinite alternate;
+    }
+    @keyframes name-glow {
+      from { filter: brightness(1); }
+      to   { filter: brightness(1.25) drop-shadow(0 0 18px rgba(255,200,50,.9)); }
+    }
+
+    .ct-roll {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem; letter-spacing: .15em;
+      color: rgba(255,255,255,.5); margin-bottom: 1.1rem;
+    }
+
+    .ct-quote {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1rem; color: rgba(255,255,255,.88);
+      line-height: 1.65;
+      background: rgba(255,255,255,.07);
+      border-left: 3px solid rgba(255,200,50,.85);
+      padding: .8rem 1.1rem;
+      border-radius: 0 10px 10px 0;
+      backdrop-filter: blur(10px);
+      margin-bottom: 1.3rem;
+    }
+
+    .ct-footer {
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .ct-date-strip {
+      flex: 1;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: .6rem .9rem;
+      backdrop-filter: blur(10px);
+    }
+    .ct-date-label { font-family:'DM Mono',monospace; font-size:.5rem; color:rgba(255,255,255,.4); letter-spacing:.1em; text-transform:uppercase; }
+    .ct-date-value { font-family:'Cormorant Garamond',serif; font-size:.95rem; font-weight:600; color:#ffd93d; }
+
+    .ct-close {
+      padding: .75rem 1.4rem;
+      background: linear-gradient(90deg, #7b2ff7, #f107a3, #7b2ff7);
+      background-size: 200%;
+      animation: btn-shimmer 3s linear infinite;
+      color: #fff; border: none; border-radius: 10px;
+      font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 8px 30px rgba(120,40,255,.55);
+      white-space: nowrap;
+    }
+    .ct-close:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(120,40,255,.75); }
+    @keyframes btn-shimmer { from{background-position:0%} to{background-position:200%} }
+
+    /* ── 2. UPCOMING CARD (Washi-tape Polaroid on Corkboard) ── */
+    .card-upcoming-wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 360px;
+      transform: scale(.82) translateY(40px) rotate(-2deg);
+      transition: transform .55s cubic-bezier(.34,1.56,.64,1);
+    }
+    .bday-overlay.open .card-upcoming-wrapper {
+      transform: scale(1) translateY(0) rotate(-1.5deg);
+    }
+
+    .cu-corkboard {
+      position: absolute;
+      inset: -35px -28px;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(180,130,70,.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 60%, rgba(140,100,50,.25) 0%, transparent 55%),
+        repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(150,110,60,.06) 22px, rgba(150,110,60,.06) 23px),
+        repeating-linear-gradient(90deg, transparent, transparent 22px, rgba(150,110,60,.06) 22px, rgba(150,110,60,.06) 23px),
+        #8B6914;
+      border-radius: 6px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,.4), 0 0 0 2px rgba(255,255,255,.05);
+      z-index: -1;
+    }
+
+    /* Cork texture dots */
+    .cu-corkboard::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 8px 8px;
+      border-radius: 6px;
+    }
+
+    .card-upcoming {
+      background: #faf8f2;
+      border-radius: 3px 3px 3px 3px;
+      overflow: visible;
+      position: relative;
+      box-shadow:
+        0 14px 50px rgba(0,0,0,.55),
+        0 3px 10px rgba(0,0,0,.35),
+        inset 0 0 0 1px rgba(0,0,0,.04);
+    }
+
+    /* Washi tape — top center */
+    .cu-tape {
+      position: absolute;
+      width: 100px; height: 32px;
+      top: -16px; left: 50%;
+      transform: translateX(-50%) rotate(-1deg);
+      z-index: 20;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .cu-tape::before {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: .82;
+    }
+    .cu-tape-orange::before {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255,165,50,.9),
+        rgba(255,165,50,.9) 9px,
+        rgba(255,195,90,.7) 9px,
+        rgba(255,195,90,.7) 18px
+      );
+    }
+    .cu-tape-blue::before {
+      background: repeating-linear-gradient(
+        -30deg,
+        rgba(100,170,255,.85),
+        rgba(100,170,255,.85) 7px,
+        rgba(140,200,255,.65) 7px,
+        rgba(140,200,255,.65) 14px
+      );
+    }
+    .cu-tape-pink::before {
+      background: repeating-linear-gradient(
+        60deg,
+        rgba(255,130,180,.85),
+        rgba(255,130,180,.85) 8px,
+        rgba(255,170,200,.65) 8px,
+        rgba(255,170,200,.65) 16px
+      );
+    }
+    /* glossy sheen */
+    .cu-tape::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,.35) 0%, rgba(255,255,255,.05) 100%);
+    }
+
+    /* Extra tape corner */
+    .cu-tape-corner {
+      position: absolute;
+      width: 52px; height: 22px;
+      bottom: 30px; right: -15px;
+      transform: rotate(42deg);
+      z-index: 20;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .cu-tape-corner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(100,220,150,.85),
+        rgba(100,220,150,.85) 6px,
+        rgba(140,240,180,.6) 6px,
+        rgba(140,240,180,.6) 12px
+      );
+    }
+    .cu-tape-corner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,.3) 0%, rgba(255,255,255,.0) 100%);
+    }
+
+    /* Photo — FULL, NO CROP, square */
+    .cu-photo {
+      margin: 18px 16px 0;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: #e8e4d8;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+    }
+    .cu-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .cu-photo-placeholder {
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, #e8e4d8, #d4cebc);
+      font-size:4rem;
+    }
+
+    .cu-caption {
+      padding: 12px 16px 10px;
+      text-align: center;
+    }
+    .cu-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 700;
+      color: #1e1610;
+      margin-bottom: 4px;
+      letter-spacing: .01em;
+    }
+    .cu-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: .55rem; color: #9a8060; letter-spacing: .1em;
+      margin-bottom: 8px;
+    }
+
+    .cu-countdown-box {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      background: linear-gradient(135deg, rgba(255,160,50,.12), rgba(255,200,80,.08));
+      border: 1px solid rgba(200,130,30,.3);
+      border-radius: 8px;
+      padding: .6rem 1rem;
+      margin-bottom: 8px;
+    }
+    .cu-cd-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 700;
+      color: #b06a08;
+      line-height: 1;
+    }
+    .cu-cd-label {
+      text-align: left;
+    }
+    .cu-cd-label-top {
+      font-family: 'DM Mono', monospace;
+      font-size: .5rem; color: #a07040; letter-spacing: .1em;
+      display: block;
+    }
+    .cu-cd-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .88rem; font-weight: 600; color: #6a4010;
+    }
+
+    .cu-quote {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: .85rem; color: #5a4830; line-height: 1.55;
+      border-top: 1px dashed rgba(0,0,0,.12);
+      padding-top: 8px; margin-top: 4px;
+    }
+
+    .cu-close {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 8px 16px 16px;
+      padding: .65rem;
+      background: #2c1e0f;
+      color: #ffd93d;
+      border: none; border-radius: 3px;
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+      text-align: center;
+    }
+    .cu-close:hover { background: #4a3010; }
+
+    /* ── 3. OTHER CARD (Polaroid develops from white) ── */
+    .card-other-wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 300px;
+      transform: scale(.7) rotate(-7deg) translateY(70px);
+      transition: transform .65s cubic-bezier(.34,1.56,.64,1);
+      transform-origin: top center;
+    }
+    .bday-overlay.open .card-other-wrapper {
+      transform: scale(1) rotate(2deg) translateY(0);
+    }
+
+    .card-other {
+      background: #fff;
+      border-radius: 2px;
+      overflow: visible;
+      position: relative;
+      box-shadow:
+        0 22px 70px rgba(0,0,0,.5),
+        0 5px 18px rgba(0,0,0,.3),
+        inset 0 0 0 1px rgba(0,0,0,.04);
+      transition: transform .3s ease;
+    }
+    .card-other:hover {
+      transform: rotate(-1deg) scale(1.015);
+    }
+
+    /* The photo with development effect */
+    .co-photo {
+      margin: 12px 12px 0;
+      aspect-ratio: 1/1;
+      position: relative;
+      overflow: hidden;
+      background: #f8f5e8;
+    }
+    .co-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: filter 1.5s ease;
+    }
+    .co-photo img.undeveloped { filter: brightness(2.5) saturate(0) contrast(.5); }
+    .co-photo img.developed   { filter: brightness(1) saturate(1) contrast(1); }
+
+    .co-photo-placeholder {
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,#f5f2e8,#e8e4d0);
+      font-size:3.5rem;
+    }
+
+    /* Wash overlay that fades away */
+    .co-dev-wash {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #fdfbf4 0%, #f2ede0 60%, #e8e2cc 100%);
+      transition: opacity 1.6s ease .2s;
+      pointer-events: none; z-index: 2;
+    }
+    .co-dev-wash.gone { opacity: 0; }
+
+    /* Scan-line sweep */
+    .co-scan {
+      position: absolute; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent 0%, rgba(220,200,120,.9) 30%, rgba(255,240,160,1) 50%, rgba(220,200,120,.9) 70%, transparent 100%);
+      box-shadow: 0 0 18px rgba(220,200,120,.7);
+      top: -4px;
+      transition: top 1.6s ease .2s;
+      z-index: 3; pointer-events: none;
+    }
+    .co-scan.done { top: 105%; }
+
+    /* White Polaroid bottom */
+    .co-white-bottom {
+      background: #fff;
+      padding: 10px 12px 14px;
+      text-align: center;
+    }
+    .co-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 700; color: #111;
+      margin-bottom: 2px;
+    }
+    .co-bday-info {
+      font-family: 'DM Mono', monospace;
+      font-size: .54rem; color: #999; letter-spacing: .08em;
+      margin-bottom: 6px;
+    }
+    .co-quote {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: .8rem; color: #555; line-height: 1.5;
+      border-top: 1px solid #ede9dc;
+      padding-top: 7px; margin-top: 5px;
+    }
+
+    .co-mini-confetti {
+      position: absolute;
+      bottom: -5px; left: 50%; transform: translateX(-50%);
+      width: 260px; height: 0;
+      pointer-events: none; overflow: visible;
+    }
+    .co-confetti-p {
+      position: absolute;
+      bottom: 0; left: 50%;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: co-burst var(--d) var(--delay) cubic-bezier(.15,.7,.35,1) both;
+    }
+    @keyframes co-burst {
+      0%   { transform: translateX(-50%) translateY(0) rotate(0deg) scale(1); opacity:1; }
+      100% { transform: translateX(calc(-50% + var(--bx))) translateY(var(--by)) rotate(var(--br)) scale(.4); opacity:0; }
+    }
+
+    .co-close {
+      display: block;
+      width: calc(100% - 24px);
+      margin: 0 12px 12px;
+      padding: .6rem;
+      background: #111; color: #fff;
+      border: none; border-radius: 2px;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+    }
+    .co-close:hover { background: #333; }
+
+    /* ── SHARED NAV (multiple same-day) ── */
+    .card-nav-float {
+      position: absolute;
+      bottom: 68px; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: center;
+      gap: .75rem; z-index: 30;
+    }
+    .card-nav-float.hidden { display: none; }
+    .cnf-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      color: #fff; font-size: .95rem;
+      display: flex; align-items:center; justify-content:center;
+      cursor: pointer; transition: background .15s;
+      backdrop-filter: blur(8px);
+    }
+    .cnf-btn:hover { background: rgba(255,255,255,.3); }
+    .cnf-count { font-family:'DM Mono',monospace; font-size:.68rem; color:rgba(255,255,255,.65); }
+    .card-nav-float.dark-nav .cnf-btn {
+      background: rgba(0,0,0,.1); border-color: rgba(0,0,0,.18); color: #333;
+    }
+    .card-nav-float.dark-nav .cnf-count { color: #666; }
+
+    /* ── CONFETTI & PARTICLE CANVASES ── */
+    #confettiCanvas { position:fixed;inset:0;z-index:100000;pointer-events:none;display:none; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .bday-layout { grid-template-columns: 1fr; }
+      .bday-sidebar { position: static; }
+    }
+    @media(max-width:600px) {
+      .bday-hero, .bday-body { padding-left:1.25rem; padding-right:1.25rem; }
+      .card-today-wrapper { max-width: 340px; }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+    .reveal-delay-1 { transition-delay:.12s; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="bday-hero">
+    <div class="bday-hero-bg"></div>
+    <div class="hero-floaters" id="heroFloaters"></div>
+    <div class="bday-hero-inner reveal">
+      <div class="section-label">// Celebrate together</div>
+      <h1>Section E <em>Birthdays</em></h1>
+      <p class="section-desc" style="max-width:520px;margin-top:.8rem">
+        Never miss a classmate's special day. All dates in Nepali calendar (BS). Click any name to open their birthday card.
+      </p>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <section class="bday-body">
+    <div class="bday-body-inner">
+
+      <!-- TODAY BANNER -->
+      <div class="today-banner" id="todayBanner" style="display:none">
+        <div class="today-banner-icon">🎂</div>
+        <div class="today-banner-text" id="todayBannerText"></div>
+      </div>
+
+      <div class="bday-layout">
+
+        <!-- SIDEBAR: UPCOMING -->
+        <aside class="bday-sidebar reveal">
+          <div class="sidebar-card">
+            <div class="sidebar-header">
+              <span>🗓</span>
+              <span class="sidebar-header-title">Upcoming</span>
+              <span class="sidebar-header-badge" id="upcomingBadge">next 30 days</span>
+            </div>
+            <div class="upcoming-items" id="upcomingList"></div>
+          </div>
+        </aside>
+
+        <!-- MAIN: ALL BY MONTH -->
+        <main class="bday-main reveal reveal-delay-1">
+          <div class="section-label" style="margin-bottom:1rem">// All birthdays by month</div>
+          <div id="allBirthdays"></div>
+        </main>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- CONFETTI -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ══════════════════════════════════════════
+     BIRTHDAY CARD POPUP — 3 EPIC TYPES
+══════════════════════════════════════════ -->
+<div class="bday-overlay" id="bdayOverlay">
+
+  <!-- TYPE 1: TODAY — Cinematic Explosion -->
+  <div class="card-today-wrapper" id="cardTodayWrapper" style="display:none">
+    <div class="ct-ring"></div>
+    <div class="card-today">
+      <div class="ct-photo-frame" id="ctPhotoFrame">
+        <div class="ct-aurora"></div>
+        <!-- stars injected by JS -->
+        <div class="ct-photo-overlay"></div>
+      </div>
+      <div class="ct-text">
+        <div class="ct-badge" id="ctBadge">🎉 TODAY'S BIRTHDAY STAR</div>
+        <div class="ct-name"><span class="ct-name-glow" id="ctName">Name</span></div>
+        <div class="ct-roll" id="ctRoll">Roll No. · Section E</div>
+        <div class="ct-quote" id="ctQuote"></div>
+        <div class="ct-footer">
+          <div class="ct-date-strip">
+            <div class="ct-date-label">Birthday</div>
+            <div class="ct-date-value" id="ctDate"></div>
+          </div>
+          <button class="ct-close" id="ctClose">🎉 Celebrate!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPE 2: UPCOMING — Washi-tape Polaroid on Corkboard -->
+  <div class="card-upcoming-wrapper" id="cardUpcomingWrapper" style="display:none">
+    <div class="cu-corkboard"></div>
+    <div class="cu-tape cu-tape-orange" id="cuTapeStyle"></div>
+    <div class="cu-tape-corner"></div>
+    <div class="card-upcoming">
+      <div class="cu-photo" id="cuPhoto"></div>
+      <div class="cu-caption">
+        <div class="cu-name" id="cuName"></div>
+        <div class="cu-subtitle" id="cuSubtitle"></div>
+        <div class="cu-countdown-box">
+          <div class="cu-cd-num" id="cuDaysNum">–</div>
+          <div class="cu-cd-label">
+            <span class="cu-cd-label-top">days away</span>
+            <div class="cu-cd-date" id="cuBdayDate"></div>
+          </div>
+        </div>
+        <div class="cu-quote" id="cuQuote"></div>
+      </div>
+      <button class="cu-close" id="cuClose">✕ Close</button>
+    </div>
+    <!-- Nav for multiple same-day -->
+    <div class="card-nav-float dark-nav hidden" id="cuNav">
+      <button class="cnf-btn" id="cuPrev">‹</button>
+      <span class="cnf-count" id="cuNavCount"></span>
+      <button class="cnf-btn" id="cuNext">›</button>
+    </div>
+  </div>
+
+  <!-- TYPE 3: OTHER — Polaroid develops from white -->
+  <div class="card-other-wrapper" id="cardOtherWrapper" style="display:none">
+    <div class="card-other">
+      <div class="co-photo" id="coPhoto">
+        <div class="co-dev-wash" id="coWash"></div>
+        <div class="co-scan" id="coScan"></div>
+      </div>
+      <!-- Mini confetti burst from bottom -->
+      <div class="co-mini-confetti" id="coConfettiBox"></div>
+      <div class="co-white-bottom">
+        <div class="co-name" id="coName"></div>
+        <div class="co-bday-info" id="coBdayInfo"></div>
+        <div class="co-quote" id="coQuote"></div>
+      </div>
+      <button class="co-close" id="coClose">✕ Close</button>
+    </div>
+    <!-- Nav -->
+    <div class="card-nav-float dark-nav hidden" id="coNav">
+      <button class="cnf-btn" id="coPrev">‹</button>
+      <span class="cnf-count" id="coNavCount"></span>
+      <button class="cnf-btn" id="coNext">›</button>
+    </div>
+  </div>
+
+  <!-- Nav for Today card (multiple) -->
+  <div class="card-nav-float hidden" id="ctNav" style="position:fixed;bottom:80px;">
+    <button class="cnf-btn" id="ctPrev">‹</button>
+    <span class="cnf-count" id="ctNavCount"></span>
+    <button class="cnf-btn" id="ctNext">›</button>
+  </div>
+
+</div>
+
+<script src="shared.js"></script>
+<script src="nepali-date.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   BIRTHDAYS PAGE — The E Chronicles
+   Epic 3-card popup system
+═══════════════════════════════════════════ */
+
+const BS_MONTHS = NepaliDate.BS_MONTHS_EN;
+
+function toTitle(s){ return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()); }
+function getInitials(n){ return n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+
+// ── Re-seed from STUDENT_PROFILES ──
+function buildBirthdayData(){
+  const out = [];
+  Object.keys(STUDENT_PROFILES).forEach(rollStr => {
+    const roll = Number(rollStr);
+    const p = STUDENT_PROFILES[roll];
+    if(!p || !p.dob || !p.dob.bsDay) return;
+    const s = STUDENTS.find(x => x.roll === roll);
+    if(!s) return;
+    out.push({ roll, name: s.name, bsYear: p.dob.bsYear, bsMonth: p.dob.bsMonth, bsDay: p.dob.bsDay });
+  });
+  const cached = JSON.parse(localStorage.getItem('ec_birthdays') || '[]');
+  const profileRolls = new Set(out.map(x=>x.roll));
+  cached.forEach(b => { if(!profileRolls.has(b.roll)) out.push(b); });
+  localStorage.setItem('ec_birthdays', JSON.stringify(out));
+  return out;
+}
+
+let _memberPhotos = {};
+function photoUrl(roll){ return getDriveFolderPhotoUrl(roll, _memberPhotos); }
+
+function daysUntil(bsMonth, bsDay){
+  const today = NepaliDate.todayBS();
+  const todayAd = new Date(); todayAd.setHours(0,0,0,0);
+  let d = NepaliDate.bsToAd(today.y, bsMonth, bsDay);
+  d.setHours(0,0,0,0);
+  let diff = Math.round((d - todayAd) / 86400000);
+  if(diff <= 0){
+    d = NepaliDate.bsToAd(today.y + 1, bsMonth, bsDay);
+    d.setHours(0,0,0,0);
+    diff = Math.round((d - todayAd) / 86400000);
+  }
+  return diff;
+}
+
+// ── Floating emojis hero ──
+(function initFloaters(){
+  const wrap = document.getElementById('heroFloaters');
+  const emojis = ['🎂','🎁','🎈','🥳','✨','🎉','🌟','🎊'];
+  for(let i=0;i<12;i++){
+    const el = document.createElement('span');
+    el.className = 'floater';
+    el.textContent = emojis[i % emojis.length];
+    el.style.cssText = `left:${Math.random()*100}%;bottom:${Math.random()*30}px;font-size:${1+Math.random()*1.2}rem;animation-duration:${4+Math.random()*6}s;animation-delay:${Math.random()*6}s;`;
+    wrap.appendChild(el);
+  }
+})();
+
+// ── Scroll reveal ──
+new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 }).observe(document.querySelector('.reveal'));
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 }).observe(el);
+});
+
+// ── Render sidebar ──
+function renderUpcoming(data){
+  const el = document.getElementById('upcomingList');
+  const list = data
+    .map(b => ({...b, days: daysUntil(b.bsMonth, b.bsDay)}))
+    .filter(b => b.days > 0 && b.days <= 30)
+    .sort((a,b) => a.days - b.days)
+    .slice(0, 10);
+  if(!list.length){ el.innerHTML='<div class="upcoming-empty">No birthdays in the next 30 days 🎈</div>'; return; }
+  document.getElementById('upcomingBadge').textContent = `${list.length} coming up`;
+  el.innerHTML = list.map(b => `
+    <div class="upcoming-item${b.days<=7?' is-soon':''}" onclick="openPopup(${b.roll})">
+      <div class="days-pill">
+        <div class="days-num">${b.days}</div>
+        <div class="days-lbl">day${b.days!==1?'s':''}</div>
+      </div>
+      <div>
+        <div class="ui-name">${toTitle(b.name)}</div>
+        <div class="ui-date">${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Render all by month ──
+function renderAll(data){
+  const el = document.getElementById('allBirthdays');
+  if(!data.length){ el.innerHTML='<p style="color:var(--text3);font-style:italic">No birthday data yet.</p>'; return; }
+  const today = NepaliDate.todayBS();
+  const byMonth = {};
+  data.forEach(b => {
+    if(!byMonth[b.bsMonth]) byMonth[b.bsMonth] = [];
+    byMonth[b.bsMonth].push(b);
+  });
+  el.innerHTML = Object.keys(byMonth).sort((a,b)=>Number(a)-Number(b)).map(m => {
+    const group = byMonth[m].sort((a,b)=>a.bsDay-b.bsDay);
+    return `
+      <div class="month-section">
+        <div class="month-header">
+          <span class="month-name">${BS_MONTHS[m-1]}</span>
+          <div class="month-line"></div>
+          <span class="month-count">${group.length} birthday${group.length!==1?'s':''}</span>
+        </div>
+        <div class="month-chips">
+          ${group.map(b => {
+            const isToday = today.m == b.bsMonth && today.d == b.bsDay;
+            return `<div class="bday-chip${isToday?' today-chip':''}" onclick="openPopup(${b.roll})">
+              <span class="chip-day">${b.bsDay}</span>
+              <span class="chip-name">${toTitle(b.name)}</span>
+              ${isToday ? '<span class="chip-today-dot"></span>' : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Today banner ──
+function renderTodayBanner(data){
+  const today = NepaliDate.todayBS();
+  const celebs = data.filter(b => today.m == b.bsMonth && today.d == b.bsDay);
+  if(!celebs.length) return;
+  const banner = document.getElementById('todayBanner');
+  banner.style.display = 'flex';
+  const names = celebs.map(b=>toTitle(b.name)).join(' & ');
+  document.getElementById('todayBannerText').innerHTML =
+    `<strong>🎉 Happy Birthday!</strong> Today we celebrate <strong>${names}</strong> from Section E. Open their card below!`;
+}
+
+// ── Messages ──
+const MESSAGES = [
+  "May this year bring incredible <strong style='color:#c77dff'>discoveries</strong>, lifelong <strong style='color:#4d96ff'>friendships</strong>, and all the <strong style='color:#ffd93d'>happiness</strong> you deserve. Section E is lucky to have you! 🌟",
+  "Another year <strong style='color:#6bcb77'>wiser</strong>, another year <strong style='color:#ffd93d'>brighter</strong>! Wishing you a day as wonderful as the <strong style='color:#4d96ff'>energy</strong> you bring every day. 🎓",
+  "Here's to <strong style='color:#ff9f43'>you</strong> — the person who makes Section E a little more <strong style='color:#6bcb77'>special</strong>. May your birthday start your most <strong style='color:#ffd93d'>amazing chapter</strong> yet! 📖",
+  "From all of <strong style='color:#4d96ff'>Section E</strong> — we hope today is filled with everything that makes you <strong style='color:#6bcb77'>smile</strong>. Happy Birthday, you absolute <strong style='color:#ffd93d'>legend</strong>! 🏆",
+  "Science says you're made of <strong style='color:#c77dff'>stardust</strong>. Today, we celebrate the <strong style='color:#ffd93d'>star</strong> that you are. Have an <strong style='color:#ff6b6b'>out-of-this-world</strong> birthday! ⭐",
+];
+
+// ── Popup state ──
+let _popupList = [], _popupIdx = 0, _currentType = 'other';
+
+function getCardType(b){
+  const today = NepaliDate.todayBS();
+  if(today.m === b.bsMonth && today.d === b.bsDay) return 'today';
+  const days = daysUntil(b.bsMonth, b.bsDay);
+  if(days > 0 && days <= 30) return 'upcoming';
+  return 'other';
+}
+
+// ── Build TODAY card ──
+function buildTodayCard(b){
+  const title = toTitle(b.name);
+  const url = photoUrl(b.roll);
+  const initials = getInitials(b.name);
+
+  // Photo frame — inject img
+  const frame = document.getElementById('ctPhotoFrame');
+  // Remove old img/placeholder, keep aurora/overlay/stars children
+  frame.querySelectorAll('.ct-photo-img,.ct-photo-placeholder,.ct-star').forEach(el=>el.remove());
+
+  const img = document.createElement('img');
+  img.className = 'ct-photo-img';
+  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;filter:brightness(.88) saturate(1.1);';
+  img.src = url;
+  img.alt = title;
+  img.onerror = function(){
+    this.remove();
+    const ph = document.createElement('div');
+    ph.className = 'ct-photo-placeholder';
+    ph.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0533,#0a1a3a);font-size:6rem;';
+    ph.textContent = '🎂';
+    frame.insertBefore(ph, frame.querySelector('.ct-aurora'));
+  };
+  frame.insertBefore(img, frame.querySelector('.ct-aurora'));
+
+  // Animated stars inside photo
+  const emojis = ['✨','⭐','🌟','💫','🎉','🎊'];
+  for(let i=0;i<10;i++){
+    const s = document.createElement('span');
+    s.className = 'ct-star';
+    s.textContent = emojis[i%emojis.length];
+    s.style.cssText = `
+      left:${10+Math.random()*80}%;
+      bottom:${10+Math.random()*60}%;
+      font-size:${.7+Math.random()*.9}rem;
+      animation-duration:${2.5+Math.random()*3}s;
+      animation-delay:${Math.random()*3}s;
+      z-index:2;
+    `;
+    frame.appendChild(s);
+  }
+
+  document.getElementById('ctName').textContent = title;
+  document.getElementById('ctRoll').textContent = `Roll No. ${b.roll} · Section E`;
+
+  const p = STUDENT_PROFILES[b.roll];
+  const msg = (p && p.quote) ? p.quote : MESSAGES[Math.floor(Math.random()*MESSAGES.length)];
+  document.getElementById('ctQuote').innerHTML = msg;
+  document.getElementById('ctDate').textContent = `${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS`;
+}
+
+// ── Build UPCOMING card ──
+const TAPE_STYLES = ['cu-tape-orange','cu-tape-blue','cu-tape-pink'];
+function buildUpcomingCard(b){
+  const title = toTitle(b.name);
+  const url = photoUrl(b.roll);
+  const days = daysUntil(b.bsMonth, b.bsDay);
+  const initials = getInitials(b.name);
+
+  // Randomize tape color
+  const tape = document.getElementById('cuTapeStyle');
+  tape.className = `cu-tape ${TAPE_STYLES[b.roll % TAPE_STYLES.length]}`;
+
+  // Photo
+  const photoEl = document.getElementById('cuPhoto');
+  photoEl.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = url; img.alt = title;
+  img.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:top center;display:block;';
+  img.onerror = function(){
+    this.remove();
+    const ph = document.createElement('div');
+    ph.className = 'cu-photo-placeholder';
+    ph.textContent = '📸';
+    photoEl.appendChild(ph);
+  };
+  photoEl.appendChild(img);
+
+  document.getElementById('cuName').textContent = title;
+  document.getElementById('cuSubtitle').textContent = `Roll No. ${b.roll} · Section E`;
+  document.getElementById('cuDaysNum').textContent = days;
+  document.getElementById('cuBdayDate').textContent = `${BS_MONTHS[b.bsMonth-1]} ${b.bsDay} BS`;
+
+  const p = STUDENT_PROFILES[b.roll];
+  const quote = (p && p.quote) ? p.quote
+    : `Looking forward to celebrating ${title}'s special day! 🎊`;
+  document.getElementById('cuQuote').innerHTML = quote;
+}
+
+// ── Build OTHER card (Polaroid develop) ──
+function buildOtherCard(b){
+  const title = toTitle(b.name);
+  const url = photoUrl(b.roll);
+  const initials = getInitials(b.name);
+
+  const photoEl = document.getElementById('coPhoto');
+  // Keep wash and scan, clear images
+  photoEl.querySelectorAll('img,.co-photo-placeholder').forEach(el=>el.remove());
+
+  const img = document.createElement('img');
+  img.src = url; img.alt = title;
+  img.className = 'undeveloped';
+  img.onerror = function(){
+    this.remove();
+    const ph = document.createElement('div');
+    ph.className = 'co-photo-placeholder';
+    ph.textContent = '📸';
+    photoEl.insertBefore(ph, document.getElementById('coWash'));
+  };
+  photoEl.insertBefore(img, document.getElementById('coWash'));
+
+  document.getElementById('coName').textContent = title;
+  document.getElementById('coBdayInfo').textContent = `${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS · Roll No. ${b.roll}`;
+
+  const p = STUDENT_PROFILES[b.roll];
+  const quote = (p && p.quote) ? p.quote
+    : `${title} celebrates their birthday on ${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}. Can't wait to celebrate! 🎊`;
+  document.getElementById('coQuote').innerHTML = quote;
+
+  // Trigger develop animation
+  const wash = document.getElementById('coWash');
+  const scan = document.getElementById('coScan');
+  wash.classList.remove('gone');
+  scan.classList.remove('done');
+  scan.style.top = '-4px';
+
+  // Fire develop after short delay
+  setTimeout(() => {
+    scan.style.top = '105%';
+    wash.classList.add('gone');
+    img.classList.remove('undeveloped');
+    img.classList.add('developed');
+    // Fire mini confetti burst from bottom
+    fireBottomConfetti();
+  }, 500);
+}
+
+// ── Bottom confetti burst for OTHER card ──
+function fireBottomConfetti(){
+  const box = document.getElementById('coConfettiBox');
+  box.innerHTML = '';
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43'];
+  for(let i=0;i<22;i++){
+    const p = document.createElement('div');
+    p.className = 'co-confetti-p';
+    const angle = (Math.random() * 180) - 90; // -90 to 90 deg spread
+    const dist = 60 + Math.random() * 100;
+    const bx = Math.sin(angle * Math.PI/180) * dist + 'px';
+    const by = -(Math.cos(angle * Math.PI/180) * dist * .6 + 20 + Math.random()*60) + 'px';
+    p.style.cssText = `
+      background:${colors[i%colors.length]};
+      --bx:${bx}; --by:${by};
+      --br:${Math.random()*720-360}deg;
+      --d:${.6+Math.random()*.8}s;
+      --delay:${Math.random()*.4}s;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+    `;
+    box.appendChild(p);
+  }
+}
+
+// ── Master openPopup ──
+function openPopup(roll){
+  const data = JSON.parse(localStorage.getItem('ec_birthdays')||'[]');
+  const b = data.find(x => x.roll === roll);
+  if(!b) return;
+
+  const type = getCardType(b);
+  _currentType = type;
+
+  // Find same-day people
+  const sameDay = data.filter(x => x.bsMonth === b.bsMonth && x.bsDay === b.bsDay);
+  // For same-day nav, filter by same type
+  _popupList = sameDay.length > 1 ? sameDay : [b];
+  _popupIdx = _popupList.findIndex(x => x.roll === roll);
+  if(_popupIdx < 0) _popupIdx = 0;
+
+  // Set overlay type class
+  const overlay = document.getElementById('bdayOverlay');
+  overlay.className = `bday-overlay type-${type}`;
+
+  // Hide all wrappers
+  document.getElementById('cardTodayWrapper').style.display = 'none';
+  document.getElementById('cardUpcomingWrapper').style.display = 'none';
+  document.getElementById('cardOtherWrapper').style.display = 'none';
+  document.getElementById('ctNav').classList.add('hidden');
+
+  // Show the right one
+  if(type === 'today'){
+    document.getElementById('cardTodayWrapper').style.display = '';
+    buildTodayCard(b);
+    setupNav('ctNav','ctNavCount', 'ctPrev','ctNext');
+    setTimeout(launchConfetti, 350);
+  } else if(type === 'upcoming'){
+    document.getElementById('cardUpcomingWrapper').style.display = '';
+    buildUpcomingCard(b);
+    setupNav('cuNav','cuNavCount','cuPrev','cuNext');
+  } else {
+    document.getElementById('cardOtherWrapper').style.display = '';
+    buildOtherCard(b);
+    setupNav('coNav','coNavCount','coPrev','coNext');
+  }
+
+  overlay.classList.add('open');
+}
+
+function setupNav(navId, countId, prevId, nextId){
+  const nav = document.getElementById(navId);
+  if(_popupList.length > 1){
+    nav.classList.remove('hidden');
+    document.getElementById(countId).textContent = `${_popupIdx+1} / ${_popupList.length}`;
+  } else {
+    nav.classList.add('hidden');
+  }
+}
+
+function closePopup(){
+  document.getElementById('bdayOverlay').classList.remove('open');
+}
+
+// Nav button wiring
+function wireNav(prevId, nextId, countId, buildFn){
+  document.getElementById(prevId).onclick = () => {
+    _popupIdx = (_popupIdx - 1 + _popupList.length) % _popupList.length;
+    buildFn(_popupList[_popupIdx]);
+    document.getElementById(countId).textContent = `${_popupIdx+1} / ${_popupList.length}`;
+  };
+  document.getElementById(nextId).onclick = () => {
+    _popupIdx = (_popupIdx + 1) % _popupList.length;
+    buildFn(_popupList[_popupIdx]);
+    document.getElementById(countId).textContent = `${_popupIdx+1} / ${_popupList.length}`;
+  };
+}
+wireNav('ctPrev','ctNext','ctNavCount', buildTodayCard);
+wireNav('cuPrev','cuNext','cuNavCount', buildUpcomingCard);
+wireNav('coPrev','coNext','coNavCount', buildOtherCard);
+
+document.getElementById('ctClose').onclick = closePopup;
+document.getElementById('cuClose').onclick = closePopup;
+document.getElementById('coClose').onclick = closePopup;
+document.getElementById('bdayOverlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closePopup();
+});
+
+// ── Confetti (today card) ──
+function launchConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#c77dff','#ff9f43','#2ed573','#fff'];
+  const shapes = ['rect','circle','star'];
+  const pieces = Array.from({length:200}, () => ({
+    x: Math.random()*canvas.width, y: -20,
+    w: Math.random()*13+5, h: Math.random()*8+4,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    shape: shapes[Math.floor(Math.random()*shapes.length)],
+    rot: Math.random()*Math.PI*2, rs: (Math.random()-.5)*.18,
+    vx: (Math.random()-.5)*4, vy: Math.random()*5+2, alpha:1,
+  }));
+  let frame = 0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      if(p.shape === 'circle'){
+        ctx.beginPath(); ctx.arc(0,0,p.w/2,0,Math.PI*2); ctx.fill();
+      } else if(p.shape === 'star'){
+        ctx.font = `${p.w}px serif`; ctx.fillText('★',0,0);
+      } else {
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      }
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rs; p.vy+=.08;
+      if(frame > 90) p.alpha -= 0.012;
+    });
+    frame++;
+    if(frame < 220) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  draw();
+}
+
+// ── INIT ──
+let _siteData = {};
+(async function init(){
+  _siteData = await loadSiteData();
+  _memberPhotos = _siteData.memberPhotos || {};
+  const data = buildBirthdayData();
+  renderTodayBanner(data);
+  renderUpcoming(data);
+  renderAll(data);
+})();
+</script>
+<script>injectNav();</script>
+</body>
+</html>
