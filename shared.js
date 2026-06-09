@@ -374,6 +374,22 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "shreyatamang2067@gmail.com",
   dob: { bsYear: 2067, bsMonth: 5, bsDay: 22, monthName: "Bhadra" }
+},
+   512: {
+  photo: "https://drive.google.com/uc?export=view&id=1aBcDeFgHiJkLmNoPqRsTuVwXyZ123456",
+  quote: "Live in the moment, because some memories never fade.",
+  experience: "A beautiful rollercoaster of late-night assignments, laughter, and lifelong friends.",
+  wantsManagement: false,
+  email: "025neb512@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 2, bsDay: 25, monthName: "Jestha" }
+},
+539: {
+  photo: "https://drive.google.com/uc?export=view&id=1zYxWvUtSrQpOnMlKjIhGfEdCbBa654321",
+  quote: "Chasing dreams and deadlines, but always down for momos.",
+  experience: "SXC gave me a classroom that feels like home and memories I'll hold onto forever.",
+  wantsManagement: false,
+  email: "aaravsharma2066@gmail.com",
+  dob: { bsYear: 2066, bsMonth: 2, bsDay: 26, monthName: "Jestha" }
 }
 };
 
