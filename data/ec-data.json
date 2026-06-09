@@ -5,7 +5,7 @@
       "title": "JUST TEST",
       "tag": "General",
       "desc": "RANDOM NOTICE",
-      "icon": "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢",
+      "icon": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢",
       "date": "",
       "color": 2,
       "pinned": 1
@@ -15,17 +15,7 @@
   "events": [],
   "achievements": [],
   "memories": [],
-  "birthdays": [
-    {
-      "id": 1,
-      "roll": 501,
-      "name": "gdhssg",
-      "bsYear": 2064,
-      "bsMonth": 2,
-      "bsDay": 25,
-      "customMsg": "dhdgd"
-    }
-  ],
+  "birthdays": [],
   "schedule": null,
   "hiddenDays": [],
   "countdown": {},
