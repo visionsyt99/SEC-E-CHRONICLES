@@ -1312,5 +1312,12 @@ for (let i = 0; i < 20; i++) {
   pw.appendChild(pt);
 }
 </script>
+   <!-- Shared nav/footer/utilities -->
+<script src="shared.js"></script>
+<script>
+  // Call injectNav after shared.js is loaded
+  // Pass true if this is index.html (root), false for all other pages
+  injectNav(false);
+</script>
 </body>
 </html>
