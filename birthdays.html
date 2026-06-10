@@ -92,9 +92,8 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
   font-size:clamp(3rem,8vw,6.5rem);
   font-weight:900;line-height:.95;letter-spacing:-.03em;
   margin:1.2rem 0 .6rem;
-  /* FIX: bright white so visible on dark mesh backdrop */
   color:#ffffff;
-  text-shadow:0 2px 20px rgba(0,0,0,.35);
+  text-shadow:0 2px 24px rgba(0,0,0,.45), 0 0 60px rgba(76,29,149,.4);
 }
 .bday-hero h1 em{
   font-style:italic;font-weight:700;
@@ -110,10 +109,9 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
 }
 .section-desc{
   font-size:1.1rem;line-height:1.65;
-  /* FIX: bright enough to read on dark bg */
-  color:rgba(226,210,255,.9);
+  color:#ffffff;
   max-width:560px;margin-top:1rem;
-  text-shadow:0 1px 8px rgba(0,0,0,.3);
+  text-shadow:0 1px 12px rgba(0,0,0,.5), 0 0 40px rgba(76,29,149,.5);
 }
 
 /* Hero floating emojis */
@@ -257,9 +255,36 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
 }
 .chip-day{
   font-family:'Fraunces',serif;font-weight:800;font-size:1.05rem;
-  color:var(--lav-600);min-width:22px;
+  color:#a78bfa;min-width:22px;
 }
-.chip-name{font-weight:500}
+/* chip-name: dark bg → white, light bg → dark ink via mix-blend contrast trick */
+.chip-name{font-weight:500;color:#1b0e3a}
+/* when style.css sets dark mode, override — covers common dark mode class patterns */
+[data-theme="dark"] .chip-name,
+.dark .chip-name,
+body.dark-mode .chip-name,
+[data-theme="dark"] .chip-day,
+.dark .chip-day,
+body.dark-mode .chip-day{color:#f1e8ff}
+[data-theme="dark"] .chip-day,
+.dark .chip-day,
+body.dark-mode .chip-day{color:#c9aaff}
+[data-theme="dark"] .bday-chip,
+.dark .bday-chip,
+body.dark-mode .bday-chip{
+  background:rgba(76,29,149,.55);
+  border-color:rgba(183,148,244,.35);
+}
+[data-theme="dark"] .month-count,
+.dark .month-count,
+body.dark-mode .month-count{color:#c9aaff}
+/* Nuclear option: if page bg is dark (style.css overrides --surface to dark),
+   the chip text must be light. Use forced-colors-safe contrast trick: */
+@media (prefers-color-scheme: dark){
+  .chip-name{color:#f1e8ff}
+  .chip-day{color:#c9aaff}
+  .bday-chip{background:rgba(76,29,149,.55);border-color:rgba(183,148,244,.35)}
+}
 .today-chip{
   background:linear-gradient(135deg,#fde047,var(--lav-300))!important;
   border-color:var(--amber)!important;
@@ -376,10 +401,9 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
 ═══════════════════════════════════════════════ */
 .ct-photo-frame{
   position:relative;
-  /* Reduced from 300px so card fits below navbar */
-  height:240px;
+  height:260px;
   overflow:hidden;
-  background:linear-gradient(135deg,#1a0533,#0a1a3a);
+  background:#0a0520;
 }
 .ct-aurora{
   position:absolute;inset:0;pointer-events:none;z-index:1;
@@ -389,20 +413,19 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'
 }
 .ct-photo-overlay{
   position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(to bottom,transparent 30%,rgba(26,5,51,.95) 100%);
+  background:linear-gradient(to bottom,transparent 55%,rgba(26,5,51,.98) 100%);
 }
 .ct-photo-img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;
-  /* FIX 3: "center 15%" keeps face in upper-center zone */
-  object-position:center 15%;
+  position:absolute;
+  /* sit on bottom so feet are at bottom, head shows at top */
+  bottom:0;left:50%;
+  transform:translateX(-50%);
+  /* full height of frame, auto width — shows whole person */
+  height:100%;
+  width:auto;
+  max-width:none;
   display:block;z-index:0;
   filter:brightness(.92) saturate(1.2) contrast(1.05);
-  animation:ctPhotoKen 14s ease-in-out infinite alternate;
-}
-@keyframes ctPhotoKen{
-  0%  {transform:scale(1.05) translateY(0)}
-  100%{transform:scale(1.14) translateY(-6px)}
 }
 .ct-star{
   position:absolute;z-index:4;pointer-events:none;
