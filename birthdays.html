@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Baloo+2:wght@600;700;800&family=Bungee&display=swap" rel="stylesheet"/>
+  <!-- face-api.js for automatic face detection / auto-centering of photos -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
   <style>
     /* ══════════════════════════════════════════
        BIRTHDAYS PAGE — Section E Chronicles
@@ -446,6 +448,46 @@
     }
     .ct-close:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(255,200,90,.65); filter: brightness(1.05); }
     @keyframes btn-shimmer { from{background-position:0%} to{background-position:220%} }
+
+    /* ── CRAZY 3D TILT / PARALLAX ── */
+    .card-today-wrapper { perspective: 1100px; perspective-origin: 50% 40%; }
+    .card-today {
+      transform-style: preserve-3d;
+      transition: transform .18s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
+      will-change: transform;
+    }
+    .card-today.tilting { transition: transform .05s linear; }
+    /* glare sweep that follows the pointer */
+    .ct-glare {
+      position:absolute; inset:0; z-index:7; pointer-events:none; border-radius:32px;
+      background: radial-gradient(circle at var(--gx,50%) var(--gy,30%),
+        rgba(255,255,255,.28), rgba(255,255,255,.05) 32%, transparent 60%);
+      opacity:0; transition:opacity .3s ease; mix-blend-mode:screen;
+    }
+    .card-today-wrapper:hover .ct-glare { opacity:1; }
+    /* depth layers float toward viewer */
+    .ct-balloons { transform: translateZ(80px); }
+    .ct-badge    { transform: translateZ(55px); }
+    .ct-name     { transform: translateZ(70px); }
+    .ct-quote    { transform: translateZ(38px); }
+    .ct-footer   { transform: translateZ(46px); }
+    .ct-photo-frame { transform: translateZ(0); }
+
+    /* ── TYPEWRITER WISH ── */
+    .ct-quote.typing::after {
+      content:'▌';
+      color:#ffd166;
+      margin-left:2px;
+      animation: tw-caret .7s steps(1) infinite;
+      -webkit-text-fill-color:#ffd166;
+    }
+    @keyframes tw-caret { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+
+    /* extra sparkle ring pulse */
+    .ct-ring { will-change: transform; }
+    .card-today-wrapper:hover .ct-ring { animation: ring-spin 3.2s linear infinite; }
+
+
 
 
     /* ── 2. UPCOMING CARD (Washi-tape Polaroid on Corkboard) ── */
@@ -890,7 +932,8 @@
   <!-- TYPE 1: TODAY — Cinematic Explosion -->
   <div class="card-today-wrapper" id="cardTodayWrapper" style="display:none">
     <div class="ct-ring"></div>
-    <div class="card-today">
+    <div class="card-today" id="cardTodayEl">
+      <div class="ct-glare" id="ctGlare"></div>
       <div class="ct-balloons"><span>🎈</span><span>🎁</span><span>🥳</span><span>🎊</span><span>🎈</span></div>
       <div class="ct-photo-frame" id="ctPhotoFrame">
         <div class="ct-aurora"></div>
@@ -1147,7 +1190,8 @@ function buildTodayCard(b){
 
   const img = document.createElement('img');
   img.className = 'ct-photo-img';
-  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;filter:brightness(.92) saturate(1.12) contrast(1.04);transform:scale(1.02);';
+  img.crossOrigin = 'anonymous';
+  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;filter:brightness(.92) saturate(1.12) contrast(1.04);transform:scale(1.04);transition:object-position .8s cubic-bezier(.22,1,.36,1),transform .8s ease;';
   img.src = url;
   img.alt = title;
   img.onerror = function(){
@@ -1158,6 +1202,7 @@ function buildTodayCard(b){
     ph.textContent = '🎂';
     frame.insertBefore(ph, frame.querySelector('.ct-aurora'));
   };
+  img.onload = function(){ autoCenterFace(img); };
   frame.insertBefore(img, frame.querySelector('.ct-aurora'));
 
   // Animated stars inside photo
@@ -1182,8 +1227,105 @@ function buildTodayCard(b){
 
   const p = STUDENT_PROFILES[b.roll];
   const msg = (p && p.quote) ? p.quote : MESSAGES[Math.floor(Math.random()*MESSAGES.length)];
-  document.getElementById('ctQuote').innerHTML = msg;
+  typewriterWish(document.getElementById('ctQuote'), msg);
   document.getElementById('ctDate').textContent = `${BS_MONTHS[b.bsMonth-1]} ${b.bsDay}, ${b.bsYear||2064} BS`;
+
+  setupCardTilt();
+}
+
+/* ── TYPEWRITER WISH (types HTML out char-by-char, keeps tags intact) ── */
+let _twTimer = null;
+function typewriterWish(el, html){
+  if(_twTimer){ clearInterval(_twTimer); _twTimer = null; }
+  // Tokenize into tags (instant) and characters (typed)
+  const tokens = [];
+  let i = 0;
+  while(i < html.length){
+    if(html[i] === '<'){
+      const end = html.indexOf('>', i);
+      tokens.push(html.slice(i, end+1));
+      i = end + 1;
+    } else {
+      tokens.push(html[i]);
+      i++;
+    }
+  }
+  el.innerHTML = '';
+  el.classList.add('typing');
+  let out = '', t = 0;
+  _twTimer = setInterval(()=>{
+    if(t >= tokens.length){
+      clearInterval(_twTimer); _twTimer = null;
+      el.classList.remove('typing');
+      return;
+    }
+    out += tokens[t++];
+    el.innerHTML = out;
+  }, 22);
+}
+
+/* ── AUTO FACE DETECTION → center the photo on the face ── */
+let _faceModelPromise = null;
+function loadFaceModel(){
+  if(_faceModelPromise) return _faceModelPromise;
+  if(typeof faceapi === 'undefined') return Promise.reject('no faceapi');
+  const base = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
+  _faceModelPromise = faceapi.nets.tinyFaceDetector.loadFromUri(base);
+  return _faceModelPromise;
+}
+async function autoCenterFace(img){
+  try{
+    await loadFaceModel();
+    const opts = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.35 });
+    const det = await faceapi.detectSingleFace(img, opts);
+    if(det && img.isConnected){
+      const box = det.box;
+      const cx = (box.x + box.width/2) / img.naturalWidth;
+      const cy = (box.y + box.height/2) / img.naturalHeight;
+      // Map face center to object-position so the face sits in the upper-mid frame
+      const px = Math.max(0, Math.min(100, cx*100));
+      const py = Math.max(0, Math.min(100, cy*100));
+      img.style.objectPosition = `${px.toFixed(1)}% ${py.toFixed(1)}%`;
+      img.style.transform = 'scale(1.08)';
+    }
+  }catch(e){ /* face model unavailable — keep default centering */ }
+}
+
+/* ── CRAZY 3D TILT + PARALLAX + GLARE ── */
+let _tiltWired = false;
+function setupCardTilt(){
+  if(_tiltWired) return;
+  _tiltWired = true;
+  const wrap = document.getElementById('cardTodayWrapper');
+  const card = document.getElementById('cardTodayEl');
+  const glare = document.getElementById('ctGlare');
+  if(!wrap || !card) return;
+  const MAX = 14;
+  function onMove(e){
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    const ry = (px - 0.5) * MAX * 2;
+    const rx = (0.5 - py) * MAX * 2;
+    card.classList.add('tilting');
+    card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(1.02)`;
+    if(glare){ glare.style.setProperty('--gx', (px*100)+'%'); glare.style.setProperty('--gy', (py*100)+'%'); }
+  }
+  function reset(){
+    card.classList.remove('tilting');
+    card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+  }
+  wrap.addEventListener('pointermove', onMove);
+  wrap.addEventListener('pointerleave', reset);
+  // Gyroscope tilt on mobile
+  if(window.DeviceOrientationEvent){
+    window.addEventListener('deviceorientation', (ev)=>{
+      if(ev.beta == null || ev.gamma == null) return;
+      const rx = Math.max(-MAX, Math.min(MAX, (ev.beta-45)/3));
+      const ry = Math.max(-MAX, Math.min(MAX, ev.gamma/3));
+      card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(1.01)`;
+    });
+  }
 }
 
 // ── Build UPCOMING card ──
