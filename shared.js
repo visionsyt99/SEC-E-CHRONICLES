@@ -389,7 +389,7 @@ const STUDENT_PROFILES = {
   experience: "SXC gave me a classroom that feels like home and memories I'll hold onto forever.",
   wantsManagement: false,
   email: "aaravsharma2066@gmail.com",
-  dob: { bsYear: 2066, bsMonth: 2, bsDay: 26, monthName: "Jestha" }
+  dob: { bsYear: 2066, bsMonth: 2, bsDay: 28, monthName: "Jestha" }
 }
 };
 
