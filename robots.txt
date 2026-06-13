@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://visionsyt99.github.io/SEC-E-CHRONICLES/sitemap.xml
