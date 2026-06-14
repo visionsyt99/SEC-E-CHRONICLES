@@ -265,7 +265,7 @@ const STUDENT_PROFILES = {
   },
   523: {
     photo: "https://drive.google.com/uc?export=view&id=13AOuaV4T1kWsmrc8DOPjT5SoHpxaEz6e",
-    quote: "JUST DO IT GOOD.",
+    quote: "JUST DO IT.",
     experience: "I hope the experience goes beyond our expectation in Class 12.",
     wantsManagement: false,
     email: "025neb523@sxc.edu.np",
