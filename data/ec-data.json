@@ -5,7 +5,7 @@
       "title": "JUST TEST",
       "tag": "General",
       "desc": "RANDOM NOTICE",
-      "icon": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢",
+      "icon": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢",
       "date": "",
       "color": 2,
       "pinned": 1
@@ -797,6 +797,36 @@
       "id": "13a5zq_jQcJuf29thWl8pW4lFTrg54gap",
       "cat": "class",
       "caption": "An old bookstore alleyway hidden in the heart of the city."
+    },
+    {
+      "id": "1bSmfqNZvtrVjqySX-epKDiJay5WBz6sj",
+      "cat": "class",
+      "caption": "Sunlight filtering through a dense forest canopy."
+    },
+    {
+      "id": "1BBeC745xHgpjqRdUwHPun31k-qrWpBin",
+      "cat": "class",
+      "caption": "A serene mountain lake perfectly reflecting the morning sky."
+    },
+    {
+      "id": "1HSCouEReguiTpLXsekXZOXLtNqNCkJK0",
+      "cat": "class",
+      "caption": "City streets bustling under the warm glow of twilight."
+    },
+    {
+      "id": "1x8SzK8ropPkOKTc9Jqu7ehzaF-rfKqyj",
+      "cat": "class",
+      "caption": "A classic typewriter sitting on an old wooden table."
+    },
+    {
+      "id": "1uHsm5Juids9GctTVsmrwdmK-odb9uCfP",
+      "cat": "class",
+      "caption": "Ocean waves gently lapping against a sandy shore."
+    },
+    {
+      "id": "1wj0VpvLKScUVXseP87MENS23ZeDXViX4",
+      "cat": "class",
+      "caption": "A cozy reading corner filled with stacks of old books."
     }
   ]
 }
