@@ -1108,27 +1108,37 @@ document.getElementById('addMemoryBtn').addEventListener('click', async () => {
 });
 
 // ══════════════════════════════════════════════════════
-// SCHEDULE  ← FIXED
+// SCHEDULE  ← UPDATED TIME SLOTS + SUNDAY ONLINE CLASS
 // ══════════════════════════════════════════════════════
 const SCHEDULE_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 let schedDay = 0;
 
-// Default schedule — each day gets its own DEEP copy so editing
-// one day never accidentally mutates another day's array.
+// Default for Mon–Fri: new time slots, subjects blank (admin fills them in)
 function makeDefaultDay(){
   return [
-    {period:'1',time:'6:15–7:00',subject:'Biology',   teacher:'',room:''},
-    {period:'2',time:'7:00–7:45',subject:'Chemistry',  teacher:'',room:''},
-    {period:'3',time:'7:45–8:30',subject:'Physics',    teacher:'',room:''},
-    {period:'—',time:'8:30–8:45',subject:'Short Break',teacher:'',room:''},
-    {period:'4',time:'8:45–9:30',subject:'Mathematics',teacher:'',room:''},
-    {period:'5',time:'9:30–10:15',subject:'English',   teacher:'',room:''},
-    {period:'6',time:'10:15–11:00',subject:'Nepali',   teacher:'',room:''}
+    {period:'1',time:'9:30–10:15', subject:'',            teacher:'',room:''},
+    {period:'2',time:'10:15–11:00',subject:'',            teacher:'',room:''},
+    {period:'3',time:'11:10–11:55',subject:'',            teacher:'',room:''},
+    {period:'4',time:'11:55–12:40',subject:'',            teacher:'',room:''},
+    {period:'—',time:'12:40–1:15', subject:'Lunch Break', teacher:'',room:''},
+    {period:'5',time:'1:20–2:05',  subject:'',            teacher:'',room:''},
+    {period:'6',time:'2:05–2:50',  subject:'',            teacher:'',room:''},
+    {period:'7',time:'3:00–3:45',  subject:'',            teacher:'',room:''},
+    {period:'8',time:'3:45–4:30',  subject:'',            teacher:'',room:''}
   ];
 }
+
 function buildDefaultSchedule(){
   const s = {};
-  for(let i=0;i<6;i++) s[i] = makeDefaultDay();
+  // Day 0 = Sunday: Online class 9:30–12:40
+  s[0] = [
+    {period:'1',time:'9:30–10:15', subject:'Online Class',teacher:'',room:''},
+    {period:'2',time:'10:15–11:00',subject:'Online Class',teacher:'',room:''},
+    {period:'3',time:'11:10–11:55',subject:'Online Class',teacher:'',room:''},
+    {period:'4',time:'11:55–12:40',subject:'Online Class',teacher:'',room:''}
+  ];
+  // Days 1–5 = Mon–Fri: standard timetable template
+  for(let i=1;i<6;i++) s[i] = makeDefaultDay();
   return s;
 }
 
