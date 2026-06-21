@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://visionsyt99.github.io/SEC-E-CHRONICLES/sitemap.xml
+Sitemap: https://ornate-vacherin-f3e640.netlify.app/sitemap.xml
