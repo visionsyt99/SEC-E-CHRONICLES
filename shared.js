@@ -202,9 +202,9 @@ const STUDENTS = [
   { roll: 545, name: "SHISHIR KHANAL",          cr: false },
   { roll: 546, name: "SHIVA THARU CHAUDHARY",   cr: false },
   { roll: 547, name: "SHOVANA KARKI",           cr: false },
-  { roll: 548, name: "SHREEJI POKHREL",         cr: true,  crTitle: "Class Representative" },
+  { roll: 548, name: "SHREEJI POKHREL",         cr: false },
   { roll: 549, name: "SHREESAK PANDEY",         cr: false },
-  { roll: 550, name: "SHREYANKA THAPALIYA",     cr: false },
+  { roll: 550, name: "SHREYANKA THAPALIYA",     cr: true, crTitle: "Class Representative" },
   { roll: 551, name: "SHREYA TAMANG",           cr: false },
   { roll: 552, name: "SHREYNA SHRESTHA",        cr: false },
   { roll: 553, name: "RAVI SHANKAR MAHATO",     cr: false },
@@ -374,6 +374,14 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "shreyatamang2067@gmail.com",
   dob: { bsYear: 2067, bsMonth: 5, bsDay: 22, monthName: "Bhadra" }
+},
+   550: {
+  photo: "https://drive.google.com/uc?export=view&id=1g_5dgXZ9Kb49xeHIKJ4Lw4fM1NFmQVLH",
+  quote: "Here for positive energy, calmness, and simple kindness! You can count me as a helping hand whenever needed!🌼💫",
+  experience: "The bestttt friends group ever! With no groupism and actually a good bond among everyone!",
+  wantsManagement: false,
+  email: "shreeyanka.thapaliya@gmail.com",
+  dob: { bsYear: 2067, bsMonth: 5, bsDay: 8, monthName: "Bhadra" }
 }
 };
 
