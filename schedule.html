@@ -57,10 +57,24 @@
     .subj-break {background:var(--bg2);color:var(--text3);font-style:italic;font-weight:400}
     .subj-lunch {background:rgba(245,158,11,.12);color:#d97706;font-style:italic;font-weight:400}
     .subj-free  {background:var(--gold-light);color:var(--gold)}
+    .subj-lab   {background:rgba(16,185,129,.18);color:#047857;font-style:italic}
+    .subj-self  {background:rgba(148,163,184,.1);color:#94a3b8;font-style:italic;font-weight:400}
+    .subj-online{background:rgba(99,102,241,.15);color:#818cf8;font-style:italic}
 
     tr.lunch-row{background:rgba(245,158,11,.04)!important}
     tr.lunch-row:hover{background:rgba(245,158,11,.08)!important}
     tr.lunch-row td{padding:.65rem 1.2rem}
+
+    tr.lab-row{background:rgba(16,185,129,.03)!important}
+    tr.lab-row:hover{background:rgba(16,185,129,.07)!important}
+
+    .teacher-cell{color:var(--text2);font-size:.82rem}
+    .teacher-abbr{
+      display:inline-block;font-family:'DM Mono',monospace;
+      font-size:.7rem;letter-spacing:.06em;
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:5px;padding:.1rem .4rem;color:var(--text3);
+    }
 
     .no-schedule{text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
 
@@ -116,75 +130,81 @@
 injectNav();
 
 // ════════════════════════════════════════════
-// SCHEDULE — read-only on front end
-// Day visibility is controlled ONLY in the Admin panel
+// SCHEDULE DATA — Section E, St. Xavier's College
+// Times: P1 9:30–10:15 | P2 10:15–11:00 | P3 11:10–11:55
+//        Lunch 11:55–12:40 | P4 12:40–1:15 | P5 1:20–2:05
+//        P6 2:05–2:50 | P7 3:00–3:45 | P8 3:45–4:30
 // ════════════════════════════════════════════
 const SCHEDULE = {
+  // ── SUNDAY (online) ──
   0: { label:'Sunday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'2', time:'7:00 – 7:45',  subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'3', time:'7:45 – 8:30',  subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'5', time:'9:45 – 10:30', subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'6', time:'10:30 – 11:15',subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1', time:'9:30 – 10:15',  subject:'Chemistry',      teacher:'DA',                          room:'Online', subj:'online' },
+    { period:'2', time:'10:15 – 11:00', subject:'Zoology',        teacher:'PT',                          room:'Online', subj:'online' },
+    { period:'3', time:'11:10 – 11:55', subject:'Nepali',         teacher:'KP',                          room:'Online', subj:'online' },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',       subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Self Study Hour',teacher:'',                            room:'Online', subj:'self'  },
   ]},
+
+  // ── MONDAY ──
   1: { label:'Monday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'2', time:'7:00 – 7:45',  subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'3', time:'7:45 – 8:30',  subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'5', time:'9:45 – 10:30', subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'6', time:'10:30 – 11:15',subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1', time:'9:30 – 10:15',  subject:'Physics',        teacher:'BP',                          room:'—', subj:'phy'  },
+    { period:'2', time:'10:15 – 11:00', subject:'Botany',         teacher:'SM',                          room:'—', subj:'bio'  },
+    { period:'3', time:'11:10 – 11:55', subject:'Chemistry',      teacher:'DA',                          room:'—', subj:'chem' },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',  subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Nepali',         teacher:'KP',                          room:'—', subj:'nep'  },
+    { period:'5', time:'1:20 – 2:05',   subject:'Mathematics',    teacher:'DP',                          room:'—', subj:'math' },
+    { period:'6', time:'2:05 – 2:50',   subject:'Physics',        teacher:'GJ',                          room:'—', subj:'phy'  },
+    { period:'7', time:'3:00 – 3:45',   subject:'Zoology',        teacher:'GC',                          room:'—', subj:'bio'  },
+    { period:'8', time:'3:45 – 4:30',   subject:'Mathematics',    teacher:'PK',                          room:'—', subj:'math' },
   ]},
+
+  // ── TUESDAY ──
   2: { label:'Tuesday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'2', time:'7:00 – 7:45',  subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'3', time:'7:45 – 8:30',  subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'5', time:'9:45 – 10:30', subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'6', time:'10:30 – 11:15',subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1', time:'9:30 – 10:15',  subject:'Botany',         teacher:'SM',                          room:'—', subj:'bio'  },
+    { period:'2', time:'10:15 – 11:00', subject:'Mathematics',    teacher:'PK',                          room:'—', subj:'math' },
+    { period:'3', time:'11:10 – 11:55', subject:'Physics',        teacher:'BP',                          room:'—', subj:'phy'  },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',  subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Chemistry',      teacher:'RR',                          room:'—', subj:'chem' },
+    { period:'5', time:'1:20 – 2:05',   subject:'English',        teacher:'LMJ',                         room:'—', subj:'eng'  },
+    { period:'6', time:'2:05 – 2:50',   subject:'Nepali',         teacher:'DP',                          room:'—', subj:'nep'  },
+    { period:'7', time:'3:00 – 3:45',   subject:'Biology Lab',    teacher:'BS · SM · PT · AJ',           room:'Lab', subj:'lab', isLab:true },
   ]},
+
+  // ── WEDNESDAY ──
   3: { label:'Wednesday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'2', time:'7:00 – 7:45',  subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'3', time:'7:45 – 8:30',  subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'5', time:'9:45 – 10:30', subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'6', time:'10:30 – 11:15',subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1', time:'9:30 – 10:15',  subject:'Chemistry',      teacher:'NKS',                         room:'—', subj:'chem' },
+    { period:'2', time:'10:15 – 11:00', subject:'Physics',        teacher:'BP',                          room:'—', subj:'phy'  },
+    { period:'3', time:'11:10 – 11:55', subject:'Zoology',        teacher:'BP',                          room:'—', subj:'bio'  },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',  subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Mathematics',    teacher:'DP',                          room:'—', subj:'math' },
+    { period:'5', time:'1:20 – 2:05',   subject:'English',        teacher:'LMJ',                         room:'—', subj:'eng'  },
+    { period:'6', time:'2:05 – 2:50',   subject:'Physics',        teacher:'VKJ',                         room:'—', subj:'phy'  },
+    { period:'7', time:'3:00 – 3:45',   subject:'Botany',         teacher:'BS',                          room:'—', subj:'bio'  },
+    { period:'8', time:'3:45 – 4:30',   subject:'Mathematics',    teacher:'PK',                          room:'—', subj:'math' },
   ]},
+
+  // ── THURSDAY ──
   4: { label:'Thursday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'2', time:'7:00 – 7:45',  subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'3', time:'7:45 – 8:30',  subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'5', time:'9:45 – 10:30', subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'6', time:'10:30 – 11:15',subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1–2', time:'9:30 – 11:00', subject:'Physics Lab',   teacher:'HKS · GJ · KPA · HB',         room:'Lab', subj:'lab', isLab:true },
+    { period:'3', time:'11:10 – 11:55', subject:'Mathematics',    teacher:'AMS',                         room:'—', subj:'math' },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',  subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Chemistry',      teacher:'DA',                          room:'—', subj:'chem' },
+    { period:'5', time:'1:20 – 2:05',   subject:'English',        teacher:'LMJ',                         room:'—', subj:'eng'  },
+    { period:'6', time:'2:05 – 2:50',   subject:'Physics',        teacher:'VKJ',                         room:'—', subj:'phy'  },
+    { period:'7', time:'3:00 – 3:45',   subject:'Zoology',        teacher:'PT',                          room:'—', subj:'bio'  },
+    { period:'8', time:'3:45 – 4:30',   subject:'Chemistry',      teacher:'RR',                          room:'—', subj:'chem' },
   ]},
+
+  // ── FRIDAY ──
   5: { label:'Friday', periods:[
-    { period:'1', time:'6:15 – 7:00',  subject:'Nepali',      teacher:'— Add Teacher —', room:'— Add Room —', subj:'nep'  },
-    { period:'2', time:'7:00 – 7:45',  subject:'English',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'eng'  },
-    { period:'3', time:'7:45 – 8:30',  subject:'Mathematics', teacher:'— Add Teacher —', room:'— Add Room —', subj:'math' },
-    { period:'—', time:'8:30 – 9:00',  subject:'Lunch Break', teacher:'',                room:'',             subj:'lunch', isLunch:true },
-    { period:'4', time:'9:00 – 9:45',  subject:'Physics',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'phy'  },
-    { period:'5', time:'9:45 – 10:30', subject:'Biology',     teacher:'— Add Teacher —', room:'— Add Room —', subj:'bio'  },
-    { period:'6', time:'10:30 – 11:15',subject:'Chemistry',   teacher:'— Add Teacher —', room:'— Add Room —', subj:'chem' },
-    { period:'7', time:'11:15 – 12:00',subject:'Environment Science', teacher:'— Add Teacher —', room:'— Add Room —', subj:'ep' },
-    { period:'8', time:'12:00 – 12:45',subject:'Free Period', teacher:'',                room:'',             subj:'free' },
+    { period:'1', time:'9:30 – 10:15',  subject:'Mathematics',    teacher:'PK',                          room:'—', subj:'math' },
+    { period:'2', time:'10:15 – 11:00', subject:'Nepali',         teacher:'DP',                          room:'—', subj:'nep'  },
+    { period:'3', time:'11:10 – 11:55', subject:'Botany',         teacher:'NSD',                         room:'—', subj:'bio'  },
+    { period:'—', time:'11:55 – 12:40', subject:'Lunch Break',    teacher:'',                            room:'',  subj:'lunch', isLunch:true },
+    { period:'4', time:'12:40 – 1:15',  subject:'Chemistry',      teacher:'RR',                          room:'—', subj:'chem' },
+    { period:'5', time:'1:20 – 2:05',   subject:'English',        teacher:'LMJ',                         room:'—', subj:'eng'  },
+    { period:'6', time:'2:05 – 2:50',   subject:'Physics',        teacher:'VKJ',                         room:'—', subj:'phy'  },
+    { period:'7–8', time:'3:00 – 4:30', subject:'Chemistry Lab',  teacher:'NR · SP · NP · RR',           room:'Lab', subj:'lab', isLab:true },
   ]},
 };
 
@@ -198,7 +218,7 @@ function renderTabs(){
   const container = document.getElementById('dayTabs');
   container.innerHTML = Object.keys(SCHEDULE).map(d=>{
     const di = parseInt(d);
-    if(hiddenDays.includes(di)) return ''; // hidden days not shown at all
+    if(hiddenDays.includes(di)) return '';
     const isActive = activeDay===di;
     return `<button class="day-tab${isActive?' active':''}" data-day="${di}" onclick="switchDay(${di})">${SCHEDULE[d].label}</button>`;
   }).join('');
@@ -213,20 +233,26 @@ function switchDay(dayIdx){
 function renderDay(dayIdx){
   const dayData = SCHEDULE[dayIdx];
   if(!dayData){ document.getElementById('scheduleBody').innerHTML=''; return; }
-  document.getElementById('scheduleBody').innerHTML = dayData.periods.map(r=>`
-    <tr${r.isLunch?' class="lunch-row"':''}>
+  document.getElementById('scheduleBody').innerHTML = dayData.periods.map(r=>{
+    const rowClass = r.isLunch ? ' class="lunch-row"' : r.isLab ? ' class="lab-row"' : '';
+    // Teacher: split by · and wrap each in abbr pill
+    const teacherHtml = r.teacher
+      ? r.teacher.split('·').map(t=>`<span class="teacher-abbr">${t.trim()}</span>`).join(' ')
+      : '<span style="color:var(--text3)">—</span>';
+    return `
+    <tr${rowClass}>
       <td style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text3)">${r.period}</td>
       <td class="time-cell">${r.time}</td>
       <td><span class="subj-pill subj-${r.subj}">${r.subject}</span></td>
-      <td style="color:var(--text2);font-size:.82rem">${r.teacher}</td>
+      <td class="teacher-cell">${teacherHtml}</td>
       <td style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text3)">${r.room}</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 // ── INIT ──
 (async function init() {
   const siteData = await loadSiteData();
-  // Prefer admin hidden-days from GitHub; fall back to localStorage
   if (siteData.hiddenDays) hiddenDays = siteData.hiddenDays;
 
   const today = new Date().getDay(); // 0=Sun … 6=Sat
@@ -240,4 +266,3 @@ function renderDay(dayIdx){
 </script>
 </body>
 </html>
-
