@@ -194,7 +194,7 @@ const STUDENTS = [
   { roll: 537, name: "SAURAV KHANAL",           cr: false },
   { roll: 538, name: "SAURAV KUMAR YADAV",      cr: false },
   { roll: 539, name: "SHASHANK YADAV",          cr: false },
-  { roll: 540, name: "SAURAV PANDEY",           cr: true,  crTitle: "Class Representative" },
+  { roll: 540, name: "SAURAV PANDEY",           cr: true, ccr: true, crTitle: "Chief Class Representative" },
   { roll: 541, name: "SEKHA LIMBU",             cr: false },
   { roll: 542, name: "SHAMBHABI GHIMIRE",       cr: false },
   { roll: 543, name: "SHISHIR BHURTEL",         cr: false },
