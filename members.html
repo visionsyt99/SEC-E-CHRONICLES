@@ -65,6 +65,7 @@
 .mc-quote-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.88rem;color:#fff;text-align:center;line-height:1.6}
 
 .mc-badge{position:absolute;top:.65rem;right:.65rem;z-index:2;font-size:.6rem;font-weight:600;letter-spacing:.08em;padding:.22rem .55rem;border-radius:7px;font-family:'DM Mono',monospace}
+
 /* ── CR badge — animated gold shimmer ── */
 @keyframes goldShimmer{
   0%{background-position:200% center}
@@ -81,6 +82,33 @@
 .mc-badge-cr::before{
   content:'';position:absolute;inset:0;
   background:linear-gradient(110deg,rgba(255,255,255,.18) 0%,transparent 45%);
+  pointer-events:none;border-radius:inherit;
+}
+
+/* ── CCR badge — premium crown gold, larger + pulsing glow ── */
+@keyframes ccrPulse{
+  0%,100%{box-shadow:0 2px 20px rgba(245,158,11,.7),0 0 40px rgba(245,158,11,.3),0 1px 3px rgba(0,0,0,.6)}
+  50%{box-shadow:0 2px 28px rgba(245,158,11,1),0 0 60px rgba(245,158,11,.5),0 1px 3px rgba(0,0,0,.6)}
+}
+@keyframes ccrShimmer{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+.mc-badge-ccr{
+  color:#1a0800;
+  font-weight:700;
+  font-size:.62rem;
+  letter-spacing:.1em;
+  border:1px solid rgba(253,224,71,.7);
+  background:linear-gradient(270deg,#92400e,#d97706,#fde047,#f59e0b,#fbbf24,#d97706,#92400e);
+  background-size:300% 100%;
+  animation:ccrShimmer 2.5s linear infinite,ccrPulse 2.5s ease-in-out infinite;
+  padding:.28rem .65rem;
+  border-radius:8px;
+}
+.mc-badge-ccr::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(110deg,rgba(255,255,255,.35) 0%,transparent 45%);
   pointer-events:none;border-radius:inherit;
 }
 
@@ -101,9 +129,15 @@
 .mc-profile-dot.has-profile{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,.6)}
 .mc-profile-dot.no-profile{background:#374151}
 
+/* CR card gold border */
 .cr-card{border-color:rgba(217,119,6,.3)!important}
 .cr-card:hover{border-color:rgba(245,158,11,.6)!important;box-shadow:var(--shadow-lg),0 0 30px rgba(245,158,11,.15)!important}
 .cr-card .mc-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(217,119,6,.12) 0%,transparent 55%);pointer-events:none;z-index:0}
+
+/* CCR card — stronger, brighter gold aura */
+.ccr-card{border-color:rgba(245,158,11,.55)!important;background:linear-gradient(160deg,rgba(245,158,11,.06) 0%,var(--surface) 40%)!important}
+.ccr-card:hover{border-color:#f59e0b!important;box-shadow:var(--shadow-lg),0 0 50px rgba(245,158,11,.3),0 0 0 1px rgba(245,158,11,.4)!important}
+.ccr-card .mc-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,158,11,.2) 0%,transparent 55%);pointer-events:none;z-index:0}
 
 .mc-info{padding:1rem 1rem 1.1rem;position:relative;z-index:1}
 .mc-roll{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text3);letter-spacing:.15em;margin-bottom:.28rem;text-transform:uppercase}
@@ -111,6 +145,8 @@
 .mc-meta{display:flex;align-items:center;gap:.35rem;margin-top:.45rem;flex-wrap:wrap}
 .mc-tag{display:inline-flex;align-items:center;gap:.2rem;font-family:'DM Mono',monospace;font-size:.53rem;letter-spacing:.06em;text-transform:uppercase;padding:.12rem .44rem;border-radius:5px;white-space:nowrap}
 .mc-tag-cr{background:var(--gold-light);color:var(--gold);border:1px solid rgba(245,158,11,.2)}
+/* CCR tag — solid gold fill so it pops */
+.mc-tag-ccr{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(253,224,71,.15));color:#fde047;border:1px solid rgba(253,224,71,.4);font-weight:700}
 .mc-tag-mgmt{background:var(--accent-light);color:var(--accent);border:1px solid rgba(139,92,246,.2)}
 .mc-dob{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--text3);margin-top:.35rem;display:flex;align-items:center;gap:.3rem}
 
@@ -128,6 +164,8 @@
 .modal-photo-sm img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .modal-photo-sm-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .cr-modal-photo{border:2px solid var(--gold);box-shadow:0 0 20px var(--gold-glow),0 4px 20px rgba(0,0,0,.4)}
+/* CCR modal photo — thicker border + stronger glow */
+.ccr-modal-photo{border:2px solid #fde047;box-shadow:0 0 30px rgba(253,224,71,.5),0 0 60px rgba(245,158,11,.25),0 4px 20px rgba(0,0,0,.5)!important}
 
 .modal-header-info{flex:1;min-width:0}
 .modal-roll{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.14em;margin-bottom:.35rem}
@@ -136,9 +174,12 @@
 .modal-divider{border:none;border-top:1px solid var(--border);margin:.95rem 0}
 
 .modal-quote-block{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(109,40,217,.06));border-left:2px solid var(--accent);border-radius:0 12px 12px 0;padding:.9rem 1.1rem;margin-bottom:1.1rem}
+/* CCR quote block — gold left border */
+.modal-quote-block.ccr-quote{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(253,224,71,.04));border-left-color:#f59e0b}
 .modal-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--text2);line-height:1.7}
 .modal-quote::before{content:'\201C';color:var(--accent);font-size:1.5rem;line-height:0;vertical-align:-.4rem;margin-right:.1rem}
 .modal-quote::after{content:'\201D';color:var(--accent);font-size:1.5rem;line-height:0;vertical-align:-.4rem;margin-left:.1rem}
+.ccr-quote .modal-quote::before,.ccr-quote .modal-quote::after{color:#f59e0b}
 
 .modal-exp-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:.45rem}
 .modal-exp{font-size:.86rem;color:var(--text2);line-height:1.7;font-style:italic;padding:.9rem 1.1rem;background:var(--surface2);border-radius:12px;border:1px solid var(--border)}
@@ -203,9 +244,6 @@ injectNav();
 function toTitle(str){return str.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
 function getInitials(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('')}
 
-// Fix 1: Removed local getBestPhoto() — now calls getDriveFolderPhotoUrl() directly
-// with _memberPhotos so admin-uploaded photo IDs are respected.
-
 function renderGrid(filter=''){
   const grid=document.getElementById('membersGrid');
   const f=filter.toLowerCase().trim();
@@ -216,31 +254,40 @@ function renderGrid(filter=''){
   grid.innerHTML=filtered.map(s=>{
     const initials=getInitials(s.name);
     const title=toTitle(s.name);
-    const crClass=s.cr?'cr-card':'';
+    // CCR gets its own card class; regular CR gets cr-card
+    const cardClass=s.ccr?'cr-card ccr-card':s.cr?'cr-card':'';
     const p=STUDENT_PROFILES[s.roll];
     const hasProfile=!!p;
     const wantsMgmt=p&&p.wantsManagement;
     const quote=p&&p.quote?p.quote:'';
-    // Fix 3: Pass _memberPhotos so admin photo IDs are used when available
     const photoSrc=getDriveFolderPhotoUrl(s.roll, _memberPhotos);
+
+    // Badge: CCR > CR > MGMT
+    let badge='';
+    if(s.ccr)       badge=`<div class="mc-badge mc-badge-ccr">👑 CCR</div>`;
+    else if(s.cr)   badge=`<div class="mc-badge mc-badge-cr">★ CR</div>`;
+    else if(wantsMgmt) badge=`<div class="mc-badge mc-badge-mgmt">⚡ MGMT</div>`;
+
+    // Tag below name: CCR > CR > MGMT
+    let tag='';
+    if(s.ccr)            tag=`<span class="mc-tag mc-tag-ccr">👑 ${s.crTitle||'Chief CR'}</span>`;
+    else if(s.cr)        tag=`<span class="mc-tag mc-tag-cr">★ ${s.crTitle||'Class Rep'}</span>`;
+    else if(wantsMgmt)   tag='<span class="mc-tag mc-tag-mgmt">⚡ Mgmt</span>';
+
     return `
-    <div class="member-card ${crClass}" onclick="openModal(${s.roll})">
+    <div class="member-card ${cardClass}" onclick="openModal(${s.roll})">
       <div class="mc-photo">
         <img src="${photoSrc}" alt="${title}"
           onerror="this.parentElement.innerHTML='<div class=mc-photo-placeholder><div class=mc-initials>${initials}</div></div>'"
           loading="lazy"/>
-        ${s.cr?'<div class="mc-badge mc-badge-cr">★ CR</div>':''}
-        ${(!s.cr&&wantsMgmt)?'<div class="mc-badge mc-badge-mgmt">⚡ MGMT</div>':''}
+        ${badge}
         <div class="mc-profile-dot ${hasProfile?'has-profile':'no-profile'}"></div>
         ${quote?`<div class="mc-quote-overlay"><div class="mc-quote-text">${quote.length>80?quote.substring(0,80)+'…':quote}</div></div>`:''}
       </div>
       <div class="mc-info">
         <div class="mc-roll">#${s.roll}</div>
         <div class="mc-name">${title}</div>
-        <div class="mc-meta">
-          ${s.cr?`<span class="mc-tag mc-tag-cr">★ ${s.crTitle||'Class Rep'}</span>`:''}
-          ${(!s.cr&&wantsMgmt)?'<span class="mc-tag mc-tag-mgmt">⚡ Mgmt</span>':''}
-        </div>
+        <div class="mc-meta">${tag}</div>
         ${(p&&p.dob&&p.dob.bsDay)?`<div class="mc-dob">🎂 ${p.dob.monthName} ${p.dob.bsDay}</div>`:''}
       </div>
     </div>`;
@@ -255,9 +302,10 @@ function openModal(roll){
   const title=toTitle(s.name);
   const initials=getInitials(s.name);
   const p=STUDENT_PROFILES[s.roll];
-  // Fix 4: Pass _memberPhotos so admin photo IDs are used in the modal too
   const photoSrc=getDriveFolderPhotoUrl(roll, _memberPhotos);
-  const crPhotoClass=s.cr?'cr-modal-photo':'';
+
+  // CCR gets the premium photo style; regular CR gets standard gold
+  const photoClass=s.ccr?'ccr-modal-photo':s.cr?'cr-modal-photo':'';
 
   let dobStr='—';
   if(p&&p.dob){
@@ -265,9 +313,15 @@ function openModal(roll){
     dobStr=d.bsDay?`${d.monthName} ${d.bsDay}, ${d.bsYear} BS`:`${d.monthName} ${d.bsYear} BS`;
   }
 
+  // Modal tag
+  let modalTag='';
+  if(s.ccr)          modalTag=`<span class="mc-tag mc-tag-ccr">👑 ${s.crTitle}</span>`;
+  else if(s.cr)      modalTag=`<span class="mc-tag mc-tag-cr">★ ${s.crTitle}</span>`;
+  if(p&&p.wantsManagement) modalTag+=`<span class="mc-tag mc-tag-mgmt">⚡ Management Team</span>`;
+
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header">
-      <div class="modal-photo-sm ${crPhotoClass}">
+      <div class="modal-photo-sm ${photoClass}">
         <img src="${photoSrc}" alt="${title}"
           onerror="this.parentElement.innerHTML='<div class=modal-photo-sm-placeholder>${initials}</div>'"
           style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/>
@@ -275,15 +329,12 @@ function openModal(roll){
       <div class="modal-header-info">
         <div class="modal-roll">Roll No. ${s.roll} · Section E</div>
         <div class="modal-name">${title}</div>
-        <div class="modal-tags">
-          ${s.cr?`<span class="mc-tag mc-tag-cr">★ ${s.crTitle}</span>`:''}
-          ${(p&&p.wantsManagement)?'<span class="mc-tag mc-tag-mgmt">⚡ Management Team</span>':''}
-        </div>
+        <div class="modal-tags">${modalTag}</div>
       </div>
     </div>
 
     ${(p&&p.quote)?`
-    <div class="modal-quote-block">
+    <div class="modal-quote-block${s.ccr?' ccr-quote':''}">
       <div class="modal-quote">${p.quote}</div>
     </div>`:''}
 
@@ -304,9 +355,7 @@ document.getElementById('modalClose').addEventListener('click',()=>document.getE
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open')});
 document.getElementById('searchInput').addEventListener('input',e=>renderGrid(e.target.value));
 
-// Fix 2: Wait for loadSiteData() before rendering so admin photos are available
 let _memberPhotos = {};
-
 (async function init(){
   const siteData = await loadSiteData();
   _memberPhotos = siteData.memberPhotos || {};
