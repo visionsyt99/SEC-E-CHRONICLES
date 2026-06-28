@@ -597,8 +597,8 @@ footer p{color:var(--text-faint);font-size:.85rem}
     </div>
     <div data-parallax="0.08">
       <div class="cd-card">
-        <div class="cd-label">⏳ Counting down to</div>
-        <div class="cd-title">🎓 Grade 12 Begins — <em>Ashad 2, 2083</em></div>
+       <div class="cd-label">⭐ Special Event</div>
+<div class="cd-title">📋 NEB Board Exams — <em>March 20, 2027</em></div>
         <div class="cd-grid">
           <div class="cd-unit"><div class="cd-num" id="cd-days">--</div><div class="cd-ul">Days</div></div>
           <div class="cd-unit"><div class="cd-num" id="cd-hours">--</div><div class="cd-ul">Hours</div></div>
@@ -754,7 +754,7 @@ const io = new IntersectionObserver((entries)=>{
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 // ─── COUNTDOWN ───
-const target = new Date('2026-06-15T18:15:00Z');
+const target = new Date('2027-03-20T01:15:00Z');
 function updateCountdown(){
   const diff = target - new Date();
   if(diff<=0){['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id=>document.getElementById(id).textContent='00');return;}
