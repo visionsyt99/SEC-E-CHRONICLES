@@ -204,7 +204,7 @@ const STUDENTS = [
   { roll: 547, name: "SHOVANA KARKI",           cr: false },
   { roll: 548, name: "SHREEJI POKHREL",         cr: false },
   { roll: 549, name: "SHREESAK PANDEY",         cr: false },
-  { roll: 550, name: "SHREYANKA THAPALIYA",     cr: true, crTitle: "Class Representative" },
+  { roll: 550, name: "SHREEYANKA THAPALIYA",     cr: true, crTitle: "Class Representative" },
   { roll: 551, name: "SHREYA TAMANG",           cr: false },
   { roll: 552, name: "SHREYNA SHRESTHA",        cr: false },
   { roll: 553, name: "RAVI SHANKAR MAHATO",     cr: false },
