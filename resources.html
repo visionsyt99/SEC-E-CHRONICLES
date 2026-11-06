@@ -58,6 +58,8 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:600px){.page-hero,.res-section{padding-left:1.25rem;padding-right:1.25rem}.res-grid{grid-template-columns:1fr}}
   </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -83,6 +85,10 @@
     </div>
   </section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script>
 injectNav();
@@ -92,15 +98,13 @@ const SUBJ_COLORS = {Biology:'rgba(34,197,94,.15)',Chemistry:'rgba(239,68,68,.15
 const SUBJ_TEXT = {Biology:'#16a34a',Chemistry:'#dc2626',Physics:'#2563eb',Mathematics:'#9333ea',English:'#ea580c',General:'var(--accent)'};
 
 let currentCat = 'all';
-// _siteData holds admin data loaded from GitHub via loadSiteData()
+// _siteData holds admin data loaded from Firebase via loadSiteData()
 let _siteData = {};
 
 function renderResources() {
   const grid = document.getElementById('resGrid');
-  // Prefer admin data from GitHub; fall back to localStorage
-  const resources = (_siteData.resources && _siteData.resources.length)
-    ? _siteData.resources
-    : JSON.parse(localStorage.getItem('ec_resources') || '[]');
+  // Use Firebase-backed site data with bundled JSON fallback
+  const resources = (_siteData.resources || []);
   const filtered = currentCat === 'all' ? resources : resources.filter(r => r.subject === currentCat);
   if (!filtered.length) {
     grid.innerHTML = '<div class="empty-state">No resources here yet. Ask your CR to add some!</div>';
@@ -135,11 +139,12 @@ document.getElementById('catTabs').addEventListener('click', e => {
   renderResources();
 });
 
-// Wait for GitHub admin data before rendering
+// Wait for Firebase site data before rendering
 (async function init() {
   _siteData = await loadSiteData();
   renderResources();
 })();
+window.addEventListener('ec-data-updated', e => { _siteData = e.detail.data || _siteData; renderResources(); });
 </script>
 </body>
 </html>

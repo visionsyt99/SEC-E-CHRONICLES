@@ -68,6 +68,8 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:600px){.page-hero,.events-section{padding-left:1.25rem;padding-right:1.25rem}.event-meta{gap:.5rem}}
   </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -90,6 +92,10 @@
     </div>
   </section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script>
 injectNav();
@@ -103,7 +109,7 @@ const EVENTS_DEFAULT = [
   { id:4, title:"First Internal Exam", date:"2025-10-15", time:"9:45 AM", venue:"Section E Classroom", desc:"First internal assessment of Grade 11.", status:"past" },
 ];
 
-// _siteData holds admin data loaded from GitHub via loadSiteData()
+// _siteData holds admin data loaded from Firebase via loadSiteData()
 let _siteData = {};
 let EVENTS = [];
 let currentFilter = 'all';
@@ -179,15 +185,16 @@ document.getElementById('filterTabs').addEventListener('click', e => {
   renderEvents();
 });
 
-// Wait for GitHub admin data before rendering
+// Wait for Firebase site data before rendering
 (async function init() {
   _siteData = await loadSiteData();
-  // Prefer admin data from GitHub, then localStorage, then hardcoded defaults
+  // Use Firebase-backed site data with bundled JSON fallback
   EVENTS = (_siteData.events && _siteData.events.length)
     ? _siteData.events
     : (JSON.parse(localStorage.getItem('ec_events') || 'null') || EVENTS_DEFAULT);
   renderEvents();
 })();
+window.addEventListener('ec-data-updated', e => { _siteData = e.detail.data || _siteData; EVENTS = (_siteData.events && _siteData.events.length) ? _siteData.events : (JSON.parse(localStorage.getItem('ec_events') || 'null') || EVENTS_DEFAULT); renderEvents(); });
 </script>
 </body>
 </html>

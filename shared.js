@@ -138,7 +138,7 @@ function injectNav(isRoot = false) {
   if (saved) {
     applyTheme(saved === 'dark');
   } else {
-    toggleBtn.textContent = isDark() ? '☀️' : '🌙';
+    applyTheme(true); // match home page default (dark)
   }
 
   toggleBtn.addEventListener('click', () => applyTheme(!isDark()));
@@ -385,32 +385,32 @@ const STUDENT_PROFILES = {
 }
 };
 
-// ── LOAD SITE DATA FROM GITHUB ──
-// Single source of truth: data/ec-data.json in the repo.
-// Uses the GitHub Contents API (not raw.githubusercontent.com) to bypass CDN cache.
-const _GH_OWNER = 'visionsyt99';
-const _GH_REPO  = 'SEC-E-CHRONICLES';
-const _GH_FILE  = 'data/ec-data.json';
-
+// ── LOAD SITE DATA FROM FIREBASE ──
+// Firebase is the live source of truth. The bundled JSON is a resilient offline fallback.
 let _siteDataCache = null;
+let _ecRealtimeStarted = false;
 
 async function loadSiteData() {
   if (_siteDataCache) return _siteDataCache;
   try {
-    const url = `https://api.github.com/repos/${_GH_OWNER}/${_GH_REPO}/contents/${_GH_FILE}`;
-    const r = await fetch(url, {
-      headers: { 'Accept': 'application/vnd.github+json' },
-      cache: 'no-store'
-    });
-    if (!r.ok) { console.warn('loadSiteData: GitHub returned', r.status); return {}; }
-    const d = await r.json();
-    const text = atob(d.content.replace(/\n/g, ''));
-    _siteDataCache = JSON.parse(text);
+    _siteDataCache = await ECFirebase.loadSiteData();
+    if (!_ecRealtimeStarted) {
+      _ecRealtimeStarted = true;
+      ECFirebase.subscribe(data => {
+        _siteDataCache = data;
+        window.dispatchEvent(new CustomEvent('ec-data-updated',{detail:{data}}));
+      });
+    }
     return _siteDataCache;
   } catch (e) {
     console.error('loadSiteData failed:', e);
     return {};
   }
+}
+
+// Start the realtime listener as early as possible on every page.
+if (window.ECFirebase) {
+  loadSiteData().catch(()=>{});
 }
 
 // ── PHOTO URL HELPER ──
@@ -419,7 +419,7 @@ async function loadSiteData() {
 //  2. Explicit photo in STUDENT_PROFILES (hardcoded)
 //  3. Apps Script proxy (roll.jpg from folder)
 function getDriveFolderPhotoUrl(roll, memberPhotosFromDB) {
-  // 1. Admin-panel override from GitHub data
+  // 1. Admin-panel override from Firebase data
   try {
     const adminPhotos = memberPhotosFromDB || {};
     if (adminPhotos[roll] && adminPhotos[roll].trim()) {

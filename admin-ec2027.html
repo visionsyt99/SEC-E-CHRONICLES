@@ -256,13 +256,13 @@
     <div class="login-logo">E</div>
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">The E Chronicles · Section E</div>
-    <input type="password" class="login-input" id="pwInput" placeholder="Enter password" />
-    <input type="text" class="login-input token-input" id="tokenInput" placeholder="GitHub Token (ghp_…)" autocomplete="off"/>
+    <input type="email" class="login-input token-input" id="emailInput" placeholder="Admin email" autocomplete="username" />
+    <input type="password" class="login-input" id="pwInput" placeholder="Firebase password" autocomplete="current-password" />
     <button class="login-btn" id="loginBtn">Unlock Panel →</button>
-    <div class="login-error" id="loginError">Incorrect password or invalid token.</div>
+    <div class="login-error" id="loginError">Incorrect email or password.</div>
     <div class="login-hint">
-      🔑 Your GitHub token is used to sync data across all devices via the repo.<br/>
-      It is stored in <code>sessionStorage</code> and cleared when you close the tab.
+      ⚡ Changes are stored in Firebase and pushed live to every open page.<br/>
+      Your password is handled by Firebase Authentication; no GitHub token is stored in the browser.
     </div>
   </div>
 </div>
@@ -294,8 +294,8 @@
 
   <main class="admin-main">
     <div class="gh-banner" id="ghBanner">
-      <span class="gh-banner-icon">☁️</span>
-      <span>Changes sync to <strong>visionsyt99/SEC-E-CHRONICLES</strong>. Every save reads the latest GitHub data first, merges your change on top, then writes — so nothing from other sessions is ever lost.</span>
+      <span class="gh-banner-icon">⚡</span>
+      <span><strong>Realtime mode:</strong> changes are saved to Firestore as individual data sections and synchronized to connected pages.</span>
     </div>
 
     <!-- NOTICES -->
@@ -467,7 +467,7 @@
           <button class="admin-btn admin-btn-primary" id="saveMemberPhotosBtn">💾 Save Changes</button>
           <button class="admin-btn" id="clearMemberPhotosBtn" style="color:#ef4444;border-color:#ef4444">🗑️ Clear All</button>
         </div>
-        <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved to GitHub! Photos will update on all devices.</div>
+        <div id="memberPhotosSavedMsg" style="margin-top:.7rem;font-size:.78rem;color:#10b981;display:none">✅ Saved live to Firebase! Photos will update on all devices.</div>
       </div>
     </div>
 
@@ -638,87 +638,17 @@
 
 <div class="toast" id="toast">✓ Saved successfully</div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="nepali-date.js"></script>
 <script>
 // ══════════════════════════════════════════════════════
-// CONFIGURATION
+// REALTIME FIREBASE ADMIN CORE
 // ══════════════════════════════════════════════════════
-const PASSWORD     = 'Echronicles2527';
-const GH_OWNER     = 'visionsyt99';
-const GH_REPO      = 'SEC-E-CHRONICLES';
-const GH_DATA_FILE = 'data/ec-data.json';
-
-// Apps Script URL — used for Farewell reads + deletes ONLY
 const FW_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3_v4IBUpJ4fLgXLE83hUNdNmh4NlJfhmPVSeUpXE1W8b0y8w2bbfWMBuwK7Yuessn/exec';
 
-// ══════════════════════════════════════════════════════
-// GITHUB API LAYER
-// ══════════════════════════════════════════════════════
-const GH = {
-  get token(){ return sessionStorage.getItem('ec_gh_token') || ''; },
-
-  headers(){
-    return {
-      'Authorization': `Bearer ${this.token}`,
-      'Accept': 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'Content-Type': 'application/json'
-    };
-  },
-
-  async getFile(path = GH_DATA_FILE){
-    try {
-      const r = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { headers: this.headers() }
-      );
-      if(r.status === 404) return null;
-      if(!r.ok) throw new Error(`GitHub GET failed: ${r.status}`);
-      const d = await r.json();
-      const text = atob(d.content.replace(/\n/g,''));
-      return { content: JSON.parse(text), sha: d.sha };
-    } catch(e){
-      console.error('GH.getFile', e);
-      return null;
-    }
-  },
-
-  async putFile(data, message = 'Admin update', path = GH_DATA_FILE, sha = null){
-    const body = {
-      message,
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
-      ...(sha ? { sha } : {})
-    };
-    try {
-      const r = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { method:'PUT', headers: this.headers(), body: JSON.stringify(body) }
-      );
-      if(!r.ok){
-        const err = await r.json();
-        throw new Error(err.message || r.status);
-      }
-      setSyncState('ok','Synced ✓');
-      return true;
-    } catch(e){
-      setSyncState('err','Sync failed ✗');
-      toastMsg('GitHub save failed: ' + e.message, true);
-      return false;
-    }
-  },
-
-  async testToken(){
-    try {
-      const r = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`,
-        { headers: this.headers() }
-      );
-      return r.ok;
-    } catch { return false; }
-  }
-};
-
-// ── In-memory store — always a COMPLETE mirror of what's on GitHub ──
 let DB = {
   notices:[], resources:[], events:[], achievements:[],
   memories:[], birthdays:[], schedule:null, hiddenDays:[],
@@ -726,130 +656,98 @@ let DB = {
   memberPhotos:{}, gallery:[]
 };
 
-// ══════════════════════════════════════════════════════
-// CORE SYNC  ← THE FIXED VERSION
-//
-// Strategy: always read the FULL file from GitHub first,
-// apply ONLY the field(s) we are changing, then write back.
-// This prevents any session from stomping another session's data.
-// ══════════════════════════════════════════════════════
-
-/**
- * syncField(fieldName, commitMsg)
- *
- * Reads the current GitHub file, updates only `fieldName`
- * from our local DB, then writes back.  All other fields
- * remain exactly as they were on GitHub.
- *
- * For memberPhotos we do a key-level merge so one session
- * can add roll 501's photo while another adds roll 502's
- * without losing either.
- */
 async function syncField(fieldName, commitMsg){
-  setSyncState('pending','Saving…');
-
-  // 1. Fresh read
-  const current = await GH.getFile();
-  if(!current){
-    setSyncState('err','Could not read GitHub file — save aborted!');
-    toastMsg('⚠️ Could not read GitHub data. Please refresh and try again.', true);
+  setSyncState('pending','Saving live…');
+  try {
+    if (!ECFirebase.currentUser()) throw new Error('Firebase session is not authenticated.');
+    // Firebase writes are document-level, so unrelated sections cannot be overwritten.
+    // For member photos, write the complete merged map from the current in-memory DB.
+    if(fieldName === 'memberPhotos') DB.memberPhotos = {...(DB.memberPhotos||{})};
+    await ECFirebase.saveField(fieldName, DB[fieldName]);
+    setSyncState('ok','Live ✓');
+    return true;
+  } catch(e){
+    console.error('Firebase save failed',e);
+    setSyncState('err','Save failed ✗');
+    toastMsg('Firebase save failed: '+(e.message||e), true);
     return false;
   }
-
-  const serverData = current.content || {};
-  const sha        = current.sha;
-
-  // 2. Build the merged object — only change the field we intend to change
-  let merged = { ...serverData };
-
-  if(fieldName === 'memberPhotos'){
-    // Key-level merge: keep every roll the server already has,
-    // then overlay only the rolls we filled in locally.
-    merged.memberPhotos = {
-      ...(serverData.memberPhotos || {}),
-      ...(DB.memberPhotos || {})
-    };
-    // Also update local DB to match what we just wrote
-    DB.memberPhotos = merged.memberPhotos;
-  } else if(fieldName === 'schedule'){
-    // Merge day-by-day: only update the day(s) we edited
-    const serverSch = serverData.schedule || {};
-    const localSch  = DB.schedule || {};
-    merged.schedule  = { ...serverSch, ...localSch };
-    DB.schedule      = merged.schedule;
-  } else {
-    // For simple fields just replace
-    merged[fieldName] = DB[fieldName];
-  }
-
-  // 3. Write
-  const ok = await GH.putFile(merged, commitMsg, GH_DATA_FILE, sha);
-
-  if(ok){
-    // Keep local DB in sync with what we just saved
-    Object.keys(merged).forEach(k => { DB[k] = merged[k]; });
-  }
-
-  return ok;
 }
 
-// ══════════════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════════════
-async function checkAuth(){
-  if(sessionStorage.getItem('ec_admin') === '1'){
-    const ok = await GH.testToken();
-    if(ok){ unlock(false); }
-    else {
-      sessionStorage.removeItem('ec_admin');
-      sessionStorage.removeItem('ec_gh_token');
+async function loadAll(){
+  setSyncState('pending','Loading live data…');
+  try {
+    const data = await ECFirebase.loadSiteData();
+    Object.keys(DB).forEach(k => { if(data[k] !== undefined) DB[k] = data[k]; });
+    // First admin session seeds the existing repository data into Firebase.
+    if(!ECFirebase.isSeeded()){
+      const seeded = await ECFirebase.seed(DB);
+      if(seeded) toastMsg('Initial site data imported to Firebase.');
     }
+    setSyncState('ok','Live ✓');
+    renderAll();
+  } catch(e){
+    console.error(e);
+    setSyncState('err','Load failed ✗');
+    toastMsg('Could not load site data: '+(e.message||e), true);
   }
 }
 
-async function unlock(doLoad = true){
-  document.getElementById('loginScreen').style.display = 'none';
+async function unlock(){
+  document.getElementById('loginScreen').style.display='none';
   document.getElementById('adminWrap').classList.add('visible');
-  if(doLoad) await loadAll();
+  await loadAll();
+}
+
+async function initAuth(){
+  ECFirebase.onAuthStateChanged(async user => {
+    if (!user) {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminWrap').classList.remove('visible');
+      return;
+    }
+    const allowed = await ECFirebase.isAdmin(user);
+    if (!allowed) {
+      await ECFirebase.signOut();
+      const err = document.getElementById('loginError');
+      err.textContent = 'This account is signed in but is not listed as an authorized site admin.';
+      err.style.display = 'block';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminWrap').classList.remove('visible');
+      return;
+    }
+    await unlock();
+  });
 }
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
-  const pw    = document.getElementById('pwInput').value;
-  const token = document.getElementById('tokenInput').value.trim();
-  if(pw !== PASSWORD || !token){
-    const err = document.getElementById('loginError');
-    err.style.display = 'block';
-    err.textContent = pw !== PASSWORD ? 'Incorrect password.' : 'Please paste your GitHub token.';
+  const email = document.getElementById('emailInput').value.trim();
+  const pw = document.getElementById('pwInput').value;
+  const err = document.getElementById('loginError');
+  err.style.display='none';
+  if(!email || !pw){ err.textContent='Enter your admin email and password.'; err.style.display='block'; return; }
+  setSyncState('pending','Signing in…');
+  try {
+    await ECFirebase.signIn(email,pw);
+  } catch(e){
+    console.error(e);
+    err.textContent='Login failed. Check the Firebase admin account and password.';
+    err.style.display='block';
+    setSyncState('err','Login failed');
     document.getElementById('loginBox').classList.add('login-shake');
-    setTimeout(() => document.getElementById('loginBox').classList.remove('login-shake'), 500);
-    document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').focus();
-    return;
+    setTimeout(()=>document.getElementById('loginBox').classList.remove('login-shake'),500);
   }
-  sessionStorage.setItem('ec_gh_token', token);
-  setSyncState('pending','Verifying token…');
-  const ok = await GH.testToken();
-  if(!ok){
-    const err = document.getElementById('loginError');
-    err.style.display = 'block';
-    err.textContent = 'GitHub token is invalid or lacks repo access.';
-    sessionStorage.removeItem('ec_gh_token');
-    setSyncState('err','Token invalid');
-    return;
-  }
-  sessionStorage.setItem('ec_admin','1');
-  await unlock(true);
 });
 
-document.getElementById('pwInput').addEventListener('keydown',    e => { if(e.key==='Enter') document.getElementById('tokenInput').focus(); });
-document.getElementById('tokenInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginBtn').click(); });
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem('ec_admin');
-  sessionStorage.removeItem('ec_gh_token');
-  location.reload();
-});
+document.getElementById('pwInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('pwInput').focus(); });
+document.getElementById('logoutBtn').addEventListener('click', async () => { await ECFirebase.signOut(); location.reload(); });
 
-checkAuth();
+initAuth();
+
+// ══════════════════════════════════════════════════════
+// LIVE SYNC STATUS
+// ══════════════════════════════════════════════════════
 
 // ══════════════════════════════════════════════════════
 // SYNC STATUS BAR
@@ -897,25 +795,8 @@ function escAdm(str){
 }
 
 // ══════════════════════════════════════════════════════
-// LOAD ALL FROM GITHUB
+// ADMIN RENDERING
 // ══════════════════════════════════════════════════════
-async function loadAll(){
-  setSyncState('pending','Loading from GitHub…');
-  const file = await GH.getFile();
-  if(file && file.content){
-    // Hydrate every known key; fall back to DB defaults if missing
-    Object.keys(DB).forEach(k => {
-      if(file.content[k] !== undefined) DB[k] = file.content[k];
-    });
-    setSyncState('ok','Loaded ✓');
-  } else {
-    setSyncState('err','Could not load data — refresh before saving!');
-    toastMsg('⚠️ Failed to load data from GitHub. Please refresh the page before making any changes.', true);
-    return;
-  }
-  renderAll();
-}
-
 function renderAll(){
   renderNoticesList(); renderResourcesList(); renderEventsList();
   renderAchievementsList(); renderMemoriesList();

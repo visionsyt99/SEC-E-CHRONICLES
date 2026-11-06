@@ -68,6 +68,8 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:600px){.page-hero,.notices-section{padding-left:1.25rem;padding-right:1.25rem}.notice-grid{grid-template-columns:1fr}}
   </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -84,21 +86,23 @@
     </div>
   </section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script>
 injectNav();
 
 const COLOR_CLASSES = ['nc-blue','nc-green','nc-gold','nc-red','nc-purple','nc-teal'];
 
-// _siteData holds admin data loaded from GitHub via loadSiteData()
+// _siteData holds admin data loaded from Firebase via loadSiteData()
 let _siteData = {};
 
 function renderNotices() {
   const grid = document.getElementById('noticeGrid');
-  // Prefer admin data from GitHub; fall back to localStorage
-  const notices = (_siteData.notices && _siteData.notices.length)
-    ? _siteData.notices
-    : JSON.parse(localStorage.getItem('ec_notices') || '[]');
+  // Use Firebase-backed site data with bundled JSON fallback
+  const notices = (_siteData.notices || []);
   if (!notices.length) {
     grid.innerHTML = '<div class="empty-state">No notices yet. Check back soon!</div>';
     return;
@@ -121,11 +125,12 @@ function renderNotices() {
   }).join('');
 }
 
-// Wait for GitHub admin data before rendering
+// Wait for Firebase site data before rendering
 (async function init() {
   _siteData = await loadSiteData();
   renderNotices();
 })();
+window.addEventListener('ec-data-updated', e => { _siteData = e.detail.data || _siteData; renderNotices(); });
 </script>
 </body>
 </html>

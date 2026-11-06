@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>E Chronicles — Connection Check</title></head>
+<body>
+  <main style="font:16px system-ui;max-width:720px;margin:10vh auto;padding:24px">
+    <h1>The E Chronicles connection check</h1>
+    <p id="status" role="status">Checking Firebase…</p>
+    <pre id="details" style="white-space:pre-wrap"></pre>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-client.js"></script>
+  <script>
+    (async () => {
+      const status = document.getElementById('status');
+      const details = document.getElementById('details');
+      try {
+        const result = await ECFirebase.checkConnection();
+        const data = await ECFirebase.loadSiteData(true);
+        status.textContent = 'Firebase connection successful.';
+        details.textContent = 'Project: ' + result.projectId + '\nDatabase: ' + result.database + '\nExisting siteData documents: ' + (result.siteDataHasDocuments ? 'yes' : 'not seeded yet') + '\nLoaded data sections: ' + Object.keys(data).length;
+      } catch (error) {
+        status.textContent = 'Firebase connection failed.';
+        details.textContent = error.message || String(error);
+      }
+    })();
+  </script>
+</body>
+</html>

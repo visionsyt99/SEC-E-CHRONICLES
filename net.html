@@ -775,6 +775,8 @@
     .reveal.visible { opacity:1; transform:none; }
     .reveal-delay-1 { transition-delay:.12s; }
   </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -924,6 +926,10 @@
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script src="nepali-date.js"></script>
 <script>
@@ -1383,6 +1389,7 @@ let _siteData = {};
   renderAll(data);
 })();
 </script>
-<script>injectNav();</script>
+<script>injectNav();window.addEventListener('ec-data-updated', e => { _siteData = e.detail.data || _siteData; _memberPhotos = _siteData.memberPhotos || {}; const data = buildBirthdayData(); renderTodayBanner(data); renderUpcoming(data); renderAll(data); });
+</script>
 </body>
 </html>

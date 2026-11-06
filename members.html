@@ -202,6 +202,8 @@
   .members-grid{grid-template-columns:repeat(2,1fr);gap:.7rem}
 }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -237,6 +239,10 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script>
 injectNav();
@@ -361,6 +367,7 @@ let _memberPhotos = {};
   _memberPhotos = siteData.memberPhotos || {};
   renderGrid();
 })();
+window.addEventListener('ec-data-updated', e => { _memberPhotos = (e.detail.data||{}).memberPhotos || {}; renderGrid(document.getElementById('searchInput')?.value || ''); });
 </script>
 </body>
 </html>

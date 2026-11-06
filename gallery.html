@@ -66,6 +66,8 @@
     @media(max-width:768px) { .gallery-grid{columns:2}.gallery-hero,.gallery-section{padding-left:1.25rem;padding-right:1.25rem} }
     @media(max-width:480px) { .gallery-grid{columns:1} }
   </style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="home-theme.css"/>
 </head>
 <body>
 <div class="page">
@@ -109,6 +111,10 @@
   <div class="lightbox-caption" id="lightboxCaption" style="display:none"></div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-client.js"></script>
 <script src="shared.js"></script>
 <script>
 injectNav();
@@ -189,13 +195,12 @@ document.getElementById('lightbox').addEventListener('click', function(e) {
 // ── INIT ──
 (async function init() {
   const siteData = await loadSiteData();
-  // Prefer admin gallery data from GitHub; fall back to localStorage
-  const adminPhotos = (siteData.gallery && siteData.gallery.length)
-    ? siteData.gallery
-    : JSON.parse(localStorage.getItem('ec_gallery') || '[]');
+  // Use Firebase-backed gallery data with bundled JSON fallback
+  const adminPhotos = (siteData.gallery || []);
   allPhotos = GALLERY_PHOTOS_HARDCODED.concat(adminPhotos);
   renderGallery();
 })();
+window.addEventListener('ec-data-updated', e => { const d=e.detail.data||{}; allPhotos = GALLERY_PHOTOS_HARDCODED.concat(d.gallery || []); renderGallery(); });
 </script>
 </body>
 </html>
