@@ -256,7 +256,7 @@ const STUDENT_PROFILES = {
     dob: { bsYear: 2065, bsMonth: 5, bsDay: 17, monthName: "Bhadra" }
   },
   522: {
-    photo: "https://drive.google.com/uc?export=view&id=1GRjaXQmMOXweFl_xOFODmfLvQxRt1gzr",
+    photo: "https://drive.google.com/file/d/1Pi7KF_0NdAP44qrGQnwtse1CY1KamLcB/view?usp=drivesdk",
     quote: "Let your wisdom speak, but let your humility speak louder.",
     experience: "I love you Section E. ❤️ Base for my confidence💞",
     wantsManagement: true,
