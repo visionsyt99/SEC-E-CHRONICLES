@@ -257,8 +257,8 @@ const STUDENT_PROFILES = {
   },
   522: {
     photo: "https://drive.google.com/uc?export=view&id=1GRjaXQmMOXweFl_xOFODmfLvQxRt1gzr",
-    quote: "\"Only those who dare to fail greatly can ever achieve greatly.\"",
-    experience: "I love you Section E. ❤️",
+    quote: "Let your wisdom speak, but let your humility speak louder.",
+    experience: "I love you Section E. ❤️ Base for my confidence💞",
     wantsManagement: true,
     email: "025neb522@sxc.edu.np",
     dob: { bsYear: 2066, bsMonth: 1, bsDay: 30, monthName: "Baishakh" }
@@ -298,7 +298,7 @@ const STUDENT_PROFILES = {
   531: {
     photo: "https://drive.google.com/uc?export=view&id=1CGlgmwdcBzU8-kYyn_GY3OThilZjVZJQ",
     quote: "Be good with everyone, enjoy the life and travel",
-    experience: "A1 experience.",
+    experience: "Everything chumeshwori.",
     wantsManagement: false,
     email: "025neb531@sxc.edu.np",
     dob: { bsYear: 2066, bsMonth: 6, bsDay: null, monthName: "Ashwin" }
@@ -361,8 +361,8 @@ const STUDENT_PROFILES = {
 },
    505: {
   photo: "https://drive.google.com/uc?export=view&id=1KLiotk5_A681nFz97eJP90GRDxMfmbNJ",
-  quote: "You should never dance in an music which feels comfortable because it is playing with you not you are playing with the music",
-  experience: "I feel curious to know more in my class",
+  quote: "We did not come this far to only come this far.",
+  experience: "Section E felt like I am with by best 😎 broos",
   wantsManagement: false,
   email: "025neb505@sxc.edu.np",
   dob: { bsYear: 2066, bsMonth: 9, bsDay: 24, monthName: "Poush" }
@@ -382,6 +382,22 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "shreeyanka.thapaliya@gmail.com",
   dob: { bsYear: 2067, bsMonth: 5, bsDay: 8, monthName: "Bhadra" }
+}, 
+   507: {
+  photo: "https://drive.google.com/uc?export=view&id=1XzAAxIFd6Q0gkTUIx-S50Mvz61YNE__D",
+  quote: "Mentally strong.",
+  experience: "It is just phenomenal. Helpful friends, good teachers etc. The routine of asking questions to me by Nitika ma'am will remain in my memory.",
+  wantsManagement: false,
+  email: "025neb507@sxc.edu.np",
+  dob: { bsYear: 2065, bsMonth: 5, bsDay: 18, monthName: "Bhadra" }
+},
+555: {
+  photo: "https://drive.google.com/uc?export=view&id=1enplAgzDBX_Ff6oYOrzwbP-rcUIbcva1",
+  quote: "हेर्दाहेर्दै",
+  experience: "Happiness, Friendship",
+  wantsManagement: false,
+  email: "025neb555@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 9, bsDay: 20, monthName: "Poush" }
 }
 };
 
