@@ -29,6 +29,7 @@
       <li><a href="${root}events.html">Events</a></li>
       <li><a href="${root}notices.html">Notices</a></li>
       <li><a href="${root}resources.html">Resources</a></li>
+       <li><a href="${root}quotes.html"> Quotes</a></li>
       <li><a href="${root}achievements.html">Achievements</a></li>
       <li><a href="${root}birthdays.html">Birthdays</a></li>
       <li><a href="${root}memory-wall.html">Memories</a></li>
@@ -50,10 +51,12 @@
     <a href="${root}events.html">🎉 Events</a>
     <a href="${root}notices.html">📢 Notices</a>
     <a href="${root}resources.html">📚 Resources</a>
+     <a href="${root}quotes.html">🗣️ Quotes</a>
     <a href="${root}achievements.html">🏆 Achievements</a>
     <a href="${root}birthdays.html">🎂 Birthdays</a>
     <a href="${root}memory-wall.html">💬 Memories</a>
     <a href="${root}farewell.html">💌 Farewell</a>
+   
   </div>`;
 
   // ── Inject into #nav-placeholder if it exists, otherwise prepend to body ──
