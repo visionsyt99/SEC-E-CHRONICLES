@@ -36,6 +36,7 @@ const NAV_HTML = `
     <li><a href="events.html">Events</a></li>
     <li><a href="notices.html">Notices</a></li>
     <li><a href="resources.html">Resources</a></li>
+    <li><a href="quotes.html">Quotes</a></li>
     <li><a href="achievements.html">Achievements</a></li>
     <li><a href="birthdays.html">Birthdays</a></li>
     <li><a href="memory-wall.html">Memory Wall</a></li>
