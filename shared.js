@@ -300,7 +300,7 @@ const STUDENT_PROFILES = {
     photo: "https://drive.google.com/uc?export=view&id=1CGlgmwdcBzU8-kYyn_GY3OThilZjVZJQ",
     quote: "Be good with everyone, enjoy the life and travel",
     experience: "Everything chumeshwori.",
-    wantsManagement: false,
+    wantsManagement: true,
     email: "025neb531@sxc.edu.np",
     dob: { bsYear: 2066, bsMonth: 6, bsDay: null, monthName: "Ashwin" }
   },
@@ -399,6 +399,14 @@ const STUDENT_PROFILES = {
   wantsManagement: false,
   email: "025neb555@sxc.edu.np",
   dob: { bsYear: 2066, bsMonth: 9, bsDay: 20, monthName: "Poush" }
+},
+   520: {
+  photo: "https://drive.google.com/uc?export=view&id=1pId2Ifjm0toKXysPTEiV-n-VhxT8kQFM",
+  quote: "We did not come this far to only come this far.",
+  experience: "The best section so far!",
+  wantsManagement: true,
+  email: "025neb520@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 3, bsDay: 16, monthName: "Ashadh" }
 }
 };
 
