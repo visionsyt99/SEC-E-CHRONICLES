@@ -3,20 +3,177 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Overheard in Section E — The E Chronicles</title>
+  <title>Quotes & Banter — The E Chronicles</title>
   <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="home-theme.css"/>
+  <style>
+    .page-hero {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 80% 50%, var(--gold-light), transparent 70%);
+      pointer-events: none;
+    }
+    .page-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .quotes-section { padding: 3rem 2.5rem 5rem; }
+    .quotes-inner { max-width: 1100px; margin: 0 auto; }
+
+    .quotes-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .cat-tabs { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .ctab {
+      padding: .4rem 1rem;
+      font-size: .78rem;
+      font-weight: 500;
+      border-radius: 100px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .ctab:hover, .ctab.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    .search-input {
+      padding: .45rem 1rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .82rem;
+      outline: none;
+      width: 220px;
+    }
+    .search-input:focus { border-color: var(--accent); }
+
+    .quotes-grid { columns: 3; column-gap: 1.2rem; }
+    .quote-card {
+      break-inside: avoid;
+      margin-bottom: 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+    }
+    .quote-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+    .quote-body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.12rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--text);
+      margin: .6rem 0 1rem;
+    }
+    .quote-body::before { content: '“'; color: var(--gold); font-size: 1.6rem; vertical-align: -.3rem; margin-right: .2rem; }
+    .quote-body::after { content: '”'; color: var(--gold); font-size: 1.6rem; vertical-align: -.3rem; margin-left: .2rem; }
+    .quote-meta {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: .6rem;
+      font-size: .78rem;
+    }
+    .quote-author { font-weight: 600; color: var(--text); }
+    .quote-context { font-size: .72rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+    @media (max-width: 900px) { .quotes-grid { columns: 2; } }
+    @media (max-width: 600px) { .quotes-grid { columns: 1; } }
+  </style>
 </head>
 <body>
-  <!-- Nav will inject here automatically -->
-  <div id="quote-board-root"></div>
+<div class="page">
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner reveal">
+      <div class="section-label">// Overheard in Section E</div>
+      <h1 class="section-title">Quotes & Banter</h1>
+      <p class="section-desc">Classroom one-liners, unhinged hallway debates, and lab moments from Section E.</p>
+    </div>
+  </div>
 
-  <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-  <script src="firebase-client.js"></script>
-  <script src="shared.js"></script>
-  <script src="nav-loader.js"></script>
-  <script src="quotes-board.js"></script>
+  <section class="quotes-section">
+    <div class="quotes-inner">
+      <div class="quotes-controls reveal">
+        <div class="cat-tabs" id="catTabs">
+          <button class="ctab active" data-cat="all">All</button>
+          <button class="ctab" data-cat="teachers">Teachers</button>
+          <button class="ctab" data-cat="students">Students</button>
+          <button class="ctab" data-cat="lab">Bio/Chem Lab</button>
+          <button class="ctab" data-cat="exams">Exam Panic</button>
+        </div>
+        <input type="text" id="quoteSearch" class="search-input" placeholder="Search quotes...">
+      </div>
+
+      <div class="quotes-grid" id="quotesGrid"></div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  injectNav();
+  initReveal();
+
+  const quotes = [
+    { text: "Do not dissect the frog like you are cutting chicken for momo.", speaker: "Zoology Teacher", cat: "lab", ctx: "Biology Lab 2" },
+    { text: "Exam starts in 10 minutes and you are still asking what is Chapter 3 syllabus?", speaker: "Class Rep", cat: "exams", ctx: "Hallway" },
+    { text: "If resistance is zero, current is infinite. If attendance is zero, marks are zero.", speaker: "Physics Sir", cat: "teachers", ctx: "Lecture Hall" },
+    { text: "Who has an extra white lab coat? External examiner will eat me alive.", speaker: "Backbencher", cat: "lab", ctx: "Board Practical" },
+    { text: "Nobody move, let the teacher forget we had homework due today.", speaker: "Class Whisperer", cat: "students", ctx: "Period 1" }
+  ];
+
+  function render(cat = 'all', query = '') {
+    const grid = document.getElementById('quotesGrid');
+    const filtered = quotes.filter(q => 
+      (cat === 'all' || q.cat === cat) &&
+      (!query || q.text.toLowerCase().includes(query.toLowerCase()) || q.speaker.toLowerCase().includes(query.toLowerCase()))
+    );
+    grid.innerHTML = filtered.map(q => `
+      <div class="quote-card">
+        <div class="quote-body">${q.text}</div>
+        <div class="quote-meta">
+          <span class="quote-author">— ${q.speaker}</span>
+          <span class="quote-context">${q.ctx}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('catTabs').addEventListener('click', e => {
+    if (!e.target.classList.contains('ctab')) return;
+    document.querySelectorAll('.ctab').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    render(e.target.dataset.cat, document.getElementById('quoteSearch').value);
+  });
+
+  document.getElementById('quoteSearch').addEventListener('input', e => {
+    const activeCat = document.querySelector('.ctab.active')?.dataset.cat || 'all';
+    render(activeCat, e.target.value);
+  });
+
+  render();
+</script>
 </body>
 </html>
+
