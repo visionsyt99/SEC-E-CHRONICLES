@@ -2,205 +2,1120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Gallery — The E Chronicles</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0"/>
+  <title>The Exhibition Wall — The E Chronicles</title>
   <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="home-theme.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
   <style>
-    .gallery-hero { background:var(--surface);border-bottom:1px solid var(--border);padding:3.5rem 2.5rem 3rem; }
-    .gallery-hero-inner { max-width:1100px;margin:0 auto; }
-    .gallery-section { padding:3rem 2.5rem 5rem; }
-    .gallery-inner { max-width:1100px;margin:0 auto; }
-
-    .gallery-filters { display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem; }
-    .filter-btn {
-      padding:.4rem 1rem;font-size:.78rem;font-weight:500;border-radius:100px;
-      border:1.5px solid var(--border);background:transparent;color:var(--text2);
-      cursor:pointer;transition:all .2s;
+    /* ══════════════════════════════════════════════════════
+       THEME VARIABLES: Galaxy Cosmic Dark vs. Museum Light
+       ══════════════════════════════════════════════════════ */
+    :root {
+      /* LIGHT THEME (Museum Plaster Wall) */
+      --wall-bg: #f8f6f0;
+      --header-bg: linear-gradient(180deg, #f2efe7 0%, var(--wall-bg) 100%);
+      --text-main: #1f1b16;
+      --text-sub: #6e665a;
+      --pill-bg: #eae5d8;
+      --pill-active: #ffffff;
+      --wall-shadow: rgba(28, 22, 14, 0.18);
+      --rail-gradient: linear-gradient(180deg, #d3cec1 0%, #b8b1a2 100%);
+      --baseboard-bg: linear-gradient(180deg, #dfdacf 0%, #cdc7b9 100%);
+      --floor-bar-bg: rgba(244, 241, 233, 0.94);
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --frame-halo: transparent;
     }
-    .filter-btn:hover,.filter-btn.active { border-color:var(--accent);color:var(--accent);background:var(--accent-light); }
 
-    /* Masonry grid */
-    .gallery-grid { columns:4;column-gap:1rem; }
-    .gallery-item {
-      break-inside:avoid;margin-bottom:1rem;border-radius:10px;overflow:hidden;
-      cursor:pointer;position:relative;border:1px solid var(--border);
-      background:var(--surface);
+    html.dark {
+      /* DARK THEME (Deep Galaxy & Cosmic Nebula) */
+      --wall-bg: #080912;
+      --header-bg: linear-gradient(180deg, #0d0f1e 0%, var(--wall-bg) 100%);
+      --text-main: #f3f1ed;
+      --text-sub: #9ea4bc;
+      --pill-bg: #151829;
+      --pill-active: #242944;
+      --wall-shadow: rgba(0, 0, 0, 0.7);
+      --rail-gradient: linear-gradient(180deg, #2a2e4a 0%, #151726 100%);
+      --baseboard-bg: linear-gradient(180deg, #1c2035 0%, #0d0f1b 100%);
+      --floor-bar-bg: rgba(11, 13, 23, 0.92);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --frame-halo: 0 0 35px rgba(110, 86, 207, 0.22);
     }
-    .gallery-item img { width:100%;display:block;transition:transform .35s; }
-    .gallery-item:hover img { transform:scale(1.04); }
-    .gallery-item-overlay {
-      position:absolute;inset:0;
-      background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%);
-      opacity:0;transition:opacity .25s;display:flex;align-items:flex-end;padding:.8rem;
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--wall-bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .gallery-item:hover .gallery-item-overlay { opacity:1; }
-    .gallery-item-caption { font-size:.78rem;color:#fff;font-weight:500; }
 
-    /* Loading skeleton */
-    .gallery-skeleton {
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;
+    /* ─── GALAXY STARFIELD (Canvas) ─── */
+    #galaxyCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.5s ease;
     }
-    .skeleton-item {
-      aspect-ratio:4/3;background:linear-gradient(90deg,var(--surface) 25%,var(--border) 50%,var(--surface) 75%);
-      background-size:200% 100%;animation:shimmer 1.5s infinite;
-      border-radius:10px;border:1px solid var(--border);
+    html.dark #galaxyCanvas { opacity: 1; }
+
+    /* ─── EXHIBITION ROOM HEADER ─── */
+    .exhibition-header {
+      padding: 2rem 2.5rem 1.4rem;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border-subtle);
+      position: relative;
+      z-index: 10;
     }
-    @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
-
-    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem}
-
-    .drive-note{
-      background:var(--accent-light);border:1px solid rgba(26,79,160,.2);border-radius:var(--radius);
-      padding:1rem 1.4rem;margin-bottom:2rem;font-size:.82rem;color:var(--accent);line-height:1.6;
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1.2rem;
     }
-    .drive-note code{font-family:'DM Mono',monospace;background:var(--bg2);padding:.1rem .35rem;border-radius:3px}
+    .exhibition-title-group h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+      font-weight: 700;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, var(--text-main) 60%, #c9a44c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .exhibition-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .badge-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: var(--pill-bg);
+      color: var(--text-main);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: 1px solid var(--border-subtle);
+    }
 
-    /* Lightbox */
-    .lightbox { position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:1rem; }
-    .lightbox.open { opacity:1;pointer-events:all; }
-    .lightbox img { max-width:90vw;max-height:85vh;border-radius:8px;object-fit:contain; }
-    .lightbox-close { position:absolute;top:1.5rem;right:1.5rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s; }
-    .lightbox-close:hover { background:rgba(255,255,255,.2); }
-    .lightbox-caption{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:.4rem 1rem;border-radius:100px;font-size:.8rem;white-space:nowrap}
+    /* ─── FILTER CONTROLS & ARROWS ─── */
+    .controls-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+    }
+    .filter-pills {
+      display: inline-flex;
+      background: var(--pill-bg);
+      padding: 4px;
+      border-radius: 100px;
+      gap: 4px;
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-pills::-webkit-scrollbar { display: none; }
 
-    @media(max-width:768px) { .gallery-grid{columns:2}.gallery-hero,.gallery-section{padding-left:1.25rem;padding-right:1.25rem} }
-    @media(max-width:480px) { .gallery-grid{columns:1} }
+    .f-pill {
+      border: none;
+      background: transparent;
+      padding: 0.45rem 1.05rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .f-pill:hover { color: var(--text-main); }
+    .f-pill.active {
+      background: var(--pill-active);
+      color: var(--text-main);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+
+    .scroll-arrows {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .arrow-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: var(--pill-bg);
+      color: var(--text-main);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .arrow-btn:hover {
+      transform: scale(1.08);
+      background: var(--pill-active);
+    }
+
+    /* ─── WALL STAGE ─── */
+    .wall-stage {
+      position: relative;
+      background-color: var(--wall-bg);
+      min-height: calc(100vh - 180px);
+      box-sizing: border-box;
+      padding: 3rem 0 4.5rem;
+      overflow: hidden;
+      cursor: grab;
+    }
+    .wall-stage:active { cursor: grabbing; }
+
+    .wall-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.7) 0%, transparent 45%),
+        radial-gradient(circle at 75% 35%, rgba(255,255,255,0.7) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(0,0,0,0.02) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.06) 100%);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    html.dark .wall-stage::before { opacity: 0; }
+
+    .nebula-glow {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 75% 45%, rgba(0, 191, 255, 0.14) 0%, transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(255, 20, 147, 0.12) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    html.dark .nebula-glow { opacity: 1; }
+
+    .gallery-top-rail {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: var(--rail-gradient);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 5;
+    }
+    .gallery-baseboard {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 22px;
+      background: var(--baseboard-bg);
+      border-top: 2px solid rgba(0,0,0,0.18);
+      z-index: 5;
+    }
+
+    /* ─── UNIFIED CONTAINER (DESKTOP: HORIZONTAL 2-TIER GRID) ─── */
+    .wall-scroll-container {
+      position: relative;
+      z-index: 4;
+      display: grid;
+      grid-template-rows: auto auto;
+      grid-auto-flow: column;
+      gap: 3.2rem 3.5rem;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 2rem 5rem 3.5rem 5rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .wall-scroll-container::-webkit-scrollbar { display: none; }
+
+    /* ─── ART PIECE CORE (ZERO CROPPING) ─── */
+    .art-piece {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+      user-select: none;
+      box-sizing: border-box;
+      max-width: 440px;
+    }
+    .art-piece:hover {
+      transform: translateY(-8px) scale(1.02);
+      z-index: 25;
+    }
+
+    .mat-board {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    .frame-photo {
+      display: block;
+      max-height: 280px;
+      max-width: 380px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      cursor: zoom-in;
+      background: #000;
+      transition: filter 0.2s;
+    }
+    .art-piece:hover .frame-photo { filter: brightness(1.04); }
+
+    /* ─── 1. CLASSROOM FRAME (Mahogany & Brass Filigree) ─── */
+    .frame-class {
+      background: linear-gradient(135deg, #3d1b0c 0%, #1f0b04 40%, #2f1308 100%);
+      padding: 16px;
+      border: 5px solid #130602;
+      border-radius: 4px;
+      box-shadow: 0 20px 48px -10px var(--wall-shadow), 0 8px 18px -4px rgba(0,0,0,0.3), var(--frame-halo);
+      position: relative;
+    }
+    .frame-class::before {
+      content: '';
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 22px;
+      background: repeating-linear-gradient(180deg, #c5a059 0, #c5a059 4px, #423214 4px, #423214 8px);
+    }
+    .frame-class .mat-board {
+      padding: 22px 22px 34px 22px;
+      background: #f8f6ec;
+      border: 2px double #b88d3d;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.18);
+    }
+    html.dark .frame-class .mat-board {
+      background: #14131b;
+      border-color: #d1a84f;
+    }
+    .frame-class .mat-board::before,
+    .frame-class .mat-board::after {
+      content: '❖';
+      position: absolute;
+      font-size: 0.9rem;
+      color: #b88d3d;
+      line-height: 1;
+    }
+    .frame-class .mat-board::before { top: 6px; left: 8px; }
+    .frame-class .mat-board::after { top: 6px; right: 8px; }
+
+    .frame-class .plaque {
+      position: absolute;
+      bottom: 8px;
+      background: linear-gradient(180deg, #ebd698 0%, #ba913c 50%, #8c6720 100%);
+      color: #261803;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 16px;
+      border-radius: 2px;
+      border: 1px solid #5a4110;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      max-width: 82%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ─── 2. ADVENTURE & TRIPS FRAME (Timber & Field Coordinates) ─── */
+    .frame-trips {
+      background: linear-gradient(135deg, #a48153 0%, #7d5c34 50%, #916f42 100%);
+      padding: 15px;
+      border: 4px solid #573c1c;
+      border-radius: 2px;
+      box-shadow: 0 22px 48px -10px var(--wall-shadow), 0 8px 18px -4px rgba(0,0,0,0.25), var(--frame-halo);
+      position: relative;
+    }
+    .frame-trips::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 20px;
+      border-left: 2px solid #815b31;
+      border-right: 2px solid #815b31;
+      border-top: 2px solid #815b31;
+      border-radius: 6px 6px 0 0;
+    }
+    .frame-trips .mat-board {
+      padding: 22px 22px 32px 22px;
+      background: #f1ebd8;
+      border: 2px solid #8b6b41;
+      box-shadow: inset 0 0 10px rgba(90, 68, 38, 0.2);
+    }
+    html.dark .frame-trips .mat-board {
+      background-color: #1a1a1f;
+      border-color: #725732;
+    }
+    .frame-trips .expedition-stamp {
+      position: absolute;
+      bottom: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #6b502b;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.7);
+      padding: 2px 8px;
+      border-radius: 2px;
+      border: 1px dashed #8b6b41;
+    }
+    html.dark .frame-trips .expedition-stamp {
+      color: #dfba82;
+      background: rgba(0,0,0,0.5);
+    }
+
+    /* ─── 3. EVENTS FRAME (Royal Baroque Gold) ─── */
+    .frame-events {
+      background: linear-gradient(135deg, #e3c46b 0%, #aa8428 50%, #f1d782 100%);
+      padding: 20px;
+      border: 5px double #624810;
+      border-radius: 5px;
+      box-shadow: 0 24px 50px -10px rgba(100, 75, 18, 0.4), var(--frame-halo);
+    }
+    .frame-events .mat-board {
+      padding: 22px;
+      background: #faf7ee;
+      border: 2px solid #8f6e21;
+      box-shadow: inset 0 3px 12px rgba(0,0,0,0.2);
+    }
+    html.dark .frame-events .mat-board {
+      background: #181512;
+      border-color: #e3c46b;
+    }
+
+    /* ─── 4. FUN TIMES (Polaroid & Washi Tape) ─── */
+    .frame-fun {
+      background: #ffffff;
+      padding: 12px 12px 34px 12px;
+      border: 1px solid #ddd7cb;
+      border-radius: 3px;
+      box-shadow: 0 16px 36px -8px rgba(0,0,0,0.18), var(--frame-halo);
+      position: relative;
+    }
+    html.dark .frame-fun {
+      background: #1a1c29;
+      border-color: #2e334d;
+    }
+    .frame-fun::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 30%;
+      width: 60px;
+      height: 20px;
+      background: rgba(228, 198, 118, 0.85);
+      backdrop-filter: blur(2px);
+      transform: rotate(-3deg);
+      border-left: 2px dashed rgba(255,255,255,0.4);
+      border-right: 2px dashed rgba(255,255,255,0.4);
+    }
+    html.dark .frame-fun::after {
+      background: rgba(142, 94, 255, 0.8);
+    }
+    .frame-fun .caption-handwritten {
+      position: absolute;
+      bottom: 8px;
+      left: 12px;
+      right: 12px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: #2b2723;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    html.dark .frame-fun .caption-handwritten { color: #e5e3de; }
+
+    .tilt-left { transform: rotate(-1.4deg); }
+    .tilt-right { transform: rotate(1.2deg); }
+    .tilt-straight { transform: rotate(0deg); }
+
+    /* ─── FLOOR PROGRESS INDICATOR ─── */
+    .gallery-floor-bar {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--floor-bar-bg);
+      backdrop-filter: blur(10px);
+      padding: 0.8rem 2.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+    .progress-track {
+      flex: 1;
+      max-width: 520px;
+      height: 5px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin: 0 1.5rem;
+      overflow: hidden;
+    }
+    html.dark .progress-track { background: rgba(255,255,255,0.12); }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #c9a44c;
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       OPTIMIZED MOBILE STYLES (≤ 768px)
+       ══════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .exhibition-header {
+        padding: 1.4rem 1.25rem 1rem;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.9rem;
+      }
+      .controls-wrap {
+        width: 100%;
+      }
+      .filter-pills {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .f-pill {
+        padding: 0.4rem 0.85rem;
+        font-size: 0.76rem;
+      }
+      .scroll-arrows {
+        display: none; /* Desktop only */
+      }
+
+      .wall-stage {
+        padding: 1.5rem 0 3.5rem;
+        cursor: default;
+      }
+
+      /* Single sequential vertical column */
+      .wall-scroll-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+        overflow-x: hidden;
+        overflow-y: visible;
+        padding: 1rem 1rem 3rem;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Compact responsive frame padding so photo remains king */
+      .art-piece {
+        max-width: 94vw;
+        width: auto;
+      }
+      .art-piece:hover {
+        transform: none; /* Disable hover jumps on touch devices */
+      }
+
+      .frame-photo {
+        max-height: 55vh;
+        max-width: calc(92vw - 28px);
+      }
+
+      /* Slimmer frames for small screens */
+      .frame-class {
+        padding: 10px;
+        border-width: 3px;
+      }
+      .frame-class::before {
+        top: -14px;
+        height: 14px;
+      }
+      .frame-class .mat-board {
+        padding: 12px 12px 30px 12px;
+      }
+      .frame-class .plaque {
+        font-size: 0.65rem;
+        padding: 3px 12px;
+      }
+
+      .frame-trips {
+        padding: 10px;
+        border-width: 3px;
+      }
+      .frame-trips::before {
+        top: -14px;
+        height: 14px;
+        width: 36px;
+      }
+      .frame-trips .mat-board {
+        padding: 12px 12px 28px 12px;
+      }
+      .frame-trips .expedition-stamp {
+        font-size: 0.62rem;
+        padding: 2px 6px;
+      }
+
+      .frame-events {
+        padding: 12px;
+        border-width: 4px;
+      }
+      .frame-events .mat-board {
+        padding: 12px;
+      }
+
+      .frame-fun {
+        padding: 8px 8px 28px 8px;
+      }
+      .frame-fun::after {
+        top: -8px;
+        width: 50px;
+        height: 16px;
+      }
+      .frame-fun .caption-handwritten {
+        font-size: 0.85rem;
+      }
+
+      .gallery-floor-bar {
+        display: none;
+      }
+    }
+
+    /* ─── FULLSCREEN LIGHTBOX ─── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(8, 9, 15, 0.96);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 1rem;
+      box-sizing: border-box;
+      touch-action: pan-y;
+    }
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox-frame-wrap {
+      position: relative;
+      max-width: 95vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-frame-wrap img {
+      max-width: 92vw;
+      max-height: 72vh;
+      object-fit: contain;
+      border: 6px solid #ffffff;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.85);
+      border-radius: 4px;
+    }
+    .lightbox-caption-box {
+      margin-top: 1rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 0.5rem 1.4rem;
+      border-radius: 100px;
+      color: #f2efe9;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      max-width: 90vw;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      transition: background 0.2s;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.3); }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+    .lightbox-close-btn {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    @media (max-width: 600px) {
+      .lightbox-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        background: rgba(255,255,255,0.25);
+      }
+      .lightbox-prev { left: 0.5rem; }
+      .lightbox-next { right: 0.5rem; }
+      .lightbox-frame-wrap img {
+        border-width: 4px;
+        max-height: 65vh;
+      }
+    }
+
+    /* Skeleton Placeholder */
+    .skeleton-wall {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2.5rem 1rem;
+    }
+    .skeleton-frame {
+      width: 260px;
+      height: 220px;
+      background: var(--pill-bg);
+      border: 6px solid var(--border-subtle);
+      border-radius: 4px;
+      animation: pulse 1.6s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.9; }
+    }
   </style>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="home-theme.css"/>
 </head>
+
 <body>
 <div class="page">
-  <div class="gallery-hero">
-    <div class="gallery-hero-inner reveal">
-      <div class="section-label">// Our memories</div>
-      <h1 class="section-title">Gallery</h1>
-      <p class="section-desc">Photos from Section E's journey — classes, events, trips, and everyday moments.</p>
+  <!-- Exhibition Room Header -->
+  <header class="exhibition-header">
+    <div class="header-inner">
+      <div class="exhibition-title-group">
+        <div class="exhibition-subtitle">
+          <span>St. Xavier's College • Section E</span>
+          <span class="badge-pill">Exhibition Wall</span>
+        </div>
+        <h1>The Memory Gallery</h1>
+      </div>
+
+      <div class="controls-wrap">
+        <div class="filter-pills" id="filterPills">
+          <button class="f-pill active" data-cat="all">All Frames</button>
+          <button class="f-pill" data-cat="class">Classroom</button>
+          <button class="f-pill" data-cat="trips">Trips & Excursions</button>
+          <button class="f-pill" data-cat="fun">Fun & Candids</button>
+          <button class="f-pill" data-cat="events">Events</button>
+        </div>
+
+        <div class="scroll-arrows">
+          <button class="arrow-btn" id="scrollLeftBtn" title="Scroll Left">‹</button>
+          <button class="arrow-btn" id="scrollRightBtn" title="Scroll Right">›</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- The Gallery Wall -->
+  <main class="wall-stage" id="wallStage">
+    <canvas id="galaxyCanvas"></canvas>
+    <div class="nebula-glow"></div>
+    <div class="gallery-top-rail"></div>
+    <div class="gallery-baseboard"></div>
+
+    <div id="loadingSkeleton" class="skeleton-wall">
+      <div class="skeleton-frame"></div>
+      <div class="skeleton-frame"></div>
+      <div class="skeleton-frame"></div>
+    </div>
+
+    <!-- Unified Sequential Stream -->
+    <div class="wall-scroll-container" id="scrollContainer" style="display:none;"></div>
+
+    <div id="emptyMsg" style="display:none; text-align:center; padding: 5rem 1.5rem; color: var(--text-sub); font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-style:italic;">
+      No framed memories found in this collection.
+    </div>
+  </main>
+
+  <!-- Floor Progress Bar (Desktop) -->
+  <footer class="gallery-floor-bar">
+    <span id="photoCounter">159 Artworks on Display</span>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <span>Swipe or drag horizontally • Tap photo to inspect</span>
+  </footer>
+</div>
+
+<!-- Spotlight Modal Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close-btn" id="lightboxClose">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
+
+  <div class="lightbox-frame-wrap" id="lightboxWrap">
+    <img id="lightboxImg" src="" alt="Exhibition Photo"/>
+    <div class="lightbox-caption-box">
+      <span id="lightboxCategory" class="badge-pill">ARCHIVE</span>
+      <span id="lightboxCaption"></span>
     </div>
   </div>
-
-  <section class="gallery-section">
-    <div class="gallery-inner">
-
-      
-
-      <div class="gallery-filters reveal" id="filterBtns">
-        <button class="filter-btn active" data-cat="all">All Photos</button>
-        <button class="filter-btn" data-cat="class">Classroom</button>
-        <button class="filter-btn" data-cat="events">Events</button>
-        <button class="filter-btn" data-cat="trips">Trips</button>
-        <button class="filter-btn" data-cat="fun">Fun Times</button>
-      </div>
-
-      <div id="skeletonGrid" class="gallery-skeleton reveal">
-        <div class="skeleton-item"></div><div class="skeleton-item"></div>
-        <div class="skeleton-item"></div><div class="skeleton-item"></div>
-        <div class="skeleton-item"></div><div class="skeleton-item"></div>
-      </div>
-
-      <div class="gallery-grid reveal reveal-delay-1" id="galleryGrid" style="display:none"></div>
-      <div id="emptyState" class="empty-state" style="display:none">No photos added yet. Upload via the admin panel!</div>
-
-    </div>
-  </section>
 </div>
 
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose">✕</button>
-  <img id="lightboxImg" src="" alt=""/>
-  <div class="lightbox-caption" id="lightboxCaption" style="display:none"></div>
-</div>
-
+<!-- Scripts -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="firebase-client.js"></script>
 <script src="shared.js"></script>
+
 <script>
-injectNav();
+// Mount standard site navigation
+if (typeof injectNav === 'function') injectNav();
 
-// ════════════════════════════════════════════
-// GALLERY PHOTOS — Add Drive file IDs here
-// Each: { id: "DRIVE_FILE_ID", cat: "class|events|trips|fun", caption: "Caption" }
-// Photos also auto-load from ec_gallery localStorage (set via admin panel)
-// ════════════════════════════════════════════
-const GALLERY_PHOTOS_HARDCODED = [
-  // { id: "GOOGLE_DRIVE_FILE_ID", cat: "events", caption: "Sports Day 2025" },
-];
-
+// Drive thumbnail generator
 function driveUrl(id, size) {
-  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size||'w800');
+  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=' + (size || 'w800');
 }
 
 let allPhotos = [];
+let filteredPhotos = [];
 let currentCat = 'all';
+let currentLightboxIdx = 0;
 
-function renderGallery() {
-  const grid = document.getElementById('galleryGrid');
-  const empty = document.getElementById('emptyState');
-  const filtered = currentCat === 'all' ? allPhotos : allPhotos.filter(p => p.cat === currentCat);
+const scrollContainer = document.getElementById('scrollContainer');
+const progressFill = document.getElementById('progressFill');
+const photoCounter = document.getElementById('photoCounter');
 
-  document.getElementById('skeletonGrid').style.display = 'none';
+// ─── GALAXY CANVAS (Mobile battery friendly) ───
+const canvas = document.getElementById('galaxyCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
 
-  if (!allPhotos.length) {
-    grid.style.display = 'none';
-    empty.style.display = 'block';
-    return;
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+  initStars();
+}
+window.addEventListener('resize', resizeCanvas);
+
+function initStars() {
+  stars = [];
+  const isMobile = window.innerWidth <= 768;
+  const count = isMobile ? 35 : Math.floor((canvas.width * canvas.height) / 5000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.3 + 0.3,
+      alpha: Math.random(),
+      speed: Math.random() * 0.015 + 0.005,
+      hue: Math.random() > 0.8 ? (Math.random() > 0.5 ? 280 : 190) : 0
+    });
   }
-  empty.style.display = 'none';
-  grid.style.display = 'block';
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div style="color:var(--text3);font-size:.85rem;font-style:italic;padding:2rem 0">No photos in this category yet.</div>';
-    return;
-  }
-
-  grid.innerHTML = filtered.map(function(p) {
-    var imgSrc = p.base64
-      ? 'data:image/jpeg;base64,' + p.base64
-      : driveUrl(p.id);
-    return '<div class="gallery-item" onclick="openLightbox(\'' + p.id + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\',' + (p.base64?'true':'false') + ',\'' + (p.base64||'') + '\')">' +
-      '<img src="' + imgSrc + '" alt="' + (p.caption||'Photo') + '" loading="lazy"/>' +
-      '<div class="gallery-item-overlay"><div class="gallery-item-caption">' + (p.caption||'') + '</div></div>' +
-      '</div>';
-  }).join('');
 }
 
-// Filter buttons
-document.getElementById('filterBtns').addEventListener('click', function(e) {
-  var btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
-  currentCat = btn.dataset.cat;
-  renderGallery();
+function animateGalaxy() {
+  if (document.documentElement.classList.contains('dark')) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.alpha += s.speed;
+      if (s.alpha > 1 || s.alpha < 0.1) s.speed = -s.speed;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctx.fillStyle = s.hue 
+        ? `hsla(${s.hue}, 90%, 75%, ${s.alpha})`
+        : `rgba(255, 255, 255, ${s.alpha * 0.85})`;
+      ctx.fill();
+    });
+  }
+  requestAnimationFrame(animateGalaxy);
+}
+resizeCanvas();
+animateGalaxy();
+
+// ─── RENDER THE ART WALL (UNIFIED SEQUENTIAL FLOW) ───
+function renderWall() {
+  document.getElementById('loadingSkeleton').style.display = 'none';
+
+  filteredPhotos = currentCat === 'all' 
+    ? allPhotos 
+    : allPhotos.filter(p => p.cat === currentCat);
+
+  if (!filteredPhotos.length) {
+    scrollContainer.style.display = 'none';
+    document.getElementById('emptyMsg').style.display = 'block';
+    photoCounter.textContent = '0 Frames';
+    return;
+  }
+
+  document.getElementById('emptyMsg').style.display = 'none';
+  scrollContainer.style.display = window.innerWidth <= 768 ? 'flex' : 'grid';
+  photoCounter.textContent = filteredPhotos.length + ' Frames on Exhibition';
+
+  scrollContainer.innerHTML = '';
+
+  const tilts = ['tilt-left', 'tilt-straight', 'tilt-right', 'tilt-straight'];
+
+  filteredPhotos.forEach((photo, idx) => {
+    const imgSrc = photo.base64 
+      ? 'data:image/jpeg;base64,' + photo.base64 
+      : driveUrl(photo.id, 'w800');
+
+    const cat = photo.cat || 'fun';
+    const caption = photo.caption || '';
+    const tilt = tilts[idx % tilts.length];
+
+    let frameClass = 'frame-fun ' + tilt;
+    let plaqueHtml = '';
+
+    if (cat === 'class') {
+      frameClass = 'frame-class';
+      plaqueHtml = '<div class="plaque">' + (caption || 'SECTION E CLASSROOM') + '</div>';
+    } else if (cat === 'trips') {
+      frameClass = 'frame-trips';
+      plaqueHtml = '<div class="expedition-stamp">' + (caption || '27°42\'N • 85°19\'E EXPEDITION') + '</div>';
+    } else if (cat === 'events') {
+      frameClass = 'frame-events';
+      if (caption) plaqueHtml = '<div style="margin-top:8px;font-family:\'Cinzel\',serif;font-size:0.75rem;font-weight:700;color:#8f6e21;text-align:center;letter-spacing:0.06em;">' + caption + '</div>';
+    } else {
+      if (caption) plaqueHtml = '<div class="caption-handwritten">' + caption + '</div>';
+    }
+
+    const itemHtml = document.createElement('div');
+    itemHtml.className = 'art-piece ' + frameClass;
+    itemHtml.onclick = () => openLightbox(idx);
+
+    itemHtml.innerHTML = `
+      <div class="mat-board">
+        <img class="frame-photo" src="${imgSrc}" alt="${caption || 'Section E Memory'}" loading="lazy" decoding="async"/>
+        ${plaqueHtml}
+      </div>
+    `;
+
+    scrollContainer.appendChild(itemHtml);
+  });
+
+  updateProgress();
+}
+
+// ─── SCROLL & CONTROLS ───
+function updateProgress() {
+  const max = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+  if (max > 0) {
+    const pct = Math.min(100, Math.max(0, (scrollContainer.scrollLeft / max) * 100));
+    progressFill.style.width = pct + '%';
+  } else {
+    progressFill.style.width = '100%';
+  }
+}
+scrollContainer.addEventListener('scroll', updateProgress);
+
+document.getElementById('scrollLeftBtn').addEventListener('click', () => {
+  scrollContainer.scrollBy({ left: -650, behavior: 'smooth' });
+});
+document.getElementById('scrollRightBtn').addEventListener('click', () => {
+  scrollContainer.scrollBy({ left: 650, behavior: 'smooth' });
 });
 
-// Lightbox
-function openLightbox(id, caption, isBase64, base64Data) {
-  var src = isBase64 ? 'data:image/jpeg;base64,' + base64Data : driveUrl(id, 'w1200');
+// Click and drag pan on desktop
+let isDown = false;
+let startX;
+let scrollStart;
+
+scrollContainer.addEventListener('mousedown', (e) => {
+  if (window.innerWidth <= 768) return;
+  isDown = true;
+  startX = e.pageX - scrollContainer.offsetLeft;
+  scrollStart = scrollContainer.scrollLeft;
+});
+window.addEventListener('mouseup', () => { isDown = false; });
+scrollContainer.addEventListener('mousemove', (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - scrollContainer.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  scrollContainer.scrollLeft = scrollStart - walk;
+});
+
+// ─── FILTER TABS ───
+document.getElementById('filterPills').addEventListener('click', (e) => {
+  const pill = e.target.closest('.f-pill');
+  if (!pill) return;
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  currentCat = pill.dataset.cat;
+  renderWall();
+  scrollContainer.scrollLeft = 0;
+});
+
+// ─── LIGHTBOX WITH MOBILE SWIPE GESTURES ───
+function openLightbox(idx) {
+  currentLightboxIdx = idx;
+  const photo = filteredPhotos[idx];
+  if (!photo) return;
+
+  const src = photo.base64 
+    ? 'data:image/jpeg;base64,' + photo.base64 
+    : driveUrl(photo.id, 'w1200');
+
   document.getElementById('lightboxImg').src = src;
-  var capEl = document.getElementById('lightboxCaption');
-  if(caption) { capEl.textContent = caption; capEl.style.display='block'; }
-  else capEl.style.display='none';
+  document.getElementById('lightboxCategory').textContent = (photo.cat || 'Archive').toUpperCase();
+  document.getElementById('lightboxCaption').textContent = photo.caption || 'Section E Memory';
   document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-document.getElementById('lightboxClose').addEventListener('click', function() {
+
+function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function nextLightbox(delta) {
+  if (!filteredPhotos.length) return;
+  currentLightboxIdx = (currentLightboxIdx + delta + filteredPhotos.length) % filteredPhotos.length;
+  openLightbox(currentLightboxIdx);
+}
+
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightboxPrev').addEventListener('click', (e) => {
+  e.stopPropagation();
+  nextLightbox(-1);
 });
-document.getElementById('lightbox').addEventListener('click', function(e) {
-  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+document.getElementById('lightboxNext').addEventListener('click', (e) => {
+  e.stopPropagation();
+  nextLightbox(1);
+});
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeLightbox();
 });
 
-// ── INIT ──
+// Touch swipe support on mobile lightbox
+let touchStartX = 0;
+let touchEndX = 0;
+const lb = document.getElementById('lightbox');
+
+lb.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+lb.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const diff = touchEndX - touchStartX;
+  if (Math.abs(diff) > 50) {
+    if (diff < 0) nextLightbox(1);  // Swiped left
+    else nextLightbox(-1);          // Swiped right
+  }
+}, { passive: true });
+
+window.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') nextLightbox(1);
+  if (e.key === 'ArrowLeft') nextLightbox(-1);
+});
+
+// Handle screen orientation/resize dynamically
+window.addEventListener('resize', () => {
+  if (scrollContainer.style.display !== 'none') {
+    scrollContainer.style.display = window.innerWidth <= 768 ? 'flex' : 'grid';
+  }
+});
+
+// ─── INITIALIZATION ───
 (async function init() {
-  const siteData = await loadSiteData();
-  // Use Firebase-backed gallery data with bundled JSON fallback
-  const adminPhotos = (siteData.gallery || []);
-  allPhotos = GALLERY_PHOTOS_HARDCODED.concat(adminPhotos);
-  renderGallery();
+  try {
+    const siteData = typeof loadSiteData === 'function' ? await loadSiteData() : {};
+    allPhotos = siteData.gallery || [];
+  } catch (err) {
+    try {
+      const res = await fetch('data/ec-data.json');
+      const d = await res.json();
+      allPhotos = d.gallery || [];
+    } catch (e) {
+      console.error('Failed to load gallery data', e);
+    }
+  }
+  renderWall();
 })();
-window.addEventListener('ec-data-updated', e => { const d=e.detail.data||{}; allPhotos = GALLERY_PHOTOS_HARDCODED.concat(d.gallery || []); renderGallery(); });
+
+window.addEventListener('ec-data-updated', (e) => {
+  const d = e.detail.data || {};
+  allPhotos = d.gallery || [];
+  renderWall();
+});
 </script>
 </body>
 </html>
