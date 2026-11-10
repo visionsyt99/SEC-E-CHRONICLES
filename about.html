@@ -575,10 +575,24 @@ body::after {
   color: var(--border); pointer-events: none; letter-spacing: -.06em;
 }
 .tc-avatar {
-  width: 88px; height: 88px; border-radius: 50%;
+  width: 112px; height: 112px; min-width: 112px;
+  border-radius: 50%; overflow: hidden;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: 3px solid var(--border2);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem; font-weight: 800; color: #fff; position: relative; z-index: 1;
+  font-size: 1.8rem; font-weight: 800; color: #fff;
+  position: relative; z-index: 1;
+  box-shadow: 0 12px 35px rgba(0,0,0,.18), 0 0 0 6px var(--glow);
+}
+.tc-avatar img {
+  width: 100%; height: 100%; display: block;
+  object-fit: cover; object-position: center;
+  border-radius: 50%;
+}
+.tc-avatar .tc-avatar-fallback {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1.8rem; font-weight: 800;
 }
 .tc-name { font-size: 1.5rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; color: var(--text); position: relative; z-index: 1; }
 .tc-role {
@@ -784,7 +798,7 @@ footer {
   .tl-card { padding: 1.2rem 1.4rem; }
 
   .tc-left { padding: 1.5rem; }
-  .tc-avatar { width: 72px; height: 72px; font-size: 1.5rem; }
+  .tc-avatar { width: 88px; height: 88px; min-width: 88px; }
   .tc-name { font-size: 1.3rem; }
   .tc-right { padding: 1.5rem; }
 
@@ -1073,7 +1087,16 @@ footer {
     <div class="lbl sr" style="margin-bottom:2rem">Our Guide</div>
     <div class="tc-card sr d1">
       <div class="tc-left">
-        <div class="tc-avatar">RR</div>
+        <div class="tc-avatar">
+          <!-- Replace YOUR_FILE_ID with the ID from your Google Drive image link. -->
+          <img
+            src="https://drive.google.com/thumbnail?id=YOUR_FILE_ID&sz=w1200"
+            alt="Mr. Rudra Rai, Class Teacher of Section E"
+            loading="lazy"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <span class="tc-avatar-fallback" style="display:none">RR</span>
+        </div>
         <div>
           <div class="tc-name">Mr. Rudra Rai</div>
           <div class="tc-role">Class Teacher · Section E · 2025–2027</div>
