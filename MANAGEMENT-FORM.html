@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b16">
+<title>Website Management | Section E Chronicles</title>
+<meta name="description" content="Official Section E Website Management Team Application">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #080b16;
+  --panel: rgba(19, 25, 43, .88);
+  --panel2: #11182a;
+  --line: rgba(255,255,255,.10);
+  --text: #f4f6ff;
+  --muted: #9ba6bd;
+  --accent: #a7ebf2;
+  --accent2: #54acbf;
+  --danger: #ff8585;
+  --success: #83e0b0;
+  --radius: 22px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 28px 16px 60px;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 12% 5%, rgba(84,172,191,.16), transparent 36%),
+    radial-gradient(ellipse at 90% 75%, rgba(38,101,140,.18), transparent 38%),
+    var(--bg);
+  font-family: "DM Sans", sans-serif;
+}
+
+button, input, textarea, select { font: inherit; }
+
+.page { width: 100%; max-width: 760px; margin: auto; }
+
+.topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(167,235,242,.4);
+  border-radius: 12px;
+  color: var(--accent);
+  background: rgba(84,172,191,.10);
+}
+
+.back-link {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.back-link:hover { color: var(--accent); }
+
+.hero { margin: 34px 0 27px; }
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 13px 0 12px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(36px, 7vw, 57px);
+  line-height: 1.08;
+  letter-spacing: -.8px;
+}
+
+h1 span { color: var(--accent); }
+
+.hero p {
+  max-width: 570px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.motto {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 9px 13px;
+  border: 1px solid rgba(167,235,242,.2);
+  border-radius: 10px;
+  color: var(--accent);
+  background: rgba(84,172,191,.07);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.progress-card {
+  margin: 25px 0 17px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: rgba(255,255,255,.035);
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255,255,255,.09);
+}
+
+.progress-fill {
+  width: 50%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  transition: width .35s ease;
+}
+
+.step-card {
+  padding: clamp(20px, 5vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: 0 24px 80px rgba(0,0,0,.24);
+  backdrop-filter: blur(18px);
+}
+
+.step { display: none; }
+.step.active { display: block; animation: appear .35s ease; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-number {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+h2 {
+  margin: 9px 0 8px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(25px, 5vw, 33px);
+}
+
+.section-desc {
+  margin: 0 0 27px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.field { margin: 0 0 23px; }
+
+label, .field-title {
+  display: block;
+  margin-bottom: 9px;
+  color: #e9eef9;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.required { color: var(--accent); }
+
+input, select, textarea {
+  width: 100%;
+  padding: 15px 15px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  outline: none;
+  color: var(--text);
+  background: #0c1221;
+  font-size: 13px;
+  transition: border .2s, box-shadow .2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(84,172,191,.12);
+}
+
+input::placeholder, textarea::placeholder { color: #68758e; }
+
+select { appearance: none; cursor: pointer; }
+select option { background: #10182a; color: white; }
+
+textarea {
+  min-height: 125px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: #8491a9;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.info-box {
+  margin: 15px 0 23px;
+  padding: 15px;
+  border: 1px solid rgba(167,235,242,.17);
+  border-radius: 13px;
+  background: rgba(84,172,191,.065);
+  color: #c5d5e5;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.scenario {
+  margin: 13px 0 15px;
+  padding: 18px;
+  border-left: 3px solid var(--accent2);
+  border-radius: 0 12px 12px 0;
+  background: rgba(84,172,191,.075);
+  color: #e3edf7;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 60px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #0c1221;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--accent2);
+  background: rgba(84,172,191,.10);
+}
+
+.choice input {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--accent2);
+}
+
+.choice span {
+  color: #dce5f4;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255,255,255,.035);
+}
+
+.confirmation input {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  margin: 2px 0 0;
+  accent-color: var(--accent2);
+}
+
+.confirmation span {
+  color: #cbd5e5;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.review-list {
+  display: grid;
+  gap: 0;
+  margin: 20px 0;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: 38% 62%;
+  gap: 10px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.review-row:last-child { border-bottom: 0; }
+.review-label { color: var(--muted); }
+.review-value { color: #f2f5fc; overflow-wrap: anywhere; }
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn {
+  min-height: 48px;
+  padding: 0 21px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: rgba(255,255,255,.05);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn:hover { transform: translateY(-1px); border-color: var(--accent2); }
+
+.btn-primary {
+  border-color: transparent;
+  color: #06141a;
+  background: linear-gradient(110deg, var(--accent), var(--accent2));
+}
+
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+.footer {
+  margin-top: 22px;
+  color: #738097;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: .5px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2,5,12,.82);
+  backdrop-filter: blur(12px);
+}
+
+.modal {
+  width: 100%;
+  max-width: 440px;
+  padding: 35px 25px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #111a2b;
+  text-align: center;
+  box-shadow: 0 25px 90px rgba(0,0,0,.5);
+}
+
+.success-icon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 19px;
+  border: 1px solid rgba(131,224,176,.4);
+  border-radius: 50%;
+  color: var(--success);
+  background: rgba(131,224,176,.10);
+  font-size: 28px;
+}
+
+.modal h2 { font-size: 29px; }
+.modal p { color: var(--muted); font-size: 13px; line-height: 1.8; }
+.modal .btn { width: 100%; margin-top: 12px; }
+
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  max-width: calc(100% - 36px);
+  padding: 14px 18px;
+  border: 1px solid rgba(255,133,133,.3);
+  border-radius: 12px;
+  color: #fff;
+  background: #291820;
+  font-size: 12px;
+  display: none;
+}
+
+@media(max-width: 540px) {
+  body { padding: 18px 12px 40px; }
+  .hero { margin-top: 26px; }
+  .step-card { padding: 22px 17px; }
+  .choice-grid { grid-template-columns: 1fr; }
+  .actions { flex-direction: column-reverse; }
+  .actions .btn { width: 100%; }
+  .review-row { grid-template-columns: 1fr; gap: 3px; }
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+
+  <header class="topline">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <span>THE E CHRONICLES</span>
+    </div>
+    <a class="back-link" href="index.html">← Return to Website</a>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">SECTION E · OFFICIAL APPLICATION</div>
+    <h1>Website Management<br><span>Team.</span></h1>
+    <p>
+      Behind every great digital experience is a team that cares about
+      the details. Join the people who maintain, improve and shape
+      the digital home of Section E.
+    </p>
+    <div class="motto">LET'S MAKE IT A GRAND SUCCESS.</div>
+  </section>
+
+  <div class="progress-card">
+    <div class="progress-top">
+      <span id="progressLabel">Section 01 — Applicant Details</span>
+      <span id="progressPercent">50%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <form id="managementForm" class="step-card" novalidate>
+
+    <!-- SECTION 1 -->
+    <section class="step active" id="step1">
+      <div class="section-number">SECTION 01 OF 02</div>
+      <h2>Applicant Identity</h2>
+      <p class="section-desc">
+        Start with the basics. Tell us who you are and what you can bring
+        to the team.
+      </p>
+
+      <div class="field">
+        <label for="name">Full Name <span class="required">*</span></label>
+        <input id="name" name="name" type="text" maxlength="100"
+          placeholder="Enter your full name" autocomplete="name" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Personal Email Address <span class="required">*</span></label>
+        <input id="email" name="email" type="email" maxlength="120"
+          placeholder="yourname@gmail.com" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label for="roll">Roll Number <span class="required">*</span></label>
+        <input id="roll" name="roll" type="text" inputmode="numeric"
+          maxlength="3" placeholder="e.g. 501" required>
+        <p class="hint">Enter your official Section E roll number.</p>
+      </div>
+
+      <div class="field">
+        <label>Section</label>
+        <input type="text" value="Section E" readonly
+          style="color:var(--accent);font-weight:800;">
+      </div>
+
+      <div class="field">
+        <label for="department">Preferred Management Department <span class="required">*</span></label>
+        <select id="department" name="department" required>
+          <option value="">Select your preferred department</option>
+          <option>Web Development & Technical</option>
+          <option>UI/UX & Creative Design</option>
+          <option>Content & Editorial</option>
+          <option>Data Management & Archive</option>
+          <option>Quality Assurance & Testing</option>
+          <option>Open to Any Department</option>
+        </select>
+        <p class="hint">Your preference will be considered during team allocation.</p>
+      </div>
+
+      <div class="field">
+        <label for="experience">Experience & Skills <span class="required">*</span></label>
+        <textarea id="experience" name="experience" maxlength="1500"
+          placeholder="Tell us about your previous experience, projects, technical skills, design abilities, tools you know, or any relevant responsibilities..."
+          required></textarea>
+        <p class="hint">You can mention experience even if it comes from personal projects or self-learning.</p>
+      </div>
+
+      <div class="actions">
+        <span></span>
+        <button class="btn btn-primary" type="button" id="nextBtn">
+          Continue to Section 02 →
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="step" id="step2">
+      <div class="section-number">SECTION 02 OF 02</div>
+      <h2>Commitment & Initiative</h2>
+      <p class="section-desc">
+        This is not a full-time position. We simply need people who are
+        dependable and ready to contribute when needed.
+      </p>
+
+      <div class="info-box">
+        This is not a huge commitment requiring dedicated daily work hours.
+        However, team members should be reasonably available when important
+        updates, technical issues or announcements require attention.
+      </div>
+
+      <div class="field">
+        <div class="field-title">Weekly Time Commitment <span class="required">*</span></div>
+        <div class="choice-grid">
+          <label class="choice">
+            <input type="radio" name="hours" value="1–2 hours" required>
+            <span>1–2 hours per week</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="hours" value="3–5 hours">
+            <span>3–5 hours per week</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="hours" value="5–7 hours">
+            <span>5–7 hours per week</span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="hours" value="Flexible — when needed">
+            <span>Flexible — available when needed</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Problem-Solving Scenario <span class="required">*</span></label>
+        <div class="scenario">
+          Imagine a page layout completely breaks on mobile view right
+          before an important announcement needs to go live. You can't
+          reach the head coordinator. What steps do you take?
+        </div>
+        <textarea id="scenarioAnswer" name="scenarioAnswer" maxlength="2500"
+          placeholder="Explain how you would assess the issue, prioritize the problem, communicate and work toward a solution..."
+          required></textarea>
+        <p class="hint">We are interested in your approach, judgement and communication — not just technical knowledge.</p>
+      </div>
+
+      <div class="field">
+        <label for="motivation">Why do you want to join the Website Management Team? <span class="required">*</span></label>
+        <textarea id="motivation" name="motivation" maxlength="1500"
+          placeholder="What motivates you to contribute to the digital presence of Section E?"
+          required></textarea>
+      </div>
+
+      <div class="field">
+        <label for="additional">Anything else you would like us to know? <span style="color:var(--muted);font-weight:400;">(Optional)</span></label>
+        <textarea id="additional" name="additional" maxlength="1000"
+          placeholder="Share any additional ideas, interests or information..."></textarea>
+      </div>
+
+      <div class="field">
+        <label class="confirmation">
+          <input type="checkbox" id="confirmation" required>
+          <span>
+            I understand that joining the Website Management Team involves
+            responsibility, teamwork and reasonable availability when
+            required. I confirm that the information provided is accurate.
+            <span class="required">*</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="backBtn">← Previous</button>
+        <button class="btn btn-primary" type="button" id="reviewBtn">
+          Review Application →
+        </button>
+      </div>
+    </section>
+
+    <!-- REVIEW -->
+    <section class="step" id="reviewStep">
+      <div class="section-number">FINAL REVIEW</div>
+      <h2>One Last Look.</h2>
+      <p class="section-desc">
+        Review your application carefully before submitting it.
+      </p>
+
+      <div class="review-list" id="reviewList"></div>
+
+      <div class="info-box">
+        By submitting, you confirm that these details are correct.
+        Your application will be recorded for review by the Section E
+        Website Management coordinators.
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="editBtn">← Edit Application</button>
+        <button class="btn btn-primary" type="submit" id="submitBtn">
+          Submit Application ↗
+        </button>
+      </div>
+    </section>
+
+  </form>
+
+  <footer class="footer">
+    SECTION E CHRONICLES · WEBSITE MANAGEMENT TEAM<br>
+    BUILT FOR THE SECTION E COMMUNITY
+  </footer>
+</main>
+
+<div class="overlay" id="successModal">
+  <div class="modal">
+    <div class="success-icon">✓</div>
+    <div class="eyebrow">APPLICATION RECEIVED</div>
+    <h2>Thank You.</h2>
+    <p>
+      Your Website Management Team application has been submitted.
+      The team will review the information provided. Stay connected
+      for further communication.
+    </p>
+    <button class="btn btn-primary" type="button"
+      onclick="window.location.href='index.html'">
+      Return to E Chronicles
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = "PASTE_YOUR_NEW_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+const form = document.getElementById("managementForm");
+const steps = [
+  document.getElementById("step1"),
+  document.getElementById("step2"),
+  document.getElementById("reviewStep")
+];
+
+const progressFill = document.getElementById("progressFill");
+const progressLabel = document.getElementById("progressLabel");
+const progressPercent = document.getElementById("progressPercent");
+const submitBtn = document.getElementById("submitBtn");
+
+let currentStep = 0;
+
+function showStep(index) {
+  currentStep = index;
+  steps.forEach((step, i) => step.classList.toggle("active", i === index));
+
+  const progress = index === 0 ? 50 : index === 1 ? 100 : 100;
+  progressFill.style.width = progress + "%";
+  progressPercent.textContent = progress + "%";
+
+  progressLabel.textContent =
+    index === 0 ? "Section 01 — Applicant Details" :
+    index === 1 ? "Section 02 — Commitment & Initiative" :
+    "Final Review";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 4000);
+}
+
+function validateStep(stepElement) {
+  const fields = stepElement.querySelectorAll("input, select, textarea");
+
+  for (const field of fields) {
+    if (field.type === "radio") continue;
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      field.focus();
+      return false;
+    }
+  }
+
+  if (stepElement.id === "step2") {
+    if (!form.querySelector('input[name="hours"]:checked')) {
+      showToast("Please select your weekly time commitment.");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (validateStep(steps[0])) showStep(1);
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  showStep(0);
+});
+
+document.getElementById("reviewBtn").addEventListener("click", () => {
+  if (!validateStep(steps[1])) return;
+  populateReview();
+  showStep(2);
+});
+
+document.getElementById("editBtn").addEventListener("click", () => {
+  showStep(1);
+});
+
+function getValue(id) {
+  return document.getElementById(id).value.trim();
+}
+
+function populateReview() {
+  const hours = form.querySelector('input[name="hours"]:checked')?.value || "";
+
+  const rows = [
+    ["Full Name", getValue("name")],
+    ["Personal Email", getValue("email")],
+    ["Roll Number", getValue("roll")],
+    ["Section", "Section E"],
+    ["Preferred Department", getValue("department")],
+    ["Experience & Skills", getValue("experience")],
+    ["Weekly Commitment", hours],
+    ["Problem-Solving Response", getValue("scenarioAnswer")],
+    ["Motivation", getValue("motivation")],
+    ["Additional Information", getValue("additional") || "Not provided"]
+  ];
+
+  const reviewList = document.getElementById("reviewList");
+  reviewList.replaceChildren();
+
+  rows.forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.className = "review-row";
+
+    const left = document.createElement("div");
+    left.className = "review-label";
+    left.textContent = label;
+
+    const right = document.createElement("div");
+    right.className = "review-value";
+    right.textContent = value;
+
+    row.append(left, right);
+    reviewList.appendChild(row);
+  });
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!document.getElementById("confirmation").checked) {
+    showToast("Please confirm the declaration before submitting.");
+    return;
+  }
+
+  if (SCRIPT_URL.includes("PASTE_YOUR")) {
+    showToast("Please configure the Apps Script URL first.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting Application...";
+
+  const payload = {
+    name: getValue("name"),
+    email: getValue("email"),
+    roll: getValue("roll"),
+    section: "Section E",
+    department: getValue("department"),
+    experience: getValue("experience"),
+    hours: form.querySelector('input[name="hours"]:checked')?.value || "",
+    scenarioAnswer: getValue("scenarioAnswer"),
+    motivation: getValue("motivation"),
+    additional: getValue("additional"),
+    confirmation: document.getElementById("confirmation").checked
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById("successModal").style.display = "grid";
+
+  } catch (error) {
+    showToast("Unable to send your application. Please check your connection and try again.");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Application ↗";
+  }
+});
+</script>
+</body>
+</html>
