@@ -1256,6 +1256,24 @@ body {
             <div class="input-field-wrapper">
               <input type="text" id="nameInput" name="name" class="text-input" placeholder="e.g. Saurav Pandey" maxlength="80" required autocomplete="name" autofocus>
             </div>
+            <div class="form-group">
+  <label class="input-label" for="emailInput">
+    Personal Email Address <span class="required-star">*</span>
+  </label>
+
+  <div class="input-field-wrapper">
+    <input
+      type="email"
+      id="emailInput"
+      name="personalEmail"
+      class="text-input"
+      placeholder="e.g. yourname@gmail.com"
+      maxlength="120"
+      required
+      autocomplete="email"
+    >
+  </div>
+</div>
           </div>
 
           <!-- STEP 2: Roll Number -->
@@ -1537,6 +1555,14 @@ body {
       <button type="button" class="btn-nav btn-secondary" onclick="window.print()">
         Save / Print Identity Pass
       </button>
+      <button
+  type="button"
+  class="btn-nav btn-primary"
+  id="managementApplyBtn"
+  style="display:none;"
+>
+  Apply for Management Team ↗
+</button>
     </div>
   </div>
 </div>
@@ -1546,7 +1572,8 @@ body {
 // CONFIGURATION & GOOGLE APPS SCRIPT HOOK
 // ==========================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyen_Ng05ptsIZ_T-AddmmMqgb2Eb5c6_wJHO_5Z1h3Q7s4eHQl_d5UjJsRQr5DkOMwKw/exec";
-
+const MANAGEMENT_FORM_URL =
+  "https://visionsyt99.github.io/SEC-E-CHRONICLES/MANAGEMENT-FORM.html";
 // Audio Synthesizer (Zero-latency Web Audio API)
 let soundEnabled = true;
 let audioCtx = null;
@@ -1647,6 +1674,9 @@ const progressBar = document.getElementById("progressBar");
 const stepCounterLabel = document.getElementById("stepCounterLabel");
 const stepPercentLabel = document.getElementById("stepPercentLabel");
 const statusBanner = document.getElementById("statusBanner");
+  document.getElementById("managementApplyBtn").addEventListener("click", () => {
+  window.location.href = MANAGEMENT_FORM_URL;
+});
 
 let currentStep = 0;
 let photoPayload = null;
@@ -1878,6 +1908,7 @@ function populateReview() {
   const management = form.querySelector('input[name="management"]:checked')?.value || "No";
   const rows = [
     { label: "Full Name", val: nameInput.value.trim() },
+    { label: "Personal Email", val: document.getElementById("emailInput").value.trim() },
     { label: "Class Roll No.", val: rollInput.value.trim() },
     { label: "Profile Portrait", val: photoPayload ? "Attached & Compressed ✓" : "None" },
     { label: "Personal Quote", val: quoteInput.value.trim() },
@@ -1962,6 +1993,7 @@ form.addEventListener("submit", async e => {
 
   const payload = {
     name: nameInput.value.trim(),
+    personalEmail: document.getElementById("emailInput").value.trim(),
     roll: rollInput.value.trim(),
     photo: photoPayload,
     quote: quoteInput.value.trim(),
@@ -1973,22 +2005,29 @@ form.addEventListener("submit", async e => {
   };
 
   try {
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
+  await fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
 
-    playSound("success");
-    fireConfetti();
-    document.getElementById("successModal").style.display = "grid";
+  playSound("success");
+  fireConfetti();
 
-  } catch (err) {
-    showToast("We could not send your submission. Please check your network connection and try again.", "error");
-    btnSubmit.disabled = false;
-    btnSubmit.innerHTML = `<span>Try Again ↗</span>`;
-  }
+  // Show management application button only if the student selected Yes
+  const managementApplyBtn = document.getElementById("managementApplyBtn");
+
+  managementApplyBtn.style.display =
+    payload.management === "Yes" ? "inline-flex" : "none";
+
+  document.getElementById("successModal").style.display = "grid";
+
+} catch (err) {
+  showToast("We could not send your submission. Please check your network connection and try again.", "error");
+  btnSubmit.disabled = false;
+  btnSubmit.innerHTML = `<span>Try Again ↗</span>`;
+}
 });
 
 // Built-in Vanilla Confetti Generator
