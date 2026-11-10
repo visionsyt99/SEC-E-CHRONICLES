@@ -407,6 +407,14 @@ const STUDENT_PROFILES = {
   wantsManagement: true,
   email: "025neb520@sxc.edu.np",
   dob: { bsYear: 2066, bsMonth: 3, bsDay: 16, monthName: "Ashadh" }
+},
+   539: {
+  photo: "https://drive.google.com/uc?export=view&id=1WyICH1q1N5lRkWAwGUpmgfwNnN386BGb",
+  quote: "Try to enjoy every bit of time. Cr7.. Hitman... Try to enjoy...",
+  experience: "Sec E always rocks.. E for excellence and that's what Sec E meant for me...",
+  wantsManagement: false,
+  email: "025neb539@sxc.edu.np",
+  dob: { bsYear: 2066, bsMonth: 5, bsDay: 5, monthName: "Bhadra" }
 }
 };
 
